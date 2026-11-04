@@ -2,6 +2,9 @@
 
 import json
 
+import pytest
+
+from nightshift.errors import LedgerError
 from nightshift.ledger import EventLedger, read_events, verify_ledger
 
 
@@ -51,6 +54,34 @@ def test_reordered_event_is_detected(tmp_path):
     rewrite(ledger.path, [events[0], events[2], events[1]])
     result = verify_ledger(ledger.path)
     assert not result.ok and result.broken_seq == 2
+
+
+def test_m11_append_onto_tampered_chain_is_refused(tmp_path):
+    ledger = make_ledger(tmp_path)
+    events = read_events(ledger.path)
+    events[1]["payload"]["usd"] = 999.0
+    rewrite(ledger.path, events)
+    with pytest.raises(LedgerError, match="broken ledger"):
+        EventLedger(ledger.path)
+
+
+def test_m11_tail_truncation_is_detected(tmp_path):
+    ledger = make_ledger(tmp_path)
+    events = read_events(ledger.path)
+    rewrite(ledger.path, events[:2])  # head record still says seq 3
+    result = verify_ledger(ledger.path)
+    assert not result.ok and "truncated" in result.message
+
+
+def test_m11_ledger_without_head_record_still_verifies(tmp_path):
+    ledger = make_ledger(tmp_path)
+    head = ledger.path.with_suffix(".jsonl.head.json")
+    assert head.exists()
+    head.unlink()
+    assert verify_ledger(ledger.path).ok
+    reopened = EventLedger(ledger.path)
+    reopened.append("run_finished", "controller", {"ok": True})
+    assert verify_ledger(ledger.path).ok
 
 
 def test_cli_verify_exit_codes(tmp_path):

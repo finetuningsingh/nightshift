@@ -7,6 +7,7 @@ import pytest
 
 from nightshift.agents import (
     AgentError,
+    AgentRunResult,
     MuseCodeAdapter,
     FakeReviser,
     parse_muse_jsonl,
@@ -24,6 +25,9 @@ def test_fake_reviser_makes_policy_valid_edit(tmp_path):
         round_no=1,
     )
     assert result.fake is True
+    assert result.validated_live is False
+    assert result.to_record()["validated_live"] is False
+    assert AgentRunResult().validated_live is False
     changed = check_pack_policy(scratch, base)
     assert "instructions.md" in changed
     assert "two candidates per prompt" in (scratch / "instructions.md").read_text().lower()
@@ -37,8 +41,17 @@ def test_fake_reviser_can_produce_a_policy_violating_candidate(tmp_path):
         check_pack_policy(scratch, base)
 
 
-def test_muse_adapter_fails_clearly_when_muse_is_missing(tmp_path):
+def test_b1_muse_adapter_refuses_without_explicit_unsandboxed_opt_in(tmp_path):
     adapter = MuseCodeAdapter(model="muse-spark-1.3", executable="muse-missing-xyz-123")
+    with pytest.raises(AgentError, match="allow_unsandboxed_cli"):
+        adapter.run_prompt("hello", tmp_path)
+
+
+def test_muse_adapter_fails_clearly_when_muse_is_missing(tmp_path):
+    adapter = MuseCodeAdapter(
+        model="muse-spark-1.3", executable="muse-missing-xyz-123",
+        allow_unsandboxed_cli=True,
+    )
     with pytest.raises(AgentError, match="not found"):
         adapter.run_prompt("hello", tmp_path)
 
@@ -75,7 +88,8 @@ def test_muse_adapter_args_and_environment_are_safe(tmp_path, monkeypatch):
     monkeypatch.setenv("META_API_KEY", "should-not-leak")
     monkeypatch.setenv("MUSE_API_KEY", "should-not-leak")
     adapter = MuseCodeAdapter(
-        model="muse-wonder-full-1.0", executable=str(script), max_model_steps=7
+        model="muse-wonder-full-1.0", executable=str(script), max_model_steps=7,
+        allow_unsandboxed_cli=True,
     )
     result = adapter.run_prompt("do the thing", workspace)
     assert result.terminal == "completed"

@@ -186,13 +186,14 @@ def nightshift_constraint_scorer():
                 checks = list(sample_metadata.get("checks") or [])
         if not checks:
             checks = list(_ACTIVE_CHECKS.get(str(getattr(state, "sample_id", "")), []))
+        if not checks:
+            raise ValueError(
+                "evaluation row has no checks; refusing to score an "
+                "unchecked row as correct"
+            )
         answer = _completion_text(state)
         results = check_text(answer, checks)
-        fraction = (
-            sum(1 for result in results if result.passed) / len(results)
-            if results
-            else 1.0
-        )
+        fraction = sum(1 for result in results if result.passed) / len(results)
         return Score(
             value=float(fraction),
             answer=answer,
@@ -435,6 +436,48 @@ class Evaluator:
                 record.to_record(),
             )
 
+    def failed_record(
+        self,
+        checkpoint_path: str | Path,
+        split: str,
+        error: str,
+        trial_id: str = "",
+        pack_version: str = "",
+        fake: bool = False,
+        model: str = "",
+    ) -> EvaluationRecord:
+        """A recorded failure (never a score) without running Inspect."""
+        info = validate_checkpoint_dir(checkpoint_path)
+        manifest = self.registry.manifest(split)
+        eval_id = "eval-" + hash_object(
+            {"checkpoint": info.checkpoint_hash, "split": split,
+             "trial": trial_id, "error": error}
+        )[:12]
+        record = EvaluationRecord(
+            evaluation_id=eval_id,
+            status="failed",
+            checkpoint_hash=info.checkpoint_hash,
+            trial_id=trial_id,
+            pack_version=pack_version,
+            dataset_manifest_id=manifest.id,
+            dataset_revision=manifest.revision,
+            dataset_sha256=manifest.sha256,
+            split=split,
+            code_revision=self.code_revision,
+            decoding_params=dict(self.decoding_params),
+            inspect_version=_inspect_version(),
+            model=str(model or ""),
+            error=error,
+            fake=bool(fake),
+        )
+        self.records_dir.mkdir(parents=True, exist_ok=True)
+        (self.records_dir / f"{eval_id}.json").write_text(
+            json.dumps(record.to_record(), indent=2, sort_keys=True),
+            encoding="utf-8",
+        )
+        self._event(record)
+        return record
+
     def evaluate_checkpoint(
         self,
         checkpoint_path: str | Path,
@@ -469,10 +512,27 @@ class Evaluator:
             "test": "final_comparison",
         }[split]
         resolved_purpose = purpose or inferred
+        if not is_fake and split in ("selection", "test"):
+            # Private real evaluation must run on a separate trusted host.
+            # That lane is not yet validated live, so fail honestly instead
+            # of scoring in-process. No test claim is consumed here.
+            return self.failed_record(
+                checkpoint_path,
+                split,
+                "private (selection/test) evaluation is not yet validated "
+                "live: it must run on a separate trusted evaluation host, "
+                "not in the controller process; refusing to score",
+                trial_id=trial_id,
+                pack_version=pack_version,
+                fake=False,
+                model=str(model or ""),
+            )
         if rows is None:
             eval_rows = self.controller.rows(split, resolved_purpose, comparison_id)
         else:
-            self.controller.check_purpose(split, resolved_purpose, comparison_id)
+            self.controller.check_supplied_rows(
+                split, resolved_purpose, comparison_id, list(rows)
+            )
             eval_rows = list(rows)
 
         eval_id = evaluation_id or "eval-" + hash_object(
@@ -567,6 +627,19 @@ class Evaluator:
             kwargs["fail_on_error"] = False
         if "display" in supported:
             kwargs["display"] = "none"
+        # Pass the recorded decoding parameters to Inspect when the
+        # installed API supports it; fake mock runs tolerate its absence.
+        try:
+            from inspect_ai.model import GenerateConfig
+
+            generate_config = GenerateConfig(
+                temperature=float(self.decoding_params.get("temperature", 0.0)),
+                max_tokens=int(self.decoding_params.get("max_tokens", 128)),
+            )
+        except Exception:
+            generate_config = None
+        if generate_config is not None and "model_config" in supported:
+            kwargs["model_config"] = generate_config
         logs = inspect_eval(task, model=inspect_model, **kwargs)
         eval_log = logs[0] if logs else None
         log_path = _locate_log(eval_log, attempt_dir)

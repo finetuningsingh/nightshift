@@ -58,6 +58,41 @@ def test_api_client_refuses_served_model_substitution(monkeypatch):
         client.complete("ping")
 
 
+def test_m5_api_client_refuses_missing_served_model(monkeypatch):
+    client, _calls = _client(monkeypatch, "hello", served="")
+    with pytest.raises(ApiAgentError, match="omitted the served model"):
+        client.complete("ping")
+
+
+def test_m6_api_client_enforces_max_calls_cap(monkeypatch):
+    monkeypatch.setenv(TEST_KEY_ENV, "test-key-value-not-a-real-credential")
+    calls = []
+
+    def transport(url, headers, payload, timeout):
+        calls.append(url)
+        return {"model": "muse-wonder-1.0",
+                "choices": [{"message": {"content": "ok"}}], "usage": {}}
+
+    endpoint = ApiEndpointConfig(
+        base_url="https://api.meta.ai/v1", model="muse-wonder-1.0",
+        api_key_env=TEST_KEY_ENV, max_calls=1,
+    )
+    client = ApiChatClient(endpoint, transport=transport)
+    assert client.complete("one")["text"] == "ok"
+    with pytest.raises(ApiAgentError, match="call cap reached"):
+        client.complete("two")
+    assert len(calls) == 1
+
+
+def test_m5_api_endpoint_requires_https_except_loopback():
+    with pytest.raises(ApiAgentError, match="must be https"):
+        ApiEndpointConfig(base_url="http://example.com/v1",
+                          model="m", api_key_env=TEST_KEY_ENV)
+    loopback = ApiEndpointConfig(base_url="http://localhost:8000/v1",
+                                 model="m", api_key_env=TEST_KEY_ENV)
+    assert loopback.completions_url().startswith("http://localhost")
+
+
 def test_api_client_fails_closed_without_credential(monkeypatch):
     monkeypatch.delenv(TEST_KEY_ENV, raising=False)
     called = []
@@ -140,7 +175,9 @@ def test_api_reviser_applies_pack_edit_and_rejects_escape(tmp_path, monkeypatch)
     assert not (tmp_path / "outside.md").exists()
 
 
-def test_clients_from_config_supports_split_lane():
+def test_clients_from_config_supports_split_lane(monkeypatch):
+    monkeypatch.setenv("BASETEN_API_KEY", "dummy-not-a-credential")
+    monkeypatch.setenv("META_API_KEY", "dummy-not-a-credential")
     config = types.SimpleNamespace(raw={"agents": {"backend": "api", "api": {
         "researcher_base_url": "https://inference.baseten.co/v1",
         "researcher_model": "meta-models/muse-spark-open-1026",
@@ -156,7 +193,52 @@ def test_clients_from_config_supports_split_lane():
     assert reviser.endpoint.base_url == "https://api.meta.ai/v1"
 
 
-def test_factories_select_api_backend_without_network():
+def test_m5_clients_from_config_preflights_credentials(monkeypatch):
+    monkeypatch.delenv("BASETEN_API_KEY", raising=False)
+    monkeypatch.setenv("META_API_KEY", "dummy-not-a-credential")
+    config = types.SimpleNamespace(raw={"agents": {"backend": "api", "api": {
+        "researcher_base_url": "https://inference.baseten.co/v1",
+        "researcher_model": "meta-models/muse-spark-open-1026",
+        "researcher_api_key_env": "BASETEN_API_KEY",
+        "reviser_base_url": "https://api.meta.ai/v1",
+        "reviser_model": "muse-wonder-1.0",
+        "reviser_api_key_env": "META_API_KEY",
+    }}})
+    with pytest.raises(ApiAgentError, match="preflight"):
+        clients_from_config(config)
+
+
+def test_m5_backend_descriptor_records_api_hosts_and_models(monkeypatch):
+    from nightshift.agents import backend_descriptor
+
+    config = types.SimpleNamespace(
+        fake=False,
+        models=types.SimpleNamespace(
+            researcher="muse-spark-1.3", reviser="muse-wonder-full-1.0"
+        ),
+        raw={"agents": {"backend": "api", "api": {
+            "researcher_base_url": "https://inference.baseten.co/v1",
+            "researcher_model": "meta-models/muse-spark-open-1026",
+            "researcher_api_key_env": "BASETEN_API_KEY",
+            "reviser_base_url": "https://api.meta.ai/v1",
+            "reviser_model": "muse-wonder-1.0",
+            "reviser_api_key_env": "META_API_KEY",
+        }}},
+    )
+    descriptor = backend_descriptor(config)
+    assert descriptor["backend"] == "api"
+    assert descriptor["researcher"] == {
+        "host": "inference.baseten.co",
+        "requested_model": "meta-models/muse-spark-open-1026",
+    }
+    assert descriptor["reviser"] == {
+        "host": "api.meta.ai", "requested_model": "muse-wonder-1.0",
+    }
+    assert "dummy" not in json.dumps(descriptor)
+
+
+def test_factories_select_api_backend_without_network(monkeypatch):
+    monkeypatch.setenv("BASETEN_API_KEY", "dummy-not-a-credential")
     config = types.SimpleNamespace(
         fake=False,
         models=types.SimpleNamespace(

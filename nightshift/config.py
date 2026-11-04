@@ -120,6 +120,7 @@ class ComparisonConfig:
     comparison_trials: int = 2
     margin: float = 0.0
     bootstrap_samples: int = 1000
+    min_scored_pairs: int = 2
 
 
 @dataclass(frozen=True)
@@ -227,6 +228,8 @@ def parse_config(raw: dict[str, Any], path: Path | None = None) -> NightshiftCon
         margin=float(comp_raw.get("margin", comp_raw.get("acceptance_margin", 0.0))),
         bootstrap_samples=_nonnegative_int(comp_raw, "bootstrap_samples", "comparison", 1000)
         or 1000,
+        min_scored_pairs=_nonnegative_int(comp_raw, "min_scored_pairs", "comparison", 2)
+        or 2,
     )
 
     data_raw = _section(raw, "data")

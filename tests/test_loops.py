@@ -43,6 +43,88 @@ def test_a10_reviser_input_contains_no_private_rows_paths_or_per_item_results(tm
     assert "public note about lanterns" in text  # public material survives
 
 
+def test_m1_reviser_input_drops_generic_selection_scores_and_fragments(tmp_path):
+    pack = create_pack(tmp_path / "pack")
+    rogue_trial = TrialRecord(
+        trial_id="trial-m1", phase="screening", pack_version="v1", seed=1,
+        status="succeeded", fake=True,
+        history=[
+            {"request": {"type": "evaluate_dev"},
+             "result": {"status": "succeeded", "split": "dev", "score": 0.5}},
+            {"request": {"type": "note"},
+             "result": {"status": "succeeded",
+                        "split": "selection", "score": 0.9,
+                        "per_seed": [1.0, 0.0]}},
+            {"request": {"type": "note"},
+             "result": {"status": "succeeded",
+                        "leaked_fragment": "mushroom stall. Use at most"}},
+        ],
+        dev_feedback=[{"split": "dev", "score": 0.5, "status": "succeeded"},
+                      {"split": "selection", "score": 0.9, "status": "succeeded"}],
+        shared_notes="public note about lanterns",
+    )
+    payload = build_reviser_input(pack, "v1", [rogue_trial], demo_registry())
+    text = canonical_json(payload)
+    assert "per_seed" not in text
+    assert "mushroom stall" not in text
+    assert '"split":"selection"' not in text
+    assert '"split":"dev"' in text  # public dev feedback survives
+
+
+def test_m10_one_scored_pair_is_not_evidence():
+    pairs = [{"seed": 1, "fake": False,
+              "original": {"status": "succeeded", "score": 0.0, "compute_seconds": 10},
+              "final": {"status": "succeeded", "score": 1.0, "compute_seconds": 10}}]
+    result = summarize_comparison(
+        [dict(p) for p in pairs], margin=0.0, bootstrap_samples=100, seed=1
+    )
+    assert result["scored_pairs"] == 1 and result["min_scored_pairs"] == 2
+    assert result["evidence_of_improvement"] is False
+    relaxed = summarize_comparison(
+        [dict(p) for p in pairs], margin=0.0, bootstrap_samples=100,
+        seed=1, min_scored_pairs=1,
+    )
+    assert relaxed["evidence_of_improvement"] is True
+
+
+def test_b1_reviser_writing_outside_scratch_pack_rejects_round(tmp_path):
+    from nightshift.agents import AgentRunResult
+    from nightshift.config import load_config, write_demo_config
+    from nightshift.loops import NightshiftRun, ScreeningResult
+    from nightshift.pack import freeze_pack
+
+    create_pack(tmp_path / "pack")
+    config_path = write_demo_config(
+        tmp_path / "nightshift.toml", output_dir="run",
+        budget_file="run/budget.json", pack_dir="pack",
+    )
+    run = NightshiftRun(load_config(config_path))
+    version, pack_dir = freeze_pack(run._source_pack(), run.run_dir / "packs")
+    run.pack_paths[version] = pack_dir
+    run._screen = lambda v, label: ScreeningResult(pack_version=v)
+
+    class OutsideReviser:
+        fake = True
+
+        def revise(self, scratch_pack_dir, public_input=None, round_no=1):
+            from pathlib import Path
+
+            scratch = Path(scratch_pack_dir)
+            text = (scratch / "instructions.md").read_text(encoding="utf-8")
+            (scratch / "instructions.md").write_text(
+                text + "\nGenerate two candidates per prompt.\n", encoding="utf-8"
+            )
+            # Outside the scratch pack, handed to the loop as data.
+            (scratch.parent / "outside.txt").write_text("escaped", encoding="utf-8")
+            return AgentRunResult(text="stub", fake=True)
+
+    run.reviser = OutsideReviser()
+    incumbent, record = run._outer_round(1, version)
+    assert incumbent == version
+    assert record["accepted"] is False
+    assert "outside the scratch pack" in record["reasons"][0]
+
+
 def test_a17_failed_trials_stay_in_the_comparison_denominator():
     pairs = [
         {"seed": 1, "fake": False,

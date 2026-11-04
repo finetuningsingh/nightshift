@@ -68,7 +68,7 @@ numbers have no defaults; a missing budget field is a configuration error.
 ```sh
 nightshift init --demo            # write the CPU demo config
 nightshift run nightshift.toml    # run a config
-nightshift stop --leases <run>/leases.json
+nightshift stop --leases <run>/leases.json --provider <name>
 ```
 
 Safety properties the controller enforces in plain code:

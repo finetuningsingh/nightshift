@@ -20,6 +20,7 @@ from typing import Any, Callable
 from .agents import (
     AgentError,
     agent_record,
+    backend_descriptor,
     context_for,
     make_researcher,
     make_reviser,
@@ -47,16 +48,19 @@ from .generation import (
     filter_sample_set,
     load_sample_set,
     make_generator,
+    verify_trainable_sample_set,
     write_sample_set,
 )
 from .hashing import hash_object
 from .ledger import EventLedger
 from .pack import (
     check_pack_policy,
+    check_reviser_edits,
     create_pack,
     freeze_pack,
     load_pack_metadata,
     make_scratch_copy,
+    snapshot_tree,
 )
 from .providers import JobSpec, RentalRequest, make_provider
 from .report import write_report
@@ -97,6 +101,7 @@ class TrialRecord:
     history: list[dict[str, Any]] = field(default_factory=list)
     shared_notes: str = ""
     agent_records: list[dict[str, Any]] = field(default_factory=list)
+    backend: dict[str, Any] = field(default_factory=dict)
     fake: bool = False
 
     @property
@@ -119,6 +124,7 @@ class TrialRecord:
             "samples_generated": int(self.samples_generated),
             "samples_accepted": int(self.samples_accepted),
             "dev_feedback": list(self.dev_feedback),
+            "backend": dict(self.backend),
             "fake": bool(self.fake),
         }
         if not public:
@@ -211,6 +217,7 @@ class TrialRunner:
         record = TrialRecord(
             trial_id=trial_id, phase=phase, pack_version=pack_version,
             seed=int(seed), researchers=list(researcher_ids),
+            backend=backend_descriptor(self.config),
             fake=bool(self.config.fake),
         )
         allowed_keys = set(load_pack_metadata(pack_path).editable_keys)
@@ -394,7 +401,7 @@ class _TrialState:
                 seed=self.record.seed, sampling_params=payload["sampling_params"],
             )
         dest = self.trial.controller_dir() / "sample_sets" / request.request_id
-        sample_set = write_sample_set(samples, dest)
+        sample_set = write_sample_set(samples, dest, kind="generated")
         self.sample_sets[sample_set.sample_set_id] = dest
         self.record.samples_generated += len(samples)
         runner._event("generation_finished", {
@@ -414,9 +421,10 @@ class _TrialState:
         runner = self.runner
         sample_set = self._load_samples(request.payload["sample_set_id"])
         verifier_ids = request.payload.get("verifier_ids") or None
+        _check_verifier_subset(verifier_ids, runner.config.verifier_ids)
         outcome = filter_sample_set(sample_set.samples, self.train_rows, verifier_ids)
         dest = self.trial.controller_dir() / "sample_sets" / request.request_id
-        accepted_set = write_sample_set(outcome.accepted, dest)
+        accepted_set = write_sample_set(outcome.accepted, dest, kind="filtered")
         self.sample_sets[accepted_set.sample_set_id] = dest
         self.record.samples_accepted += len(outcome.accepted)
         runner._event("filter_finished", {
@@ -430,6 +438,9 @@ class _TrialState:
     def _train(self, request: Any) -> dict[str, Any]:
         runner = self.runner
         sample_set = self._load_samples(request.payload["sample_set_id"])
+        # Provenance is re-verified before any spend: only a filtered set
+        # whose every sample passes ALL checks of its approved row trains.
+        verify_trainable_sample_set(sample_set, self.train_rows)
         checkpoint_dir = (
             self.trial.controller_dir() / "checkpoints" / request.request_id
         )
@@ -527,6 +538,26 @@ class _TrialState:
         )
 
 
+def _check_verifier_subset(
+    verifier_ids: list[str] | tuple[str, ...] | None,
+    configured_ids: tuple[str, ...],
+) -> None:
+    """Researcher-supplied verifier ids must stay inside the configured set.
+
+    An empty request means "all row checks" and is always allowed; a
+    non-empty request must be a subset of ``config.verifier_ids`` whenever
+    the operator configured that list.
+    """
+    if not verifier_ids or not configured_ids:
+        return
+    extra = sorted(set(verifier_ids) - set(configured_ids))
+    if extra:
+        raise PolicyError(
+            f"filter refused: verifier id(s) {extra} are not in the "
+            f"configured verifier set {sorted(configured_ids)}"
+        )
+
+
 def _eval_model_string(config: NightshiftConfig) -> str | None:
     model = config.provider.options.get("eval_model")
     if model:
@@ -538,10 +569,34 @@ def _eval_model_string(config: NightshiftConfig) -> str | None:
 
 
 _PRIVATE_KEY_WORDS = {"selection", "test", "per_item", "per-item"}
+_ALLOWED_SPLITS = {"dev", "train_prompts"}
+
+# Explicit public fields for reviser input (allowlist, spec 3.10). Anything
+# not listed here is dropped, so a future component cannot smuggle private
+# scores, paths, or prompt fragments through an inventively named key.
+_PUBLIC_REQUEST_KEYS = {
+    "type", "request_id", "prompt_ids", "count", "sampling_params",
+    "sample_set_id", "verifier_ids", "checkpoint_id", "recipe_overrides",
+}
+_PUBLIC_RESULT_KEYS = {
+    "request_id", "type", "status", "reason", "sample_set_id", "n",
+    "accepted", "rejected", "pass_rate", "checkpoint_id",
+    "checkpoint_hash", "n_samples", "fake", "split", "score", "failures",
+    "evaluation_id", "inspect_log_sha256", "submitted_checkpoint_id", "note",
+}
+_PUBLIC_FEEDBACK_KEYS = {
+    "split", "status", "n", "failures", "score", "fake",
+    "checkpoint_id", "evaluation_id", "inspect_log_sha256",
+}
 
 
 def _sanitize_public(value: Any, markers: set[str]) -> Any:
+    """Secondary scrub: key denylist, private-marker redaction, and a
+    hard drop of any nested record whose split is not public."""
     if isinstance(value, dict):
+        split = value.get("split")
+        if split is not None and str(split) not in _ALLOWED_SPLITS:
+            return None
         clean: dict[str, Any] = {}
         for key, item in value.items():
             lowered = str(key).lower()
@@ -551,15 +606,67 @@ def _sanitize_public(value: Any, markers: set[str]) -> Any:
                 continue
             if lowered.startswith("test_") or lowered.endswith("_test"):
                 continue
-            clean[str(key)] = _sanitize_public(item, markers)
+            cleaned = _sanitize_public(item, markers)
+            if cleaned is not None:
+                clean[str(key)] = cleaned
         return clean
     if isinstance(value, list):
-        return [_sanitize_public(item, markers) for item in value]
+        cleaned_items = [_sanitize_public(item, markers) for item in value]
+        return [item for item in cleaned_items if item is not None]
     if isinstance(value, str):
         if any(marker and marker in value for marker in markers):
             return "[removed: private material]"
         return value
     return value
+
+
+def _allowlisted(
+    record: Any, allowed_keys: set[str], markers: set[str]
+) -> dict[str, Any]:
+    if not isinstance(record, dict):
+        return {}
+    split = record.get("split")
+    if split is not None and str(split) not in _ALLOWED_SPLITS:
+        return {}
+    kept = {key: record[key] for key in allowed_keys if key in record}
+    cleaned = _sanitize_public(kept, markers)
+    return cleaned if isinstance(cleaned, dict) else {}
+
+
+def _public_history(history: Any, markers: set[str]) -> list[dict[str, Any]]:
+    entries: list[dict[str, Any]] = []
+    if not isinstance(history, list):
+        return entries
+    for entry in history:
+        if not isinstance(entry, dict):
+            continue
+        result = entry.get("result")
+        if isinstance(result, dict):
+            split = result.get("split")
+            if split is not None and str(split) not in _ALLOWED_SPLITS:
+                continue
+        entries.append(
+            {
+                "request": _allowlisted(
+                    entry.get("request"), _PUBLIC_REQUEST_KEYS, markers
+                ),
+                "result": _allowlisted(
+                    entry.get("result"), _PUBLIC_RESULT_KEYS, markers
+                ),
+            }
+        )
+    return entries
+
+
+def _public_feedback(feedback: Any, markers: set[str]) -> list[dict[str, Any]]:
+    if not isinstance(feedback, list):
+        return []
+    kept: list[dict[str, Any]] = []
+    for item in feedback:
+        cleaned = _allowlisted(item, _PUBLIC_FEEDBACK_KEYS, markers)
+        if cleaned:
+            kept.append(cleaned)
+    return kept
 
 
 def build_reviser_input(
@@ -583,6 +690,7 @@ def build_reviser_input(
     trial_records: list[dict[str, Any]] = []
     for trial in trials:
         raw = trial.to_record() if isinstance(trial, TrialRecord) else dict(trial)
+        notes = _sanitize_public(str(raw.get("shared_notes", "")), markers)
         public_trial = {
             "trial_id": raw.get("trial_id"),
             "pack_version": raw.get("pack_version"),
@@ -590,9 +698,11 @@ def build_reviser_input(
             "status": raw.get("status"),
             "samples_generated": raw.get("samples_generated"),
             "samples_accepted": raw.get("samples_accepted"),
-            "history": raw.get("history", []),
-            "dev_feedback": raw.get("dev_feedback", []),
-            "shared_notes": raw.get("shared_notes", ""),
+            "history": _public_history(raw.get("history", []), markers),
+            "dev_feedback": _public_feedback(
+                raw.get("dev_feedback", []), markers
+            ),
+            "shared_notes": notes if isinstance(notes, str) else "",
             "fake": bool(raw.get("fake")),
         }
         trial_records.append(_sanitize_public(public_trial, markers))
@@ -646,6 +756,7 @@ def summarize_comparison(
     bootstrap_samples: int = 1000,
     seed: int = 0,
     fake: bool = False,
+    min_scored_pairs: int = 2,
 ) -> dict[str, Any]:
     """Paired comparison math; failed trials stay in the denominator (A17)."""
     diffs: list[float] = []
@@ -681,6 +792,7 @@ def summarize_comparison(
         ci = [means[int(0.025 * (len(means) - 1))], means[int(0.975 * (len(means) - 1))]]
     evidence = bool(
         not fake
+        and len(diffs) >= int(min_scored_pairs)
         and mean_diff is not None
         and mean_diff >= float(margin)
         and ci[0] is not None
@@ -692,6 +804,7 @@ def summarize_comparison(
         "pairs": pairs,
         "pair_denominator": len(pairs),
         "scored_pairs": len(diffs),
+        "min_scored_pairs": int(min_scored_pairs),
         "original_failures": original_failures,
         "final_failures": final_failures,
         "original_compute_seconds": original_compute,
@@ -772,6 +885,64 @@ class NightshiftRun:
             create_pack(fallback)
         return fallback
 
+    def _evaluate_private(
+        self,
+        trial: TrialRecord,
+        pack_version: str,
+        split: str,
+        purpose: str,
+        rows: list[dict[str, Any]] | None = None,
+        comparison_id: str | None = None,
+    ) -> EvaluationRecord:
+        """Selection/test evaluation with honest charging and hash binding.
+
+        In fake mode a provider job is reserved and charged first, like
+        dev. In real mode the evaluator itself refuses to score private
+        splits in-process (separate trusted host not yet validated live).
+        A score is used only when the evaluated checkpoint hash equals
+        the hash the trial submitted.
+        """
+        if self.config.fake:
+            try:
+                trial.spent_usd += self.trial_runner._run_provider_job(
+                    trial.trial_id, f"evaluate_{split}", 10.0, evaluation=10.0
+                )
+            except Exception as exc:
+                return self.evaluator.failed_record(
+                    trial.submitted_checkpoint_path, split,
+                    f"evaluation job failed before scoring: {exc}",
+                    trial_id=trial.trial_id, pack_version=pack_version,
+                    fake=True, model="mockllm/model",
+                )
+        if rows is None:
+            evaluation = self.evaluator.evaluate_checkpoint(
+                trial.submitted_checkpoint_path, split=split,
+                trial_id=trial.trial_id, pack_version=pack_version,
+                purpose=purpose, comparison_id=comparison_id,
+                model=_eval_model_string(self.config), fake=self.config.fake,
+            )
+        else:
+            evaluation = self.evaluator.evaluate_rows(
+                trial.submitted_checkpoint_path, split=split, rows=rows,
+                trial_id=trial.trial_id, pack_version=pack_version,
+                purpose=purpose, comparison_id=comparison_id,
+                model=_eval_model_string(self.config), fake=self.config.fake,
+            )
+        if evaluation.checkpoint_hash != trial.submitted_checkpoint_hash:
+            evaluation.status = "failed"
+            evaluation.score = None
+            evaluation.error = (
+                "checkpoint hash mismatch: evaluation scored "
+                f"{evaluation.checkpoint_hash} but the trial submitted "
+                f"{trial.submitted_checkpoint_hash}"
+            )
+            self._event("evaluation_hash_mismatch", {
+                "trial_id": trial.trial_id, "split": split,
+                "submitted_checkpoint_hash": trial.submitted_checkpoint_hash,
+                "evaluated_checkpoint_hash": evaluation.checkpoint_hash,
+            })
+        return evaluation
+
     def _screen(self, pack_version: str, round_label: str) -> ScreeningResult:
         if pack_version in self.screening_cache:
             return self.screening_cache[pack_version]
@@ -789,11 +960,9 @@ class NightshiftRun:
             result.trials.append(trial)
             self.all_trials.append(trial)
             if trial.succeeded:
-                evaluation = self.evaluator.evaluate_checkpoint(
-                    trial.submitted_checkpoint_path, split="selection",
-                    trial_id=trial.trial_id, pack_version=pack_version,
+                evaluation = self._evaluate_private(
+                    trial, pack_version, split="selection",
                     purpose="selection_evaluation",
-                    model=_eval_model_string(self.config), fake=self.config.fake,
                 )
                 result.evaluations.append(evaluation)
         self.screening_cache[pack_version] = result
@@ -819,9 +988,27 @@ class NightshiftRun:
             "requested_model": config.models.reviser,
         })
         scratch = make_scratch_copy(incumbent_dir, round_dir / "candidate_pack")
+        # Outside-edit detection for every reviser kind: snapshot the run
+        # tree around the reviser call and allow only the scratch pack
+        # subtree plus the controller-written reviser prompt file.
+        scratch_rel = scratch.relative_to(self.run_dir).as_posix()
+        prompt_rel = (
+            round_dir / f"reviser-prompt-{round_no}.md"
+        ).relative_to(self.run_dir).as_posix()
+        before_edits = snapshot_tree(self.run_dir)
         reviser_result = self.reviser.revise(
             scratch, public_input=reviser_input, round_no=round_no
         )
+        after_edits = snapshot_tree(self.run_dir)
+        before_checked = dict(before_edits)
+        after_checked = dict(after_edits)
+        before_checked.pop(prompt_rel, None)
+        after_checked.pop(prompt_rel, None)
+        outside_edits_error = ""
+        try:
+            check_reviser_edits(before_checked, after_checked, scratch_rel)
+        except PolicyError as exc:
+            outside_edits_error = str(exc)
         self._event("reviser_finished", {
             "round": round_no, **reviser_result.to_record(),
         }, )
@@ -835,6 +1022,12 @@ class NightshiftRun:
             "fake": bool(config.fake),
             "incumbent_screening": incumbent_screen.to_record(),
         }
+        if outside_edits_error:
+            round_record["reasons"] = [
+                f"reviser edited outside the scratch pack: {outside_edits_error}"
+            ]
+            self._event("acceptance_decision", dict(round_record))
+            return incumbent_version, round_record
         try:
             changed = check_pack_policy(scratch, incumbent_dir)
         except PolicyError as exc:
@@ -936,13 +1129,10 @@ class NightshiftRun:
                     "fake": trial.fake,
                 }
                 if trial.succeeded:
-                    evaluation = self.evaluator.evaluate_rows(
-                        trial.submitted_checkpoint_path, split="test",
-                        rows=test_rows, trial_id=trial.trial_id,
-                        pack_version=version, purpose="final_comparison",
+                    evaluation = self._evaluate_private(
+                        trial, version, split="test",
+                        purpose="final_comparison", rows=test_rows,
                         comparison_id=comparison_id,
-                        model=_eval_model_string(self.config),
-                        fake=self.config.fake,
                     )
                     arm["evaluation_id"] = evaluation.evaluation_id
                     if evaluation.succeeded and evaluation.score is not None:
@@ -959,6 +1149,7 @@ class NightshiftRun:
             bootstrap_samples=self.config.comparison.bootstrap_samples,
             seed=self.config.seed,
             fake=self.config.fake,
+            min_scored_pairs=self.config.comparison.min_scored_pairs,
         )
         comparison["comparison_id"] = comparison_id
         (self.run_dir / "comparison.json").write_text(
@@ -985,6 +1176,7 @@ class NightshiftRun:
             "run_name": config.run_name, "seed": config.seed,
             "researcher_model": config.models.researcher,
             "reviser_model": config.models.reviser,
+            "backend": backend_descriptor(config),
             "base_model": config.models.base_model,
             "base_revision": config.models.base_revision,
             "provider": config.provider.name,

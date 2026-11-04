@@ -1,4 +1,7 @@
 # Trial collaboration settings (CORAL-style, implemented natively).
+# Researcher-facing guidance only: the controller does not read these
+# values; researcher count and note behaviour come from the run config
+# and controller code.
 [collaboration]
 shared_notes = true
 heartbeat = ["reflect", "consolidate", "pivot"]

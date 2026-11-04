@@ -214,9 +214,11 @@ class BudgetStore:
 class LeaseStore:
     """Exact set of rentals this run owns. Cleanup never uses name patterns."""
 
-    def __init__(self, path: str | Path):
+    def __init__(self, path: str | Path, require_existing: bool = False):
         self.path = Path(path)
         if not self.path.exists():
+            if require_existing:
+                raise ResourceError(f"lease file does not exist: {self.path}")
             _atomic_write_json(self.path, {"version": 1, "leases": []})
 
     def _load(self) -> dict[str, Any]:
@@ -232,11 +234,18 @@ class LeaseStore:
         return [dict(lease) for lease in self._load().get("leases", [])]
 
     def live(self) -> list[dict[str, Any]]:
-        return [lease for lease in self.leases() if lease.get("status") == "live"]
+        # A lease whose destruction was never confirmed stays live for retry.
+        return [
+            lease
+            for lease in self.leases()
+            if lease.get("status") in ("live", "stop_failed")
+        ]
 
     def pending_or_live(self) -> list[dict[str, Any]]:
         return [
-            lease for lease in self.leases() if lease.get("status") in ("pending", "live")
+            lease
+            for lease in self.leases()
+            if lease.get("status") in ("pending", "live", "stop_failed")
         ]
 
     def find(self, rental_id: str) -> dict[str, Any] | None:
@@ -246,7 +255,12 @@ class LeaseStore:
         return None
 
     def add_pending(
-        self, reservation_id: str | None, run_id: str, trial_id: str, fake: bool
+        self,
+        reservation_id: str | None,
+        run_id: str,
+        trial_id: str,
+        fake: bool,
+        provider: str = "",
     ) -> str:
         """Write a lease entry before the provider create call."""
         lease_id = f"lease-{uuid.uuid4().hex[:12]}"
@@ -256,6 +270,7 @@ class LeaseStore:
                 "lease_id": lease_id,
                 "rental_id": None,
                 "reservation_id": reservation_id,
+                "provider": str(provider),
                 "run_id": run_id,
                 "trial_id": trial_id,
                 "status": "pending",
@@ -270,6 +285,9 @@ class LeaseStore:
         for lease in data["leases"]:
             if lease.get("lease_id") == lease_id:
                 lease.update(rental.to_record())
+                # The provider name is stored in every lease at activation
+                # so stop/destroy can refuse a provider mismatch.
+                lease["provider"] = str(rental.provider)
                 lease["status"] = "live"
         self._save(data)
 
@@ -459,6 +477,7 @@ class ResourceManager:
             request.run_id or self.run_id,
             request.trial_id,
             fake=bool(getattr(self.provider, "fake", False)),
+            provider=str(getattr(self.provider, "name", "")),
         )
         try:
             rental = self.provider.create(request)
@@ -499,14 +518,42 @@ class ResourceManager:
             )
         if lease.get("status") == "destroyed":
             return 0.0, 0.0
-        destroyed = self.provider.destroy(rental_id)
+        lease_provider = str(lease.get("provider") or "")
+        if lease_provider and lease_provider != str(self.provider.name):
+            raise ResourceError(
+                f"refusing to destroy rental {rental_id!r}: lease provider "
+                f"{lease_provider!r} does not match provider {self.provider.name!r}"
+            )
+        destroyed = bool(self.provider.destroy(rental_id))
         now = self.now()
+        if not destroyed:
+            # Unconfirmed destruction is never settled or marked destroyed;
+            # the lease stays live (stop_failed) for a later retry.
+            self.leases.mark(
+                rental_id,
+                "stop_failed",
+                destroy_reason=reason,
+                provider_confirmed=False,
+                stop_failed_at=now,
+            )
+            self._event(
+                "rental_destroy_failed",
+                {
+                    "rental_id": rental_id,
+                    "reason": reason,
+                    "provider_confirmed": False,
+                },
+            )
+            raise ResourceError(
+                f"destruction of rental {rental_id!r} was not confirmed by "
+                f"provider {self.provider.name!r}; lease kept live for retry"
+            )
         self.leases.mark(
             rental_id,
             "destroyed",
             destroyed_at=now,
             destroy_reason=reason,
-            provider_confirmed=bool(destroyed),
+            provider_confirmed=True,
         )
         rental = Rental(
             rental_id=rental_id,
@@ -604,28 +651,63 @@ def stop_from_leases(
 
     Needs only the lease file and provider credentials (the provider object).
     Rentals the provider reports but the lease file does not list as live and
-    owned are never touched.
+    owned are never touched. The lease file must already exist, the CLI
+    provider must match every lease's recorded provider, and a lease is
+    marked destroyed only when the provider confirms destruction.
     """
-    store = LeaseStore(leases_path)
+    store = LeaseStore(leases_path, require_existing=True)
+    provider_name = str(getattr(provider, "name", ""))
+    live = store.live()
+    mismatched = sorted(
+        {
+            str(lease.get("provider") or "<missing>")
+            for lease in live
+            if str(lease.get("provider") or "") != provider_name
+        }
+    )
+    if mismatched:
+        raise ResourceError(
+            f"stop refused: lease provider(s) {mismatched} do not match "
+            f"the requested provider {provider_name!r}; no rental was touched"
+        )
     destroyed: list[str] = []
-    already_gone: list[str] = []
-    for lease in store.live():
+    stop_failed: list[str] = []
+    for lease in live:
         rental_id = lease.get("rental_id")
         if not rental_id:
             continue
-        confirmed = provider.destroy(str(rental_id))
-        store.mark(
-            str(rental_id),
-            "destroyed",
-            destroy_reason="stop",
-            provider_confirmed=bool(confirmed),
-            stopped_at=time.time(),
-        )
-        (destroyed if confirmed else already_gone).append(str(rental_id))
+        error = ""
+        try:
+            confirmed = bool(provider.destroy(str(rental_id)))
+        except Exception as exc:  # a provider error is an unconfirmed stop
+            confirmed = False
+            error = f"{type(exc).__name__}: {exc}"
+        if confirmed:
+            store.mark(
+                str(rental_id),
+                "destroyed",
+                destroy_reason="stop",
+                provider_confirmed=True,
+                stopped_at=time.time(),
+            )
+            destroyed.append(str(rental_id))
+        else:
+            extra: dict[str, Any] = {
+                "destroy_reason": "stop",
+                "provider_confirmed": False,
+                "stop_failed_at": time.time(),
+            }
+            if error:
+                extra["stop_error"] = error
+            store.mark(str(rental_id), "stop_failed", **extra)
+            stop_failed.append(str(rental_id))
     summary: dict[str, Any] = {
         "leases_file": str(leases_path),
+        "provider": provider_name,
         "destroyed": destroyed,
-        "already_gone": already_gone,
+        "stop_failed": stop_failed,
+        "already_gone": [],
+        "ok": not stop_failed,
         "fake": bool(getattr(provider, "fake", False)),
     }
     stop_record_path = Path(str(leases_path) + ".stop.json")

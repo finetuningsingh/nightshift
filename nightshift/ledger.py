@@ -33,12 +33,44 @@ class VerifyResult:
         return self.ok
 
 
+def _head_path(path: Path) -> Path:
+    return path.with_suffix(path.suffix + ".head.json")
+
+
+def _write_head(path: Path, seq: int, head_hash: str) -> None:
+    head = _head_path(path)
+    tmp = head.with_suffix(head.suffix + ".tmp")
+    tmp.write_text(
+        json.dumps({"seq": int(seq), "hash": head_hash}, sort_keys=True),
+        encoding="utf-8",
+    )
+    tmp.replace(head)
+
+
+def _read_head(path: Path) -> dict[str, Any] | None:
+    head = _head_path(path)
+    if not head.exists():
+        return None
+    try:
+        data = json.loads(head.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {"corrupt": True}
+    return data if isinstance(data, dict) else {"corrupt": True}
+
+
 class EventLedger:
     """Append-only JSONL ledger. Each event chains to the previous hash."""
 
     def __init__(self, path: str | Path):
         self.path = Path(path)
         self.path.parent.mkdir(parents=True, exist_ok=True)
+        if self.path.exists():
+            result = verify_ledger(self.path)
+            if not result.ok:
+                raise LedgerError(
+                    f"refusing to append to a broken ledger {self.path}: "
+                    f"{result.message} (seq {result.broken_seq})"
+                )
         self._seq, self._prev_hash = self._read_tail()
 
     def _read_tail(self) -> tuple[int, str]:
@@ -90,6 +122,7 @@ class EventLedger:
             handle.write(canonical_json(event) + "\n")
         self._seq = event["seq"]
         self._prev_hash = event["hash"]
+        _write_head(self.path, int(event["seq"]), str(event["hash"]))
         return event
 
     def events(self) -> Iterator[dict[str, Any]]:
@@ -147,4 +180,25 @@ def verify_ledger(path: str | Path) -> VerifyResult:
             return VerifyResult(False, count, expected_seq, "event hash mismatch")
         prev_hash = claimed
         expected_seq += 1
+    # Tail-truncation check against the sibling head record. Ledgers
+    # written before head records existed (no head file) still verify.
+    head = _read_head(ledger_path)
+    if head is not None:
+        if head.get("corrupt"):
+            return VerifyResult(
+                False, count, count + 1, "ledger head record is corrupt"
+            )
+        head_seq = head.get("seq")
+        if isinstance(head_seq, int) and head_seq > count:
+            return VerifyResult(
+                False, count, count + 1,
+                f"ledger truncated: head record is at seq {head_seq} "
+                f"but the file holds only {count} event(s)",
+            )
+        if isinstance(head_seq, int) and head_seq == count and count > 0:
+            if head.get("hash") != prev_hash:
+                return VerifyResult(
+                    False, count, count,
+                    "ledger head hash does not match the last event",
+                )
     return VerifyResult(True, count, None, "ok")

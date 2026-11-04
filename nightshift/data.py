@@ -100,6 +100,14 @@ def _validate_rows(manifest: DataManifest, rows: list[dict[str, Any]]) -> None:
         seen.add(row_id)
         if not isinstance(row.get("prompt"), str) or not row["prompt"]:
             raise DataError(f"manifest {manifest.id}: row {row_id!r} needs a prompt")
+        if manifest.split in ("dev", "selection", "test"):
+            checks = row.get("checks") or row.get("verifiers")
+            if not isinstance(checks, list) or not checks:
+                raise DataError(
+                    f"manifest {manifest.id}: {manifest.split} row "
+                    f"{row_id!r} has no checks; an unchecked row must "
+                    "never be scored as correct"
+                )
         if manifest.split == "train_prompts":
             leaked = TARGET_KEYS & set(row)
             if leaked:
@@ -133,7 +141,14 @@ class TestAccessGate:
     def claimed(self, comparison_id: str) -> bool:
         return comparison_id in self._load().get("test_claims", {})
 
-    def claim(self, comparison_id: str) -> None:
+    def claimed_row_ids(self, comparison_id: str) -> list[str] | None:
+        claim = self._load().get("test_claims", {}).get(comparison_id)
+        if not isinstance(claim, dict):
+            return None
+        row_ids = claim.get("row_ids")
+        return [str(r) for r in row_ids] if isinstance(row_ids, list) else None
+
+    def claim(self, comparison_id: str, row_ids: list[str] | None = None) -> None:
         if not comparison_id:
             raise PolicyError("test access requires a comparison id")
         state = self._load()
@@ -143,7 +158,10 @@ class TestAccessGate:
                 f"test split was already accessed for comparison {comparison_id!r}; "
                 "it may be accessed exactly once per comparison id"
             )
-        claims[comparison_id] = {"claimed": True}
+        claims[comparison_id] = {
+            "claimed": True,
+            "row_ids": [str(r) for r in row_ids] if row_ids is not None else None,
+        }
         self.state_path.parent.mkdir(parents=True, exist_ok=True)
         tmp = self.state_path.with_suffix(self.state_path.suffix + ".tmp")
         tmp.write_text(json.dumps(state, indent=2, sort_keys=True), encoding="utf-8")
@@ -161,12 +179,29 @@ class DatasetRegistry:
         self.base_dir = Path(base_dir)
         self._by_split: dict[str, DataManifest] = {}
         self._by_id: dict[str, DataManifest] = {}
+        seen_paths: dict[str, str] = {}
+        seen_hashes: dict[str, str] = {}
         for entry in manifests:
             manifest = entry if isinstance(entry, DataManifest) else DataManifest.from_dict(entry)
             if manifest.split in self._by_split:
                 raise DataError(f"duplicate manifest for split {manifest.split!r}")
             if manifest.id in self._by_id:
                 raise DataError(f"duplicate manifest id {manifest.id!r}")
+            resolved = str(self.resolve_path(manifest).resolve())
+            if resolved in seen_paths:
+                raise DataError(
+                    f"splits {seen_paths[resolved]!r} and {manifest.split!r} "
+                    f"point at the same data file ({manifest.path!r}); "
+                    "identical file paths across splits are refused"
+                )
+            if manifest.sha256 in seen_hashes:
+                raise DataError(
+                    f"splits {seen_hashes[manifest.sha256]!r} and "
+                    f"{manifest.split!r} have the identical file hash; "
+                    "identical file hashes across splits are refused"
+                )
+            seen_paths[resolved] = manifest.split
+            seen_hashes[manifest.sha256] = manifest.split
             self._by_split[manifest.split] = manifest
             self._by_id[manifest.id] = manifest
 
@@ -188,6 +223,12 @@ class DatasetRegistry:
     def from_config(cls, config: Any) -> "DatasetRegistry":
         if config.data_manifests:
             return cls(config.data_manifests, config.base_dir)
+        if not getattr(config, "fake", False):
+            raise DataError(
+                "a non-fake run requires explicit data manifests "
+                "([[data.manifests]]); the bundled demo data fallback is "
+                "available only to fake (demo) configs"
+            )
         return demo_registry()
 
     def manifest(self, split: str) -> DataManifest:
@@ -288,7 +329,12 @@ class ControllerDataAccess:
         self.test_gate = test_gate
 
     def check_purpose(
-        self, split: str, purpose: str, comparison_id: str | None = None, claim_test: bool = False
+        self,
+        split: str,
+        purpose: str,
+        comparison_id: str | None = None,
+        claim_test: bool = False,
+        row_ids: list[str] | None = None,
     ) -> None:
         if split == "selection" and purpose not in ("selection_evaluation", "outer_screening"):
             raise PolicyError(
@@ -304,7 +350,43 @@ class ControllerDataAccess:
             if claim_test:
                 if self.test_gate is None:
                     raise PolicyError("test access requires a TestAccessGate")
-                self.test_gate.claim(comparison_id or "")
+                self.test_gate.claim(comparison_id or "", row_ids=row_ids)
+
+    def check_supplied_rows(
+        self,
+        split: str,
+        purpose: str,
+        comparison_id: str | None,
+        rows: list[dict[str, Any]],
+    ) -> None:
+        """Caller-supplied rows are bound to an existing claim (spec 3.11).
+
+        For `test`, an earlier claim for this comparison id must exist and
+        the supplied row ids must exactly match the claimed manifest rows.
+        The literal once-per-comparison-id claim rule is unchanged.
+        """
+        self.check_purpose(split, purpose, comparison_id, claim_test=False)
+        if split != "test":
+            return
+        if not comparison_id or self.test_gate is None:
+            raise PolicyError(
+                "supplied test rows require a comparison id with an "
+                "existing test claim"
+            )
+        claimed_ids = self.test_gate.claimed_row_ids(comparison_id)
+        if claimed_ids is None:
+            raise PolicyError(
+                f"supplied test rows refused: no existing test claim "
+                f"with recorded manifest rows for comparison "
+                f"{comparison_id!r}"
+            )
+        supplied_ids = [str(row.get("id")) for row in rows]
+        if supplied_ids != claimed_ids:
+            raise PolicyError(
+                f"supplied test rows refused: row ids {supplied_ids} do "
+                f"not exactly match the claimed manifest rows "
+                f"{claimed_ids} for comparison {comparison_id!r}"
+            )
 
     def rows(
         self,
@@ -313,8 +395,15 @@ class ControllerDataAccess:
         comparison_id: str | None = None,
     ) -> list[dict[str, Any]]:
         manifest = self.registry.manifest(split)
-        self.check_purpose(split, purpose, comparison_id, claim_test=True)
-        return self.registry.verify(manifest)
+        verified = self.registry.verify(manifest)
+        self.check_purpose(
+            split,
+            purpose,
+            comparison_id,
+            claim_test=True,
+            row_ids=[str(row["id"]) for row in verified] if split == "test" else None,
+        )
+        return verified
 
 
 def private_markers(registry: DatasetRegistry) -> set[str]:

@@ -19,7 +19,7 @@ from .data import PublicDataView
 from .errors import NightshiftError, PolicyError, ProviderError
 from .hashing import canonical_json, hash_object, sha256_hex
 from .providers import JobSpec, RentalRequest
-from .verifiers import filter_samples, normalise_check
+from .verifiers import check_text, filter_samples, normalise_check
 
 FAKE_GENERATOR_ID = "nightshift-fake-generator-1.0.0"
 
@@ -102,33 +102,52 @@ def checks_for_row(row: dict[str, Any]) -> list[dict[str, Any]]:
     return list(row.get("checks") or row.get("verifiers") or [])
 
 
+SAMPLE_SET_KINDS = ("generated", "filtered")
+
+
+def samples_content_hash(samples: list[dict[str, Any]]) -> str:
+    """Content hash over the canonical full samples (not just their ids)."""
+    return hash_object(list(samples))
+
+
 @dataclass
 class SampleSet:
     sample_set_id: str
     samples: list[dict[str, Any]]
     fake: bool
     path: Path | None = None
+    kind: str = "generated"
+    content_hash: str = ""
 
     def to_record(self) -> dict[str, Any]:
         return {
             "sample_set_id": self.sample_set_id,
+            "kind": self.kind,
+            "content_hash": self.content_hash,
             "n": len(self.samples),
             "fake": bool(self.fake),
             "sample_ids": [s.get("sample_id") for s in self.samples],
         }
 
 
-def write_sample_set(samples: list[dict[str, Any]], dest_dir: str | Path) -> SampleSet:
+def write_sample_set(
+    samples: list[dict[str, Any]], dest_dir: str | Path, kind: str = "generated"
+) -> SampleSet:
+    if kind not in SAMPLE_SET_KINDS:
+        raise GenerationError(f"unknown sample set kind {kind!r}")
     dest = Path(dest_dir)
     dest.mkdir(parents=True, exist_ok=True)
     fake = all(bool(s.get("fake")) for s in samples) if samples else False
+    content_hash = samples_content_hash(samples)
     sample_set_id = "samples-" + hash_object(
-        [s.get("sample_id", "") for s in samples] + [fake]
+        {"kind": kind, "content_hash": content_hash, "fake": fake}
     )[:12]
     with (dest / "samples.jsonl").open("w", encoding="utf-8") as handle:
         for sample in samples:
             handle.write(canonical_json(sample) + "\n")
-    record = SampleSet(sample_set_id, samples, fake, dest)
+    record = SampleSet(
+        sample_set_id, samples, fake, dest, kind=kind, content_hash=content_hash
+    )
     (dest / "sample_set.json").write_text(
         json.dumps(record.to_record(), indent=2, sort_keys=True), encoding="utf-8"
     )
@@ -143,7 +162,69 @@ def load_sample_set(path: str | Path) -> SampleSet:
         if line.strip()
     ]
     meta = json.loads((dest / "sample_set.json").read_text(encoding="utf-8"))
-    return SampleSet(str(meta["sample_set_id"]), samples, bool(meta.get("fake")), dest)
+    kind = str(meta.get("kind") or "")
+    if kind not in SAMPLE_SET_KINDS:
+        raise GenerationError(
+            f"sample set at {dest} has unknown kind {kind!r}; refusing it"
+        )
+    expected_hash = str(meta.get("content_hash") or "")
+    actual_hash = samples_content_hash(samples)
+    if not expected_hash or actual_hash != expected_hash:
+        raise GenerationError(
+            f"sample set at {dest} failed its content-hash check "
+            f"(stored {expected_hash!r}, recomputed {actual_hash!r}); "
+            "the sample file may have been tampered with; refusing it"
+        )
+    fake = all(bool(s.get("fake")) for s in samples) if samples else False
+    if bool(meta.get("fake")) != fake:
+        raise GenerationError(
+            f"sample set at {dest} has a fake flag that disagrees with "
+            "its samples; refusing it"
+        )
+    return SampleSet(
+        str(meta["sample_set_id"]), samples, fake, dest,
+        kind=kind, content_hash=actual_hash,
+    )
+
+
+def verify_trainable_sample_set(
+    sample_set: SampleSet, train_rows: list[dict[str, Any]]
+) -> None:
+    """Train-boundary provenance check (spec 3.5, 3.7).
+
+    Only a filtered set may train, and every sample is re-verified here
+    against ALL checks of its approved training row, regardless of which
+    verifier subset any researcher asked filtering to apply.
+    """
+    if sample_set.kind != "filtered":
+        raise PolicyError(
+            f"training refused: sample set {sample_set.sample_set_id} is "
+            f"{sample_set.kind!r}, not 'filtered'; only verifier-filtered "
+            "local generations may become training targets"
+        )
+    rows_by_id = {row["id"]: row for row in train_rows}
+    for sample in sample_set.samples:
+        prompt_id = sample.get("prompt_id")
+        row = rows_by_id.get(str(prompt_id))
+        if row is None:
+            raise PolicyError(
+                f"training refused: sample prompt id {prompt_id!r} is not "
+                "in approved train_prompts"
+            )
+        text = sample.get("text")
+        if not isinstance(text, str) or not text:
+            raise PolicyError(
+                f"training refused: sample for prompt {prompt_id!r} has "
+                "no non-empty string text"
+            )
+        results = check_text(text, checks_for_row(row))
+        failed = [r.verifier_id for r in results if not r.passed]
+        if failed:
+            raise PolicyError(
+                f"training refused: sample for prompt {prompt_id!r} does "
+                f"not pass all checks of its approved training row "
+                f"(failed: {failed})"
+            )
 
 
 @dataclass
@@ -308,7 +389,38 @@ class RealLocalGenerator:
                 "real local generation is not yet validated live: the provider "
                 "job returned no sample artefact"
             )
-        return list(produced)
+        # Every worker-returned sample is validated before acceptance: a
+        # faulty or hostile worker must not inject arbitrary targets.
+        samples = list(produced)
+        expected = len(prompt_ids) * int(count)
+        if len(samples) != expected:
+            raise ProviderError(
+                f"real local generation returned {len(samples)} sample(s) "
+                f"for a request of {expected}; refusing the artefact"
+            )
+        for sample in samples:
+            if not isinstance(sample, dict):
+                raise ProviderError(
+                    "real local generation returned a non-object sample; "
+                    "refusing the artefact"
+                )
+            if str(sample.get("prompt_id") or "") not in approved:
+                raise ProviderError(
+                    f"real local generation returned a sample for unknown "
+                    f"prompt id {sample.get('prompt_id')!r}; refusing it"
+                )
+            text = sample.get("text")
+            if not isinstance(text, str) or not text:
+                raise ProviderError(
+                    "real local generation returned a sample with no "
+                    "non-empty string text; refusing it"
+                )
+            if sample.get("fake") is not False:
+                raise ProviderError(
+                    "real local generation returned a sample whose fake "
+                    "flag is not explicitly false; refusing it"
+                )
+        return samples
 
 
 def make_generator(config: Any, resource_manager: Any = None) -> Any:

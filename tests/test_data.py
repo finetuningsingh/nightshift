@@ -45,6 +45,51 @@ def test_a9_row_count_mismatch_is_refused(tmp_path):
         broken.verify(broken.manifest("dev"))
 
 
+def test_m8_non_fake_run_requires_explicit_manifests(tmp_path):
+    import types
+
+    non_fake = types.SimpleNamespace(
+        data_manifests=(), fake=False, base_dir=tmp_path
+    )
+    with pytest.raises(DataError, match="non-fake run requires explicit"):
+        DatasetRegistry.from_config(non_fake)
+    fake = types.SimpleNamespace(data_manifests=(), fake=True, base_dir=tmp_path)
+    assert len(DatasetRegistry.from_config(fake).manifests()) == 4
+
+
+def test_m8_identical_paths_or_hashes_across_splits_are_refused(tmp_path):
+    registry, _dest = copied_registry(tmp_path)
+    entries = [m.to_record() for m in registry.manifests()]
+    by_split = {e["split"]: e for e in entries}
+    same_path = [dict(e) for e in entries]
+    for entry in same_path:
+        if entry["split"] == "selection":
+            entry["path"] = by_split["dev"]["path"]
+            entry["sha256"] = "f" * 64
+    with pytest.raises(DataError, match="same data file"):
+        DatasetRegistry(same_path, registry.base_dir)
+    same_hash = [dict(e) for e in entries]
+    for entry in same_hash:
+        if entry["split"] == "selection":
+            entry["sha256"] = by_split["dev"]["sha256"]
+    with pytest.raises(DataError, match="identical file hash"):
+        DatasetRegistry(same_hash, registry.base_dir)
+
+
+def test_m3_eval_rows_without_checks_are_refused(tmp_path):
+    registry, dest = copied_registry(tmp_path)
+    dev_file = dest / "dev.jsonl"
+    lines = dev_file.read_text(encoding="utf-8").splitlines()
+    first = json.loads(lines[0])
+    first.pop("checks", None)
+    lines[0] = json.dumps(first)
+    dev_file.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    rebuilt = DatasetRegistry(build_manifest_entries(dest), dest)
+    with pytest.raises(DataError, match="has no checks"):
+        rebuilt.verify(rebuilt.manifest("dev"))
+    assert registry is not rebuilt
+
+
 def test_bundled_demo_manifests_verify():
     counts = demo_registry().verify_all()
     assert counts == {"train_prompts": 6, "dev": 4, "selection": 4, "test": 4}

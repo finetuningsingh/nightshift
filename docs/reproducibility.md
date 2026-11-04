@@ -48,10 +48,12 @@ or paths handed to it.
 The controller owns all spending arithmetic. The fake provider's simulated
 clock, the fake generator, fake training, and the fake Inspect outputs are
 deterministic functions of the config seed, pack version, and sample ids,
-so a given commit plus a given config reproduces the same ledger events
-(modulo timestamps), checkpoint hashes, and scores. Pack versions and
-checkpoint ids are content hashes; Inspect log files are hashed byte-wise
-into every evaluation record.
+so a given commit plus a given config reproduces the same scores and
+content hashes. No stronger determinism is claimed: ledger timestamps,
+reservation ids, and lease ids contain fresh random identifiers and may
+differ between repeats. Pack versions and checkpoint ids are content
+hashes; Inspect log files are hashed byte-wise into every evaluation
+record.
 
 ## Real-run path (not yet validated live)
 
@@ -67,8 +69,10 @@ rather than silently succeeding:
    bundles only synthetic toy rows written for the demo.
 3. Configure one real provider (the SSH adapter skeleton) and budgets.
    Every GPU request is reserved before any provider create call;
-   `nightshift stop --leases <run>/leases.json` destroys exactly the owned
-   rentals recorded there.
+   `nightshift stop --leases <run>/leases.json --provider <name>` destroys
+   exactly the owned rentals recorded there, requires the lease file to
+   already exist and the provider to match every lease, and exits nonzero
+   when a destruction is not confirmed.
 4. Real agents run through the Muse CLI (`muse exec --json`,
    researcher `muse-spark-1.3`, reviser `muse-wonder-full-1.0`) using
    subscription login. API-key variables are stripped from the child
@@ -84,3 +88,20 @@ Until a recorded live run exists (acceptance L1–L5), all "improvement"
 language in reports from fake runs is suppressed by construction: the
 report states "no evidence of improvement" for any run that used a fake
 component.
+
+## Known limitations
+
+Some boundaries are deliberately documented here rather than claimed as
+solved. Pack policy is lexical: the recipe is read with a flat key parser
+and pack tool files get no semantic YAML or code policy, so a determined
+reviser might phrase an edit the literal checks do not recognise. Budget
+enforcement is not one cross-process transaction: the dollar ceiling is
+locked in the shared budget file, but per-trial seconds and concurrency
+are checked around it, separate run roots keep separate lease stores,
+and no independent reaper can destroy a rental while a provider call is
+blocking. Lease files now record the provider name and stop refuses a
+mismatch or an unconfirmed destruction, but there is still no
+authoritative provider-side listing proving a rental is absent, and the
+full provider binding for real lease files remains not yet validated
+live, as do all real provider, generation, training, agent, and private
+evaluation lanes.

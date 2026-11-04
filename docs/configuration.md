@@ -56,7 +56,12 @@ backend = "muse-cli"
 executable = "muse"
 max_model_steps = 30
 api_key_mode = false    # false strips API-key variables; subscription login is used
+allow_unsandboxed_cli = false  # CLI agents refuse to run unless this is explicitly true
 ```
+
+The Muse lane is not yet validated live with controller-enforced
+workspace isolation, so it fails closed until an operator explicitly
+sets `allow_unsandboxed_cli = true`.
 
 OpenAI-compatible API backend. Use this for a hosted-model evidence lane,
 for example a Muse Model API reviser with Baseten Muse Spark Open
@@ -77,7 +82,13 @@ reviser_model = "muse-wonder-1.0"
 reviser_api_key_env = "META_API_KEY"
 timeout_seconds = 300
 max_tokens = 4096
+max_calls = 200         # optional hard cap on API calls per role endpoint
 ```
+
+Base URLs must be `https://` (plain `http://` is accepted only for
+loopback development endpoints), every configured credential variable is
+preflighted before a run starts, and a response that omits its served
+model fails instead of being recorded as the requested model.
 
 Notes on the API lane:
 

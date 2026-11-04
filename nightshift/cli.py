@@ -43,7 +43,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     stop = sub.add_parser("stop", help="destroy every live owned rental in a lease file")
     stop.add_argument("--leases", required=True)
-    stop.add_argument("--provider", default="fake")
+    stop.add_argument("--provider", required=True)
     stop.add_argument("--host", default="")
     stop.add_argument("--user", default="")
     return parser
@@ -142,6 +142,14 @@ def main(argv: list[str] | None = None) -> int:
                 f"destroyed {len(summary['destroyed'])} owned rental(s){label}: "
                 f"{', '.join(summary['destroyed']) or 'none'}"
             )
+            if summary.get("stop_failed"):
+                print(
+                    f"error: destruction NOT confirmed for "
+                    f"{', '.join(summary['stop_failed'])}; "
+                    f"lease(s) kept live for retry{label}",
+                    file=sys.stderr,
+                )
+                return 1
             return 0
         parser.print_help()
         return 2

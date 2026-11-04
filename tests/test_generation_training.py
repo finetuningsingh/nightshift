@@ -5,7 +5,16 @@ import pytest
 from nightshift.checkpoints import validate_checkpoint_dir
 from nightshift.data import PublicDataView, demo_registry
 from nightshift.errors import PolicyError
-from nightshift.generation import FakeGenerator, load_sample_set, write_sample_set
+from nightshift.errors import ProviderError
+from nightshift.generation import (
+    FakeGenerator,
+    GenerationError,
+    RealLocalGenerator,
+    load_sample_set,
+    verify_trainable_sample_set,
+    write_sample_set,
+)
+from nightshift.loops import _check_verifier_subset
 from nightshift.pack import create_pack, parse_recipe_keys
 from nightshift.training import FakeTrainer, RealTrainer, TrainingError, render_recipe
 
@@ -150,3 +159,90 @@ def test_real_training_rejects_fake_samples_before_any_provider_call(tmp_path):
                                   transfer_seconds=5, evaluation_seconds=5),
             work_dir=tmp_path / "real-training",
         )
+
+
+_TRAIN_ROW = {
+    "id": "train-x",
+    "prompt": "toy prompt",
+    "verifiers": [
+        {"id": "max_words", "params": {"max_words": 2}},
+        {"id": "required_keyword", "params": {"keyword": "honey"}},
+    ],
+}
+
+
+def _sample(text, prompt_id="train-x", fake=False):
+    # Hostile/substituted texts below are passed as data to the functions.
+    return {"sample_id": "s-1", "prompt_id": prompt_id, "prompt": "toy prompt",
+            "text": text, "fake": fake}
+
+
+def test_b2_train_on_unfiltered_set_is_refused(tmp_path):
+    sample_set = write_sample_set([_sample("honey")], tmp_path / "gen")
+    assert sample_set.kind == "generated" and sample_set.content_hash
+    loaded = load_sample_set(tmp_path / "gen")
+    with pytest.raises(PolicyError, match="not 'filtered'"):
+        verify_trainable_sample_set(loaded, [_TRAIN_ROW])
+
+
+def test_b2_subset_filtered_violating_sample_is_refused_at_train(tmp_path):
+    # Passes the required_keyword subset but breaks max_words (4 > 2).
+    violating = _sample("honey sweet treat extra")
+    sample_set = write_sample_set([violating], tmp_path / "filt", kind="filtered")
+    with pytest.raises(PolicyError, match="does not pass all checks"):
+        verify_trainable_sample_set(
+            load_sample_set(tmp_path / "filt"), [_TRAIN_ROW]
+        )
+    good = write_sample_set([_sample("honey")], tmp_path / "good", kind="filtered")
+    verify_trainable_sample_set(load_sample_set(tmp_path / "good"), [_TRAIN_ROW])
+    assert good.kind == "filtered"
+
+
+def test_b2_tampered_sample_file_is_refused_at_load(tmp_path):
+    write_sample_set([_sample("honey")], tmp_path / "set", kind="filtered")
+    samples_file = tmp_path / "set" / "samples.jsonl"
+    samples_file.write_text(
+        samples_file.read_text(encoding="utf-8").replace("honey", "jammy"),
+        encoding="utf-8",
+    )
+    with pytest.raises(GenerationError, match="content-hash"):
+        load_sample_set(tmp_path / "set")
+
+
+def test_b2_researcher_verifiers_must_be_subset_of_configured():
+    _check_verifier_subset(["max_words"], ("max_words", "valid_json"))
+    _check_verifier_subset(None, ("max_words",))
+    _check_verifier_subset(["anything"], ())
+    with pytest.raises(PolicyError, match="configured verifier set"):
+        _check_verifier_subset(["lowercase"], ("max_words", "valid_json"))
+
+
+def test_b2_real_generator_validates_every_returned_sample():
+    import types
+
+    from nightshift.providers import RentalRequest
+
+    def generator_returning(samples):
+        execution = types.SimpleNamespace(
+            result=types.SimpleNamespace(output={"samples": samples})
+        )
+        manager = types.SimpleNamespace(
+            run_and_destroy=lambda request, job: execution
+        )
+        return RealLocalGenerator(resource_manager=manager, config=None)
+
+    rows = [_TRAIN_ROW]
+    request = RentalRequest(compute_seconds=10)
+    good = [_sample("honey")]
+    assert generator_returning(good).generate(
+        rows, ["train-x"], request, count=1
+    ) == good
+    bad_sets = [
+        [_sample("honey", prompt_id="sel-01")],       # unknown prompt id
+        [_sample("")],                                 # empty text
+        [_sample("honey", fake=True)],                 # fake flag not false
+        [_sample("honey"), _sample("honey")],          # count mismatch
+    ]
+    for bad in bad_sets:
+        with pytest.raises(ProviderError):
+            generator_returning(bad).generate(rows, ["train-x"], request, count=1)

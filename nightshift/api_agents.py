@@ -31,6 +31,7 @@ from __future__ import annotations
 import json
 import os
 import urllib.error
+import urllib.parse
 import urllib.request
 from dataclasses import dataclass
 from pathlib import Path
@@ -50,6 +51,21 @@ class ApiAgentError(NightshiftError):
     """An API-backed agent call failed or was refused."""
 
 
+_LOOPBACK_HOSTS = {"localhost", "127.0.0.1", "::1"}
+
+
+def _require_safe_base_url(base_url: str) -> None:
+    parsed = urllib.parse.urlparse(base_url)
+    if parsed.scheme == "https" and parsed.hostname:
+        return
+    if parsed.scheme == "http" and (parsed.hostname or "") in _LOOPBACK_HOSTS:
+        return
+    raise ApiAgentError(
+        f"API base_url {base_url!r} must be https (plain http is "
+        "allowed only for loopback development endpoints)"
+    )
+
+
 @dataclass(frozen=True)
 class ApiEndpointConfig:
     base_url: str
@@ -58,6 +74,12 @@ class ApiEndpointConfig:
     timeout_seconds: float = 300.0
     max_tokens: int = 4096
     temperature: float = 0.0
+    max_calls: int | None = None
+
+    def __post_init__(self) -> None:
+        _require_safe_base_url(self.base_url)
+        if self.max_calls is not None and int(self.max_calls) <= 0:
+            raise ApiAgentError("max_calls must be a positive integer when set")
 
     def completions_url(self) -> str:
         return self.base_url.rstrip("/") + "/chat/completions"
@@ -116,9 +138,17 @@ class ApiChatClient:
     ):
         self.endpoint = endpoint
         self.transport = transport or _urllib_transport
+        self._calls = 0
 
     def complete(self, prompt: str) -> dict[str, Any]:
         cfg = self.endpoint
+        if cfg.max_calls is not None and self._calls >= int(cfg.max_calls):
+            raise ApiAgentError(
+                f"API call cap reached for endpoint {cfg.base_url!r} "
+                f"model {cfg.model!r}: max_calls={int(cfg.max_calls)}; "
+                "no request was sent"
+            )
+        self._calls += 1
         headers = {
             "Authorization": f"Bearer {cfg.api_key()}",
             "Content-Type": "application/json",
@@ -133,7 +163,12 @@ class ApiChatClient:
             cfg.completions_url(), headers, payload, float(cfg.timeout_seconds)
         )
         served = str(response.get("model") or "")
-        if served and served != cfg.model:
+        if not served:
+            raise ApiAgentError(
+                f"API response omitted the served model for requested "
+                f"model {cfg.model!r}; refusing to invent it"
+            )
+        if served != cfg.model:
             raise ApiAgentError(
                 f"served model {served!r} does not match requested model "
                 f"{cfg.model!r}; refusing to substitute silently"
@@ -154,7 +189,7 @@ class ApiChatClient:
         return {
             "text": content,
             "requested_model": cfg.model,
-            "served_model": served or cfg.model,
+            "served_model": served,
             "base_url": cfg.base_url,
             "usage": usage,
         }
@@ -353,8 +388,8 @@ def _endpoint_for(api_cfg: dict[str, Any], role: str) -> ApiEndpointConfig:
             f"[agents.api] is missing {role} field(s): {', '.join(missing)}; "
             f"set {role}_<field> or the shared <field> for each"
         )
-    if not base_url.startswith(("https://", "http://")):
-        raise ApiAgentError(f"[agents.api] {role} base_url must be an http(s) URL")
+    _require_safe_base_url(base_url)
+    max_calls_raw = pick(f"{role}_max_calls", "max_calls", default=None)
     return ApiEndpointConfig(
         base_url=base_url,
         model=model,
@@ -362,6 +397,7 @@ def _endpoint_for(api_cfg: dict[str, Any], role: str) -> ApiEndpointConfig:
         timeout_seconds=float(pick("timeout_seconds", default=300.0)),
         max_tokens=int(pick("max_tokens", default=4096)),
         temperature=float(pick("temperature", default=0.0)),
+        max_calls=int(max_calls_raw) if max_calls_raw is not None else None,
     )
 
 
@@ -373,7 +409,18 @@ def clients_from_config(config: Any) -> tuple[ApiChatClient, ApiChatClient]:
         raise ApiAgentError(
             "agents.backend = 'api' requires a non-empty [agents.api] table"
         )
+    researcher_endpoint = _endpoint_for(api_cfg, "researcher")
+    reviser_endpoint = _endpoint_for(api_cfg, "reviser")
+    # Preflight: every configured credential must be present before any
+    # trial spend, not discovered missing at first use.
+    for endpoint in (researcher_endpoint, reviser_endpoint):
+        if not os.environ.get(endpoint.api_key_env, ""):
+            raise ApiAgentError(
+                f"API agent preflight failed: credential environment "
+                f"variable {endpoint.api_key_env!r} is empty (endpoint "
+                f"{endpoint.base_url!r}, model {endpoint.model!r})"
+            )
     return (
-        ApiChatClient(_endpoint_for(api_cfg, "researcher")),
-        ApiChatClient(_endpoint_for(api_cfg, "reviser")),
+        ApiChatClient(researcher_endpoint),
+        ApiChatClient(reviser_endpoint),
     )

@@ -44,7 +44,7 @@ class AgentRunResult:
     usage: dict[str, Any] = field(default_factory=dict)
     records: list[dict[str, Any]] = field(default_factory=list)
     fake: bool = False
-    validated_live: bool = True
+    validated_live: bool = False
 
     def to_record(self) -> dict[str, Any]:
         return {
@@ -303,6 +303,7 @@ class MuseCodeAdapter:
         timeout_seconds: float = 1800.0,
         api_key_mode: bool = False,
         sandbox_network: str = "restricted",
+        allow_unsandboxed_cli: bool = False,
     ):
         self.model = model
         self.max_model_steps = int(max_model_steps)
@@ -310,6 +311,7 @@ class MuseCodeAdapter:
         self.timeout_seconds = float(timeout_seconds)
         self.api_key_mode = bool(api_key_mode)
         self.sandbox_network = sandbox_network
+        self.allow_unsandboxed_cli = bool(allow_unsandboxed_cli)
 
     def build_args(self, prompt_file: Path, workspace: Path, session_id: str) -> list[str]:
         return [
@@ -332,6 +334,14 @@ class MuseCodeAdapter:
         workspace: str | Path,
         prompt_file: str | Path | None = None,
     ) -> AgentRunResult:
+        if not self.allow_unsandboxed_cli:
+            raise AgentError(
+                "Muse agents are not yet validated live with "
+                "controller-enforced workspace isolation; refusing to run "
+                "the unsandboxed host CLI. An operator who accepts that "
+                "risk must set agents.allow_unsandboxed_cli = true "
+                "explicitly in the run config"
+            )
         if shutil.which(self.executable) is None:
             raise AgentError(
                 f"Muse unavailable: executable {self.executable!r} not found "
@@ -474,6 +484,43 @@ class MuseReviser(MuseCodeAdapter):
         return self.run_prompt(prompt, pack, prompt_file=prompt_file)
 
 
+def backend_descriptor(config: Any) -> dict[str, Any]:
+    """Resolved agent backend for run records: kind + per-role identity.
+
+    For the API lane this is the configured endpoint host and requested
+    model per role, never a credential and never a served-model guess.
+    """
+    if getattr(config, "fake", False):
+        return {
+            "backend": "fake",
+            "researcher": {"host": "", "requested_model": config.models.researcher},
+            "reviser": {"host": "", "requested_model": config.models.reviser},
+            "fake": True,
+        }
+    options = _agent_options(config)
+    backend = str(options.get("backend") or "muse-cli")
+    if backend == "api":
+        from urllib.parse import urlparse
+
+        from .api_agents import _endpoint_for
+
+        api_cfg = options.get("api") if isinstance(options.get("api"), dict) else {}
+        descriptor: dict[str, Any] = {"backend": "api", "fake": False}
+        for role in ("researcher", "reviser"):
+            endpoint = _endpoint_for(api_cfg, role)
+            descriptor[role] = {
+                "host": urlparse(endpoint.base_url).hostname or "",
+                "requested_model": endpoint.model,
+            }
+        return descriptor
+    return {
+        "backend": backend,
+        "researcher": {"host": "", "requested_model": config.models.researcher},
+        "reviser": {"host": "", "requested_model": config.models.reviser},
+        "fake": False,
+    }
+
+
 def _agent_options(config: Any) -> dict[str, Any]:
     raw_agents = (getattr(config, "raw", None) or {}).get("agents") or {}
     return raw_agents if isinstance(raw_agents, dict) else {}
@@ -500,6 +547,7 @@ def make_researcher(config: Any, researcher_id: str, primary: bool) -> Any:
         max_model_steps=int(options.get("max_model_steps", 30)),
         executable=str(options.get("executable", "muse")),
         api_key_mode=bool(options.get("api_key_mode", False)),
+        allow_unsandboxed_cli=bool(options.get("allow_unsandboxed_cli", False)),
     )
 
 
@@ -522,6 +570,7 @@ def make_reviser(config: Any) -> Any:
         max_model_steps=int(options.get("max_model_steps", 30)),
         executable=str(options.get("executable", "muse")),
         api_key_mode=bool(options.get("api_key_mode", False)),
+        allow_unsandboxed_cli=bool(options.get("allow_unsandboxed_cli", False)),
     )
 
 

@@ -180,7 +180,7 @@ def write_training_dataset(samples: list[dict[str, Any]], path: str | Path) -> P
                     {
                         "instruction": sample.get("prompt", ""),
                         "input": "",
-                        "output": sample.get("text") or sample.get("completion") or "",
+                        "output": sample.get("text") or "",
                     }
                 )
                 + "\n"

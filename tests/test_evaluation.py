@@ -105,3 +105,49 @@ def test_a16_test_split_only_in_final_comparison_and_only_once(tmp_path):
         evaluator.evaluate_rows(
             checkpoint, split="test", rows=[], purpose="dev_feedback"
         )
+
+
+def test_b5_supplied_test_rows_require_claim_and_exact_ids(tmp_path):
+    checkpoint = write_fake_checkpoint(tmp_path / "ckpt", marker="b5", quality=1.0)
+    evaluator = make_evaluator(tmp_path)
+    test_rows = demo_registry().verify(demo_registry().manifest("test"))
+    with pytest.raises(PolicyError, match="no existing test claim"):
+        evaluator.evaluate_rows(
+            checkpoint, split="test", rows=test_rows,
+            purpose="final_comparison", comparison_id="cmp-b5",
+        )
+    claimed = evaluator.claim_test_rows("cmp-b5")
+    mismatched = [dict(r) for r in claimed]
+    mismatched[0] = dict(mismatched[0], id="test-999")
+    with pytest.raises(PolicyError, match="do not exactly match"):
+        evaluator.evaluate_rows(
+            checkpoint, split="test", rows=mismatched,
+            purpose="final_comparison", comparison_id="cmp-b5",
+        )
+    record = evaluator.evaluate_rows(
+        checkpoint, split="test", rows=claimed,
+        purpose="final_comparison", comparison_id="cmp-b5",
+    )
+    assert record.status == "succeeded"
+
+
+def test_b3_real_mode_private_evaluation_is_refused_not_scored(tmp_path):
+    checkpoint = write_fake_checkpoint(tmp_path / "ckpt", marker="b3", quality=1.0)
+    evaluator = make_evaluator(tmp_path)
+    record = evaluator.evaluate_checkpoint(
+        checkpoint, split="selection", purpose="selection_evaluation",
+        fake=False, model="some/real-model",
+    )
+    assert record.status == "failed" and record.score is None
+    assert "separate trusted" in record.error
+    assert "not yet validated" in record.error
+    assert "score" not in record.to_record()
+
+
+def test_m3_row_with_no_checks_fails_instead_of_scoring_perfect(tmp_path):
+    checkpoint = write_fake_checkpoint(tmp_path / "ckpt", marker="m3", quality=1.0)
+    evaluator = make_evaluator(tmp_path)
+    rows = [{"id": "dev-x", "prompt": "Say anything at all please.", "checks": []}]
+    record = evaluator.evaluate_rows(checkpoint, split="dev", rows=rows, trial_id="t-x")
+    assert record.status == "failed" and record.score is None
+    assert "score" not in record.to_record()
