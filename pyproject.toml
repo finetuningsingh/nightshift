@@ -1,0 +1,41 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "nightshift"
+version = "0.1.0"
+description = "Research agents that post-train a small open model overnight, with an outer loop that improves the researchers."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "Nightshift contributors" }]
+dependencies = [
+    "inspect-ai>=0.3.100,<0.4",
+]
+
+[project.optional-dependencies]
+test = ["pytest>=8"]
+train = ["axolotl==0.21.1"]
+
+[project.scripts]
+nightshift = "nightshift.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["nightshift*"]
+
+[tool.setuptools.package-data]
+nightshift = [
+    "demo_data/*.jsonl",
+    "demo_data/*.json",
+    "packs/default/*.md",
+    "packs/default/*.toml",
+    "packs/default/*.yaml",
+    "packs/default/tools/*.md",
+    "packs/default/tools/*.py",
+    "packs/default/initial_notes/*.md",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

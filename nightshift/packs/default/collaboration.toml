@@ -1,0 +1,5 @@
+# Trial collaboration settings (CORAL-style, implemented natively).
+[collaboration]
+shared_notes = true
+heartbeat = ["reflect", "consolidate", "pivot"]
+max_notes_per_researcher = 20

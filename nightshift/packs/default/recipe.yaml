@@ -1,0 +1,24 @@
+# Axolotl QLoRA recipe template (keys follow Axolotl 0.21.1
+# examples/muse-glimmer/qlora.yaml). Lines marked CONTROLLER-OWNED are
+# forced by the Nightshift controller at render time and cannot be
+# overridden by the pack or by a researcher request.
+base_model: meta-models/Muse-Glimmer-30B
+load_in_4bit: true
+adapter: qlora
+lora_r: 32
+lora_alpha: 16
+lora_dropout: 0.05
+lora_target_modules: "model.language_model.*(q_proj|k_proj|v_proj|o_proj|gate_proj|up_proj|down_proj)"
+optimizer: adamw_bnb_8bit
+learning_rate: 0.0002
+gradient_checkpointing: true
+micro_batch_size: 1
+gradient_accumulation_steps: 8
+sequence_len: 1024
+num_epochs: 1
+max_steps: 50
+seed: 17
+output_dir: CONTROLLER_OUTPUT_DIR
+datasets:
+  - path: CONTROLLER_DATASET_PATH
+    type: alpaca

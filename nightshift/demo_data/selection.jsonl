@@ -1,0 +1,4 @@
+{"id": "sel-01", "prompt": "Write a sign for a mushroom stall. Use at most 9 words and include the word forest.", "checks": [{"id": "max_words", "params": {"max_words": 9}}, {"id": "required_keyword", "params": {"keyword": "forest"}}]}
+{"id": "sel-02", "prompt": "Reply with only a JSON object with keys tool and job, about a carpenter.", "checks": [{"id": "valid_json", "params": {"required_keys": ["tool", "job"]}}]}
+{"id": "sel-03", "prompt": "Name a gemstone in lowercase with at most 4 words and include the word ruby.", "checks": [{"id": "max_words", "params": {"max_words": 4}}, {"id": "lowercase"}, {"id": "required_keyword", "params": {"keyword": "ruby"}}]}
+{"id": "sel-04", "prompt": "Shout a slogan about bread in uppercase with at most 4 words and include the word BREAD.", "checks": [{"id": "max_words", "params": {"max_words": 4}}, {"id": "uppercase"}, {"id": "required_keyword", "params": {"keyword": "BREAD"}}]}

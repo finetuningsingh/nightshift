@@ -1,0 +1,16 @@
+[pack]
+name = "default"
+parent_version = ""
+editable_keys = [
+  "learning_rate",
+  "lora_r",
+  "lora_alpha",
+  "lora_dropout",
+  "micro_batch_size",
+  "gradient_accumulation_steps",
+  "sequence_len",
+  "num_epochs",
+]
+
+[controller]
+controller_owned_recipe_keys = ["base_model", "datasets", "output_dir", "max_steps", "seed"]

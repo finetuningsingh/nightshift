@@ -1,0 +1,11 @@
+{
+  "note": "Bundled synthetic toy data written for the Nightshift demo. Frozen demo manifests (with sha256 and row_count) are materialised from these files by nightshift.data.build_manifest_entries at demo init; operator manifests are frozen files verified by hash.",
+  "revision": "toy-1",
+  "source": "nightshift-bundled-toy",
+  "splits": {
+    "dev": "dev.jsonl",
+    "selection": "selection.jsonl",
+    "test": "test.jsonl",
+    "train_prompts": "train_prompts.jsonl"
+  }
+}
