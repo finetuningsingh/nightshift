@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+# The ONLY training entry point for recipes:  glimmer-axolotl-train CONFIG.yaml --data TRAIN.jsonl
+# First checks where the targets came from (lib/data_origin.py); then registers the dataset as the processed training data of this job ($GLIMMER_OUT/train_data.jsonl, what the control host scans for
+# contamination), then runs Axolotl 0.19.0 QLoRA with the harness overrides (lib/axolotl_train.py). The adapter lands in
+# $GLIMMER_OUT/adapter. May be called more than once (rounds); every call appends to train_data.jsonl.
+set -euo pipefail
+HOSTKIT="${HOSTKIT:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
+# shellcheck source=../lib/env.sh
+source "$HOSTKIT/lib/env.sh"
+
+[ $# -ge 3 ] && [ "$2" = "--data" ] || { echo "usage: glimmer-axolotl-train CONFIG.yaml --data TRAIN.jsonl" >&2; exit 2; }
+CONFIG=$1; DATA=$3
+[ -f "$CONFIG" ] || { echo "glimmer-axolotl-train: no config $CONFIG" >&2; exit 2; }
+SHA_BEFORE=$(sha256sum "$DATA" | cut -d" " -f1)
+"$PY" -I "$HOSTKIT/lib/data_origin.py" check "$DATA"   # every assistant target must be a verifier-passing sample of the local base model (owner rule)
+"$PY" -I "$HOSTKIT/lib/glimmer_data.py" register "$DATA" "$GLIMMER_OUT"
+[ "$(sha256sum "$DATA" | cut -d" " -f1)" = "$SHA_BEFORE" ] || { echo "glimmer-axolotl-train: the data file changed after the origin check" >&2; exit 1; }
+exec "$AXOLOTL_VENV/bin/python" "$HOSTKIT/lib/axolotl_train.py" "$CONFIG" --data "$DATA"

@@ -1,5 +1,7 @@
 # Nightshift
 
+> **Which code produced the results.** The recorded hackathon study (real Muse Spark researchers training Muse Glimmer 30B, one real Muse Wonder Full revision, private Inspect scoring) was run by the **original engine** in [`original-engine/`](original-engine/README.md). Its outcome: both loops ran; the revised researchers did not produce better adapters on this small evidence (E1: original 55.0% vs revised 52.0% and 47.0% pass-all); the held-out comparison produced no valid pair. No improvement is claimed. The controller in this repository's root is a later standalone rewrite: it has run only a CPU simulation with fake components and has no experimental result. Code tools: see [`original-engine/AUTHORSHIP.md`](original-engine/AUTHORSHIP.md).
+
 *Research agents that post-train a small open model overnight, and an outer
 agent that improves the researchers.*
 

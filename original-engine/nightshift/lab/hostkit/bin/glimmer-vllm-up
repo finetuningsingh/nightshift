@@ -1,0 +1,65 @@
+#!/usr/bin/env bash
+# Start (or stop) a vLLM server for the BASE model on this rental: base-model generation for a rejection-sampling recipe.
+#   glimmer-vllm-up [--port P] [--max-model-len N] [--wait SECONDS]     start, wait until /v1/models answers, print the base URL
+#   glimmer-vllm-up --stop                                              stop it and wait for the GPU memory to be released
+# Logs to $GLIMMER_OUT/vllm.log. The served model name is muse-glimmer. Stop it BEFORE training: training and serving never share the GPU.
+set -euo pipefail
+HOSTKIT="${HOSTKIT:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
+# shellcheck source=../lib/env.sh
+source "$HOSTKIT/lib/env.sh"
+
+PORT=8000; WAIT=1800; STOP=0; MAXLEN=8300
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --port) PORT=$2; shift 2;;
+    --wait) WAIT=$2; shift 2;;
+    --max-model-len) MAXLEN=$2; shift 2;;
+    --stop) STOP=1; shift;;
+    *) echo "glimmer-vllm-up: unknown argument $1" >&2; exit 2;;
+  esac
+done
+PIDFILE="$LAB_WORK/vllm.pid"
+SERVE="${LAB_SERVE_SH:-$HOSTKIT/serve.sh}"
+
+stop_server() {
+  [ -f "$PIDFILE" ] || return 0
+  local pid; pid=$(cat "$PIDFILE")
+  if [[ "$pid" =~ ^[0-9]+$ ]] && kill -0 "$pid" 2>/dev/null; then
+    kill "$pid" 2>/dev/null || true
+    for _ in $(seq 1 60); do kill -0 "$pid" 2>/dev/null || break; sleep 1; done
+    kill -9 "$pid" 2>/dev/null || true
+  fi
+  rm -f "$PIDFILE"
+}
+
+if [ "$STOP" = "1" ]; then stop_server; exit 0; fi
+
+mkdir -p "$GLIMMER_OUT" "$LAB_WORK"
+stop_server
+S=$(command -v setsid || true)
+nohup $S bash "$SERVE" --port "$PORT" --max-model-len "$MAXLEN" > "$GLIMMER_OUT/vllm.log" 2>&1 < /dev/null &
+echo $! > "$PIDFILE"
+if ! "$PY" -I - "$PORT" "$WAIT" "$(cat "$PIDFILE")" <<'PY'; then
+import os, sys, time, urllib.request
+port, wait, pid = int(sys.argv[1]), float(sys.argv[2]), int(sys.argv[3])
+end = time.time() + wait
+while time.time() < end:
+    try:
+        os.kill(pid, 0)
+    except ProcessLookupError:
+        print("vLLM exited before it was ready; see vllm.log", file=sys.stderr)
+        sys.exit(1)
+    try:
+        with urllib.request.urlopen(f"http://127.0.0.1:{port}/v1/models", timeout=3) as r:
+            if r.status == 200:
+                sys.exit(0)
+    except Exception:
+        pass
+    time.sleep(2)
+print("vLLM did not become ready in time", file=sys.stderr)
+sys.exit(1)
+PY
+  tail -n 30 "$GLIMMER_OUT/vllm.log" >&2 || true
+  exit 1
+fi
+echo "http://127.0.0.1:$PORT"

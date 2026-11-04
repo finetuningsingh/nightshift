@@ -1,0 +1,9 @@
+be96205227e63c6648741c9409bc13524fe62b93f689cc08af85b42bc16b0c6d  ./notes/seed.md
+420721ed2be4718de4b275e2015fdb27828f98db124bec22889c7c60a1d2a26b  ./seed/recipe/build_sft.py
+b9abfb4566ac0b66b53aee579cabef02ae33a84391597e33146fef0d19cef685  ./seed/recipe/config.yaml
+79849f32d721b4582bc33e69d90223bf0a08f97995e8118f1676b4340d3249b8  ./seed/recipe/generate.py
+71b73a27d7321282aebc5635b724b0e1e0df1004b5fecc204606077d00d06257  ./seed/recipe/origin_check.py
+860abf7bbb77517695003d4c94c1f6eb70e83b1f112525362f7e468bef7015b5  ./seed/recipe/README.md
+98e8aebfda77ec4d7eb0a8e8bc027dbb3f25e314fb0c504043b5c6ddaea45175  ./seed/recipe/run.sh
+2f1f67c627f7a1d1bd69d563bd89eb7f0d490082d15becc26c7d473e9e43145d  ./seed/recipe/summarize.py
+a3cb4b8da74e1ca846a8d306035039327be8d0b6e2d0507c59ecafe5b4a16ce6  ./seed/recipe/tests/test_pipeline.py

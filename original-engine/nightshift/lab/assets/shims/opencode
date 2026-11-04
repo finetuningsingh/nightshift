@@ -1,0 +1,24 @@
+#!/bin/bash
+# PWD shim for opencode 1.19.3 (docs/harness-design.md, "CORAL integration plan").
+#
+# CORAL spawns opencode with cwd=<worktree> but leaves a stale inherited PWD. opencode 1.19.3 trusts $PWD, so the session ran in the
+# wrong directory and failed with "Model not found" (VERIFIED on ax41, probe trial t1). bash re-derives a stale PWD from the real
+# cwd when it starts, so running through this script and exporting PWD fixes it.
+#
+# Put the directory holding this file FIRST on PATH. It then execs the next `opencode` on PATH (or $OPENCODE_REAL).
+self_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
+export PWD
+if [ -n "${OPENCODE_REAL:-}" ] && [ -x "$OPENCODE_REAL" ]; then
+  exec "$OPENCODE_REAL" "$@"
+fi
+IFS=: read -r -a path_dirs <<< "$PATH"
+for d in "${path_dirs[@]}"; do
+  [ -n "$d" ] || continue
+  real="$(cd "$d" 2>/dev/null && pwd -P)" || continue
+  [ "$real" = "$self_dir" ] && continue
+  if [ -f "$d/opencode" ] && [ -x "$d/opencode" ]; then
+    exec "$d/opencode" "$@"
+  fi
+done
+echo "opencode shim: no opencode found on PATH after $self_dir" >&2
+exit 127

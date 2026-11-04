@@ -1,0 +1,11 @@
+{
+  "agent_id": "captain-nemo",
+  "attempt_id": "8bc454ec26423751aa2d928ca32142f50ea20d84",
+  "direction": "maximize",
+  "max_real_attempts": 1,
+  "real_attempt_count": 1,
+  "reason": "max_real_attempts",
+  "score": 0.36410189352798084,
+  "score_threshold": null,
+  "timestamp": "2026-11-01T05:36:25.161259+00:00"
+}

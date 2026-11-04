@@ -1,0 +1,24 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "provider": {
+    "muse": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "Meta Muse (via CORAL gateway)",
+      "options": {
+        "baseURL": "http://127.0.0.1:4310/v1",
+        "apiKey": "coral-gateway-placeholder"
+      },
+      "models": {
+        "muse-spark-1.3": {
+          "name": "Muse Spark 1.3",
+          "tool_call": true,
+          "reasoning": false,
+          "limit": {
+            "context": 1048576,
+            "output": 16000
+          }
+        }
+      }
+    }
+  }
+}

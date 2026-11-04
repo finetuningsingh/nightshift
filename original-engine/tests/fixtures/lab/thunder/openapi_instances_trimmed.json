@@ -1,0 +1,1069 @@
+{
+ "components": {
+  "schemas": {
+   "thundertypes.ErrorResponse": {
+    "properties": {
+     "code": {
+      "example": 400,
+      "type": "integer"
+     },
+     "error": {
+      "example": "invalid_request",
+      "type": "string"
+     },
+     "message": {
+      "example": "The request is malformed",
+      "type": "string"
+     }
+    },
+    "type": "object"
+   },
+   "thundertypes.GPUAvailabilityResponse": {
+    "properties": {
+     "gpu_type": {
+      "additionalProperties": {
+       "additionalProperties": {
+        "type": "string"
+       },
+       "type": "object"
+      },
+      "type": "object"
+     },
+     "specs": {
+      "additionalProperties": {
+       "type": "string"
+      },
+      "type": "object"
+     }
+    },
+    "type": "object"
+   },
+   "thundertypes.GpuSpecConfig": {
+    "properties": {
+     "displayName": {
+      "type": "string"
+     },
+     "gpuCount": {
+      "type": "integer"
+     },
+     "mode": {
+      "type": "string"
+     },
+     "ramCapGiB": {
+      "description": "RamCapGiB, when > 0, caps total RAM at the max vCPU option and makes RAM\naffine rather than a clean multiple of vCPU: RAM shrinks by RamPerVCPUGiB\nfor every vCPU below the max. Used for configs whose physical machine RAM\nis less than maxVcpu * RamPerVCPUGiB (e.g. multi-GPU A100). Zero/unset =\nproportional RAM = vcpu * RamPerVCPUGiB.",
+      "type": "integer"
+     },
+     "ramPerVCPUGiB": {
+      "type": "integer"
+     },
+     "storageGB": {
+      "$ref": "#/components/schemas/thundertypes.StorageRange"
+     },
+     "vcpuOptions": {
+      "items": {
+       "type": "integer"
+      },
+      "type": "array",
+      "uniqueItems": false
+     },
+     "vramGB": {
+      "type": "integer"
+     }
+    },
+    "type": "object"
+   },
+   "thundertypes.GpuSpecs": {
+    "additionalProperties": {
+     "$ref": "#/components/schemas/thundertypes.GpuSpecConfig"
+    },
+    "type": "object"
+   },
+   "thundertypes.GpuSpecsResponse": {
+    "properties": {
+     "specs": {
+      "$ref": "#/components/schemas/thundertypes.GpuSpecs"
+     }
+    },
+    "type": "object"
+   },
+   "thundertypes.InstanceAddKeyRequest": {
+    "properties": {
+     "public_key": {
+      "description": "Optional SSH public key material. Omit to have a key pair generated and the private key returned.",
+      "type": "string"
+     }
+    },
+    "type": "object"
+   },
+   "thundertypes.InstanceAddKeyResponse": {
+    "properties": {
+     "key": {
+      "description": "Private key (only when generated)",
+      "type": "string"
+     },
+     "message": {
+      "description": "Status message",
+      "type": "string"
+     },
+     "success": {
+      "description": "Whether the key was successfully added",
+      "type": "boolean"
+     },
+     "uuid": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "success",
+     "uuid"
+    ],
+    "type": "object"
+   },
+   "thundertypes.InstanceCreateRequest": {
+    "properties": {
+     "cpu_cores": {
+      "example": 4,
+      "type": "integer"
+     },
+     "disk_size_gb": {
+      "example": 100,
+      "type": "integer"
+     },
+     "gpu_type": {
+      "example": "H100",
+      "type": "string"
+     },
+     "mode": {
+      "$ref": "#/components/schemas/thundertypes.InstanceMode",
+      "deprecated": true,
+      "description": "Deprecated: retained for legacy compatibility. Omit in new integrations. Behavior is specific to each endpoint; see its operation description."
+     },
+     "num_gpus": {
+      "example": 1,
+      "type": "integer"
+     },
+     "public_key": {
+      "description": "Optional SSH public key material to seed authorized_keys. If omitted, a key pair is generated and the private key returned.",
+      "type": "string"
+     },
+     "template": {
+      "example": "ubuntu-22.04",
+      "type": "string"
+     }
+    },
+    "required": [
+     "cpu_cores",
+     "disk_size_gb",
+     "gpu_type",
+     "num_gpus",
+     "template"
+    ],
+    "type": "object"
+   },
+   "thundertypes.InstanceCreateResponse": {
+    "properties": {
+     "identifier": {
+      "type": "integer"
+     },
+     "key": {
+      "type": "string"
+     },
+     "uuid": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "identifier",
+     "key",
+     "uuid"
+    ],
+    "type": "object"
+   },
+   "thundertypes.InstanceDeleteResponse": {
+    "properties": {
+     "message": {
+      "example": "Success",
+      "type": "string"
+     }
+    },
+    "type": "object"
+   },
+   "thundertypes.InstanceListItem": {
+    "properties": {
+     "cpuCores": {
+      "type": "string"
+     },
+     "createdAt": {
+      "type": "string"
+     },
+     "gpuType": {
+      "type": "string"
+     },
+     "httpPorts": {
+      "items": {
+       "type": "integer"
+      },
+      "type": "array",
+      "uniqueItems": false
+     },
+     "id": {
+      "description": "Populated from map key by client",
+      "type": "string"
+     },
+     "ip": {
+      "type": "string"
+     },
+     "k8s": {
+      "type": "boolean"
+     },
+     "lastRestart": {
+      "$ref": "#/components/schemas/thundertypes.InstanceRestart"
+     },
+     "memory": {
+      "type": "string"
+     },
+     "name": {
+      "type": "string"
+     },
+     "numGpus": {
+      "type": "string"
+     },
+     "port": {
+      "type": "integer"
+     },
+     "progressStartedAt": {
+      "type": "string"
+     },
+     "promoted": {
+      "type": "boolean"
+     },
+     "provisioningTime": {
+      "type": "string"
+     },
+     "restoringTime": {
+      "type": "string"
+     },
+     "snapshotSize": {
+      "type": "integer"
+     },
+     "snapshotSizeGB": {
+      "type": "integer"
+     },
+     "sshPublicKeys": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array",
+      "uniqueItems": false
+     },
+     "status": {
+      "type": "string"
+     },
+     "storage": {
+      "type": "integer"
+     },
+     "template": {
+      "type": "string"
+     },
+     "uuid": {
+      "type": "string"
+     }
+    },
+    "type": "object"
+   },
+   "thundertypes.InstanceListResponse": {
+    "additionalProperties": {
+     "$ref": "#/components/schemas/thundertypes.InstanceListItem"
+    },
+    "type": "object"
+   },
+   "thundertypes.InstanceMode": {
+    "enum": [
+     "prototyping",
+     "production"
+    ],
+    "type": "string",
+    "x-enum-varnames": [
+     "InstanceMode_Prototyping",
+     "InstanceMode_Production"
+    ]
+   },
+   "thundertypes.InstanceModifyRequest": {
+    "properties": {
+     "add_ports": {
+      "items": {
+       "type": "integer"
+      },
+      "type": "array",
+      "uniqueItems": false
+     },
+     "cpu_cores": {
+      "type": "integer"
+     },
+     "disk_size_gb": {
+      "type": "integer"
+     },
+     "gpu_type": {
+      "type": "string"
+     },
+     "mode": {
+      "$ref": "#/components/schemas/thundertypes.InstanceMode",
+      "deprecated": true,
+      "description": "Deprecated: retained for legacy compatibility. Omit in new integrations. Behavior is specific to each endpoint; see its operation description."
+     },
+     "num_gpus": {
+      "type": "integer"
+     },
+     "remove_ports": {
+      "items": {
+       "type": "integer"
+      },
+      "type": "array",
+      "uniqueItems": false
+     }
+    },
+    "type": "object"
+   },
+   "thundertypes.InstanceModifyResponse": {
+    "properties": {
+     "gpu_type": {
+      "type": "string"
+     },
+     "identifier": {
+      "type": "string"
+     },
+     "instance_name": {
+      "type": "string"
+     },
+     "num_gpus": {
+      "type": "integer"
+     }
+    },
+    "required": [
+     "identifier",
+     "instance_name"
+    ],
+    "type": "object"
+   },
+   "thundertypes.InstanceRestart": {
+    "properties": {
+     "exitCode": {
+      "type": "integer"
+     },
+     "message": {
+      "type": "string"
+     },
+     "reason": {
+      "type": "string"
+     },
+     "timestamp": {
+      "type": "string"
+     }
+    },
+    "type": "object"
+   },
+   "thundertypes.PortAddResponse": {
+    "properties": {
+     "http_ports": {
+      "items": {
+       "type": "integer"
+      },
+      "type": "array",
+      "uniqueItems": false
+     },
+     "identifier": {
+      "type": "string"
+     },
+     "instance_name": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "identifier",
+     "instance_name"
+    ],
+    "type": "object"
+   },
+   "thundertypes.PortUpdateRequest": {
+    "properties": {
+     "add_ports": {
+      "items": {
+       "type": "integer"
+      },
+      "type": "array",
+      "uniqueItems": false
+     },
+     "remove_ports": {
+      "items": {
+       "type": "integer"
+      },
+      "type": "array",
+      "uniqueItems": false
+     }
+    },
+    "type": "object"
+   },
+   "thundertypes.PricingMap": {
+    "additionalProperties": {
+     "type": "number"
+    },
+    "type": "object"
+   },
+   "thundertypes.PricingResponse": {
+    "properties": {
+     "pricing": {
+      "$ref": "#/components/schemas/thundertypes.PricingMap"
+     }
+    },
+    "type": "object"
+   },
+   "thundertypes.StorageRange": {
+    "properties": {
+     "max": {
+      "type": "integer"
+     },
+     "min": {
+      "type": "integer"
+     }
+    },
+    "type": "object"
+   }
+  },
+  "securitySchemes": {
+   "ApiKeyAuth": {
+    "description": "Bearer token authentication. Provide your API token prefixed with \"Bearer \", e.g. \"Bearer your-api-token\".",
+    "in": "header",
+    "name": "Authorization",
+    "type": "apiKey"
+   }
+  }
+ },
+ "info": {
+  "contact": {
+   "email": "support@thundercompute.com",
+   "name": "Thunder Compute API Support",
+   "url": "https://thundercompute.com/support"
+  },
+  "description": "Retrieve current GPU availability using mode-less spec keys\nRecommended for new integrations. The /status and /v1/status endpoints retain their legacy configuration keys for compatibility.",
+  "license": {
+   "name": "Apache 2.0",
+   "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+  },
+  "termsOfService": "http://swagger.io/terms/",
+  "title": "Thunder Compute API",
+  "version": "1.0"
+ },
+ "paths": {
+  "/instances/create": {
+   "post": {
+    "description": "Create a new compute instance.\nThe optional mode field is retained for legacy compatibility. Its value does not select execution mode; routing is derived from num_gpus. New integrations should omit mode and use GET /v2/specs for available configurations.\n\nSSH access: pass an SSH public key in the `public_key` field to seed the instance's `authorized_keys`. If omitted, Thunder generates a key pair and returns the private key in the response (it is only returned once \u2014 store it immediately).\n\nNote: SSH keys saved in your account (Authentication section of the console) are a separate store and are NOT automatically attached to new instances. To use one of those keys, copy its public key material into the `public_key` field on this request.",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/thundertypes.InstanceCreateRequest",
+        "description": "Instance creation parameters",
+        "summary": "request"
+       }
+      }
+     },
+     "description": "Instance creation parameters",
+     "required": true
+    },
+    "responses": {
+     "201": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/thundertypes.InstanceCreateResponse"
+        }
+       }
+      },
+      "description": "Created"
+     },
+     "400": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/thundertypes.ErrorResponse"
+        }
+       }
+      },
+      "description": "Bad Request"
+     },
+     "401": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/thundertypes.ErrorResponse"
+        }
+       }
+      },
+      "description": "Unauthorized"
+     },
+     "500": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/thundertypes.ErrorResponse"
+        }
+       }
+      },
+      "description": "Internal Server Error"
+     }
+    },
+    "security": [
+     {
+      "ApiKeyAuth": []
+     }
+    ],
+    "summary": "Create instance",
+    "tags": [
+     "Instances"
+    ]
+   }
+  },
+  "/instances/list": {
+   "get": {
+    "description": "Get a list of user's compute instances",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "type": "object"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/thundertypes.InstanceListResponse"
+        }
+       }
+      },
+      "description": "OK"
+     },
+     "400": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/thundertypes.ErrorResponse"
+        }
+       }
+      },
+      "description": "Bad Request"
+     },
+     "401": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/thundertypes.ErrorResponse"
+        }
+       }
+      },
+      "description": "Unauthorized"
+     },
+     "500": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/thundertypes.ErrorResponse"
+        }
+       }
+      },
+      "description": "Internal Server Error"
+     }
+    },
+    "security": [
+     {
+      "ApiKeyAuth": []
+     }
+    ],
+    "summary": "List instances",
+    "tags": [
+     "Instances"
+    ]
+   }
+  },
+  "/instances/{id}/add_key": {
+   "post": {
+    "description": "Append an SSH public key to an existing instance's `authorized_keys`.\n\nBehavior:\n- If `public_key` is provided, that raw key material is appended to `authorized_keys`. If the same public key is already attached, the request is a no-op (no error).\n- If `public_key` is omitted, Thunder generates a new key pair, appends the public half to `authorized_keys`, and returns the private key in the response. The private key is only returned once \u2014 store it immediately.\n\nNote: SSH keys saved in your account (Authentication section of the console) are a separate store and are NOT automatically attached to instances. To use one of those keys, copy its public key material into the `public_key` field on this request.",
+    "parameters": [
+     {
+      "description": "Instance ID",
+      "in": "path",
+      "name": "id",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/thundertypes.InstanceAddKeyRequest",
+        "description": "Optional: provide an existing public key to add",
+        "summary": "request"
+       }
+      }
+     },
+     "description": "Optional: provide an existing public key to add"
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/thundertypes.InstanceAddKeyResponse"
+        }
+       }
+      },
+      "description": "OK"
+     },
+     "400": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/thundertypes.ErrorResponse"
+        }
+       }
+      },
+      "description": "Bad Request"
+     },
+     "401": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/thundertypes.ErrorResponse"
+        }
+       }
+      },
+      "description": "Unauthorized"
+     },
+     "404": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/thundertypes.ErrorResponse"
+        }
+       }
+      },
+      "description": "Not Found"
+     },
+     "500": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/thundertypes.ErrorResponse"
+        }
+       }
+      },
+      "description": "Internal Server Error"
+     }
+    },
+    "security": [
+     {
+      "ApiKeyAuth": []
+     }
+    ],
+    "summary": "Add SSH key to instance",
+    "tags": [
+     "Instances"
+    ]
+   }
+  },
+  "/instances/{id}/delete": {
+   "post": {
+    "description": "Delete a compute instance by ID",
+    "parameters": [
+     {
+      "description": "Instance ID",
+      "example": "\"550e8400-e29b-41d4-a716-446655440000\"",
+      "in": "path",
+      "name": "id",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "type": "object"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/thundertypes.InstanceDeleteResponse"
+        }
+       }
+      },
+      "description": "OK"
+     },
+     "400": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/thundertypes.ErrorResponse"
+        }
+       }
+      },
+      "description": "Bad Request"
+     },
+     "401": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/thundertypes.ErrorResponse"
+        }
+       }
+      },
+      "description": "Unauthorized"
+     },
+     "404": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/thundertypes.ErrorResponse"
+        }
+       }
+      },
+      "description": "Not Found"
+     },
+     "500": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/thundertypes.ErrorResponse"
+        }
+       }
+      },
+      "description": "Internal Server Error"
+     }
+    },
+    "security": [
+     {
+      "ApiKeyAuth": []
+     }
+    ],
+    "summary": "Delete instance",
+    "tags": [
+     "Instances"
+    ]
+   }
+  },
+  "/instances/{id}/modify": {
+   "post": {
+    "description": "Modify a running compute instance's resources\nThe optional mode field is retained for legacy compatibility. If supplied, routing is derived from the requested or existing GPU count, not the mode value. New integrations should omit mode and configure resources using GPU type, GPU count, CPU, and storage.",
+    "parameters": [
+     {
+      "description": "Instance ID (index)",
+      "in": "path",
+      "name": "id",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/thundertypes.InstanceModifyRequest",
+        "description": "Instance modification parameters",
+        "summary": "request"
+       }
+      }
+     },
+     "description": "Instance modification parameters",
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/thundertypes.InstanceModifyResponse"
+        }
+       }
+      },
+      "description": "OK"
+     },
+     "400": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/thundertypes.ErrorResponse"
+        }
+       }
+      },
+      "description": "Bad Request"
+     },
+     "401": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/thundertypes.ErrorResponse"
+        }
+       }
+      },
+      "description": "Unauthorized"
+     },
+     "404": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/thundertypes.ErrorResponse"
+        }
+       }
+      },
+      "description": "Not Found"
+     },
+     "500": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/thundertypes.ErrorResponse"
+        }
+       }
+      },
+      "description": "Internal Server Error"
+     }
+    },
+    "security": [
+     {
+      "ApiKeyAuth": []
+     }
+    ],
+    "summary": "Modify instance",
+    "tags": [
+     "Instances"
+    ]
+   }
+  },
+  "/instances/{id}/ports": {
+   "patch": {
+    "description": "Atomically add and remove forwarded HTTP ports on a running instance in a single transaction. Body: `{\"add_ports\": [8080], \"remove_ports\": [3000]}`. Adds are deduplicated and removing ports that are not currently forwarded is a no-op. Each forwarded port is reachable at https://<uuid>-<port>.thundercompute.net.",
+    "parameters": [
+     {
+      "description": "Instance ID (index)",
+      "in": "path",
+      "name": "id",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/thundertypes.PortUpdateRequest",
+        "description": "Ports to add and remove",
+        "summary": "request"
+       }
+      }
+     },
+     "description": "Ports to add and remove",
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/thundertypes.PortAddResponse"
+        }
+       }
+      },
+      "description": "OK"
+     },
+     "400": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/thundertypes.ErrorResponse"
+        }
+       }
+      },
+      "description": "Bad Request"
+     },
+     "401": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/thundertypes.ErrorResponse"
+        }
+       }
+      },
+      "description": "Unauthorized"
+     },
+     "404": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/thundertypes.ErrorResponse"
+        }
+       }
+      },
+      "description": "Not Found"
+     },
+     "500": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/thundertypes.ErrorResponse"
+        }
+       }
+      },
+      "description": "Internal Server Error"
+     }
+    },
+    "security": [
+     {
+      "ApiKeyAuth": []
+     }
+    ],
+    "summary": "Atomically update forwarded HTTP ports on an instance",
+    "tags": [
+     "Instances"
+    ]
+   }
+  },
+  "/v2/pricing": {
+   "get": {
+    "description": "Retrieve current hourly pricing information for compute resources using mode-less spec keys",
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/thundertypes.PricingResponse"
+        }
+       }
+      },
+      "description": "OK"
+     },
+     "500": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/thundertypes.ErrorResponse"
+        }
+       }
+      },
+      "description": "Internal Server Error"
+     }
+    },
+    "servers": [
+     {
+      "description": "Production server",
+      "url": "https://api.thundercompute.com:8443"
+     }
+    ],
+    "summary": "Get current v2 pricing",
+    "tags": [
+     "Utilities"
+    ]
+   }
+  },
+  "/v2/specs": {
+   "get": {
+    "description": "Retrieve GPU spec configurations for all supported GPU types and counts using mode-less spec keys",
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/thundertypes.GpuSpecsResponse"
+        }
+       }
+      },
+      "description": "OK"
+     },
+     "500": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/thundertypes.ErrorResponse"
+        }
+       }
+      },
+      "description": "Internal Server Error"
+     }
+    },
+    "servers": [
+     {
+      "description": "Production server",
+      "url": "https://api.thundercompute.com:8443"
+     }
+    ],
+    "summary": "Get v2 GPU specifications",
+    "tags": [
+     "Utilities"
+    ]
+   }
+  },
+  "/v2/status": {
+   "get": {
+    "description": "Retrieve current GPU availability using mode-less spec keys\nRecommended for new integrations. The /status and /v1/status endpoints retain their legacy configuration keys for compatibility.",
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/thundertypes.GPUAvailabilityResponse"
+        }
+       }
+      },
+      "description": "OK"
+     },
+     "500": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/thundertypes.ErrorResponse"
+        }
+       }
+      },
+      "description": "Internal Server Error"
+     }
+    },
+    "servers": [
+     {
+      "description": "Production server",
+      "url": "https://api.thundercompute.com:8443"
+     }
+    ],
+    "summary": "Get GPU availability",
+    "tags": [
+     "Utilities"
+    ]
+   }
+  }
+ },
+ "servers": [
+  {
+   "description": "Production server",
+   "url": "https://api.thundercompute.com:8443/v1"
+  },
+  {
+   "description": "Production server",
+   "url": "https://api.thundercompute.com:8443"
+  }
+ ]
+}

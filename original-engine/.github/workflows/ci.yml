@@ -1,0 +1,75 @@
+name: ci
+on:
+  push:
+  pull_request:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
+        numpy: ["with-numpy", "without-numpy"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: "Install numpy (optional, only the spiral-classifier task needs it)"
+        if: matrix.numpy == 'with-numpy'
+        run: python -m pip install numpy
+      - name: "Byte-compile the package, the tests and the scripts (not the task fixtures: a task template with __pycache__ is invalid)"
+        run: python -m compileall -q -x 'tests/fixtures/' nightshift tests scripts
+      - name: "Unit, integration and end-to-end tests (offline, no API key, browser tests skip when Playwright is absent)"
+        run: python -m unittest discover -s tests -t . -v
+      - name: "Offline fault-injection demo (law-discovery needs no dependencies)"
+        run: python -m nightshift demo --no-serve --out runs/ci-demo
+      - name: "Offline demo with NIGHTSHIFT_ISOLATION=none (the mode a laptop without user namespaces gets)"
+        env:
+          NIGHTSHIFT_ISOLATION: none
+        run: |
+          python -m nightshift demo --no-serve --out runs/ci-demo-isolation-none
+          python - <<'PY'
+          from nightshift.ledger import Ledger
+          v = Ledger.read_only("runs/ci-demo-isolation-none").view()
+          assert v.finished, "the demo did not finish"
+          labels = {e.data["isolation"] for e in Ledger.read_only("runs/ci-demo-isolation-none").events() if e.kind == "experiment.run_started"}
+          assert labels == {"none"}, labels
+          print("isolation none: every experiment run is labelled none")
+          PY
+      - name: "Clean negative control must produce zero findings"
+        run: |
+          python -m nightshift run --task tasks/law-discovery --backend scripted --control --run-dir runs/ci-control
+          python - <<'PY'
+          from nightshift.ledger import Ledger
+          v = Ledger.read_only("runs/ci-control").view()
+          assert not v.findings, sorted(v.findings)
+          assert not v.malformed, v.malformed
+          print("control run: zero findings")
+          PY
+      - name: "Verify the demo ledger hash chain"
+        run: python -m nightshift verify runs/ci-demo
+      - name: "Task validation (calibration) for every bundled task; a task whose optional dependency is absent is skipped, but never when numpy is installed"
+        run: |
+          set -o pipefail
+          python -m nightshift tasks | tee "$RUNNER_TEMP/tasks.out"
+          if [ "${{ matrix.numpy }}" = "with-numpy" ] && grep -q '^SKIP' "$RUNNER_TEMP/tasks.out"; then
+            echo "a task was skipped although numpy is installed: its calibration did not run"
+            exit 1
+          fi
+  integration:
+    # The three real-engine tests are skipped unless NIGHTSHIFT_INTEGRATION=1 (about 50 s on top of the suite).
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: "Install numpy (optional, only the spiral-classifier task needs it)"
+        run: python -m pip install numpy
+      - name: "Full suite including the real-engine integration tests"
+        env:
+          NIGHTSHIFT_INTEGRATION: "1"
+        run: python -m unittest discover -s tests -t . -v

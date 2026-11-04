@@ -1,0 +1,48 @@
+# spiral-classifier: the second Nightshift demo task, to show the system is not tied to one problem. Needs numpy.
+#
+# Timing (measured on a laptop, one run = one seed): the baseline and the polar model take well under 0.1 s, the small
+# neural network about 0.7 s and the slowest proposal (the planted overfit: a 1024-unit network solved exactly) about 1.5 s, all including
+# the numpy import. No scripted proposal hangs, so stall_sec only needs to cover the longest silent computation.
+name = "spiral-classifier"
+description = "Separate two interleaved spiral arms in the plane from noisy labelled examples."
+brief = """Classify points of the plane into two classes. The points lie along two interleaved spiral arms that wind twice around
+the origin; class 0 is one arm and class 1 is the other. Coordinates are scaled to lie roughly in [-1, 1]. A few percent of
+the recorded labels are wrong, so no classifier can be perfect.
+
+Edit model.py only. fit_predict(X_train, y_train, X_query) receives the coordinates of the labelled training points as a
+float array of shape (n, 2), their classes as an int array of 0 and 1, and the coordinates of the points to classify as an
+array of shape (m, 2). It returns m values, each exactly 0 or 1, in the order of X_query. The starting model is a logistic
+regression on the raw coordinates.
+
+The score is heldout_accuracy: the fraction of unseen points that are classified correctly. Higher is better.
+train_accuracy (the accuracy on the points you trained on) is reported too: a model that is far more accurate on the
+points it has seen than on new points is memorising, not learning, and that is not an improvement.
+
+Rules: numpy and the standard library only. run.py, data.py and the CSV files are read-only; changing any of them
+invalidates the experiment. Do not read anything outside the workspace. Keep a run under a few seconds. Only a higher
+heldout_accuracy counts as progress; claims without a measured result do not."""
+objective = "maximize"
+primary_metric = "heldout_accuracy"
+train_metric = "train_accuracy"
+
+[workspace]
+editable = ["model.py"]
+scratch = ["outputs/**"]
+
+[run]
+cmd = ["python3", "run.py"]
+timeout_sec = 20
+
+[grade]
+cmd = ["python3", "{task_dir}/trusted/grade.py", "--workspace", "{workspace}", "--seed", "{seed}", "--split", "{split}"]
+timeout_sec = 20
+seeds = [0, 1, 2]
+replication_seeds = [100, 101, 102, 103, 104]
+# The unmodified baseline's per-seed std of the accuracy is about 0.02 on both splits (0.023 dev and 0.019 sealed over 100
+# seeds; `nightshift tasks` estimates it over 20 seeds, good to about +-16%), so noise_margin is set to about 1x that and
+# sigma_floor to that std too: with a lower floor the noise prior of the comparisons is inert (docs/NULL_BENCHMARK.md).
+noise_margin = 0.02
+sigma_floor = 0.02
+sealed = true
+requires = ["numpy"]
+stall_sec = 8

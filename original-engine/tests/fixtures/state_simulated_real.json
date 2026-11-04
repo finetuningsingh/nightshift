@@ -1,0 +1,2436 @@
+{
+ "run": {
+  "run_id": "r-5d4e1968",
+  "task": "law-discovery",
+  "backend": "meta",
+  "mode": "simulated",
+  "origin": "simulated",
+  "endpoint": {
+   "kind": "loopback",
+   "hosts": [
+    "127.0.0.1"
+   ]
+  },
+  "models": {
+   "auditor_final": "muse-wonder-1.0",
+   "designer": "muse-spark-1.3",
+   "implementer": "muse-spark-1.3",
+   "judge": "muse-spark-1.3",
+   "reflector": "muse-spark-1.3",
+   "reviewer": "muse-spark-1.3",
+   "reviewer_hard": "muse-wonder-1.0",
+   "supervisor": "muse-spark-1.3"
+  },
+  "started_ts": 1793019251.466717,
+  "now": 1793019258.5813696,
+  "finished": true,
+  "reason": "supervisor_finish",
+  "verdict_class": "success",
+  "summary": "I ran 5 lanes in 2 round(s) and asked for 2 independent re-check(s), always for the strongest development gain. These replicated: e001 (A quadratic trend extrapolates better than a straight line.); e004 (The readings follow a damped oscillation exp(-g t) (A cos(w t) + B sin(w t)) + C with an u). These improved on the development data but were not re-checked or did not replicate, so they are not findings: e005. The current best is e004, which replicated. The re-check says only pass or fail, so I report no size for the gain. Caveat: one task, a small pool of measurements, and the development numbers are optimistic because they were used to choose lanes.",
+  "objective": "minimize",
+  "primary_metric": "heldout_rmse",
+  "isolation": "userns",
+  "implementer": "patch",
+  "models_answered": {
+   "auditor_final": [
+    "muse-wonder-1.0"
+   ],
+   "designer": [
+    "muse-spark-1.3"
+   ],
+   "implementer": [
+    "muse-spark-1.3"
+   ],
+   "judge": [
+    "muse-spark-1.3"
+   ],
+   "reflector": [
+    "muse-spark-1.3"
+   ],
+   "reviewer": [
+    "muse-spark-1.3"
+   ],
+   "reviewer_hard": [
+    "muse-wonder-1.0"
+   ],
+   "supervisor": [
+    "muse-spark-1.3"
+   ]
+  },
+  "resumes": []
+ },
+ "banner": "SIMULATED MODEL: the language model endpoint is a local test server. This run exercises the live code path (prompts, tool calls, metering, audit) but is not Meta model output.",
+ "budget": {
+  "limits": {
+   "max_experiments": 12,
+   "max_wall_sec": 900.0,
+   "max_llm_usd": 2.0,
+   "max_parallel": 3,
+   "max_supervisor_turns": 40,
+   "max_replications": 6,
+   "max_repairs": 2,
+   "stall_after": 3
+  },
+  "used": {
+   "experiments": 5,
+   "replications": 2,
+   "llm_usd": 0.3371585,
+   "llm_calls": 54,
+   "supervisor_turns": 12,
+   "wall_sec": 7.220534801483154
+  },
+  "remaining": {
+   "experiments": 7,
+   "replications": 4,
+   "llm_usd": 1.6628414999999999,
+   "supervisor_turns": 28,
+   "wall_sec": 892.7794651985168
+  }
+ },
+ "baseline": {
+  "exp_id": "e000",
+  "score": 1.6268810539750416
+ },
+ "incumbent": {
+  "exp_id": "e004",
+  "score": 0.06147135267817346,
+  "replicated": true
+ },
+ "experiments": [
+  {
+   "exp_id": "e000",
+   "lane": "baseline",
+   "hypothesis": "unmodified template",
+   "status": "recorded",
+   "stage": "record",
+   "worker": "",
+   "reviewer": "",
+   "outcome": "baseline",
+   "dev_outcome": "baseline",
+   "score": 1.6268810539750416,
+   "train": 0.21187493892230957,
+   "delta": null,
+   "sealed_delta": null,
+   "train_delta": null,
+   "train_margin": null,
+   "overfit_suspect": false,
+   "review": null,
+   "replicated": false,
+   "awaiting_replication": false,
+   "diff_summary": "",
+   "parent_exp_id": null,
+   "blocked_reason": null,
+   "protected": [],
+   "claim_ids": [],
+   "finding_ids": [],
+   "planted_fault": null,
+   "started_ts": 1793019251.472326,
+   "ended_ts": 1793019251.9785616,
+   "cost_usd": null,
+   "tokens": null,
+   "llm_calls": null,
+   "cost_by_role": {}
+  },
+  {
+   "exp_id": "e001",
+   "lane": "A",
+   "hypothesis": "A quadratic trend extrapolates better than a straight line.",
+   "status": "recorded",
+   "stage": "record",
+   "worker": "patch-worker[muse-spark-1.3]",
+   "reviewer": "reviewer[muse-spark-1.3]",
+   "outcome": "improved",
+   "dev_outcome": "improved",
+   "score": 0.8991803454457031,
+   "train": 0.13452051533246334,
+   "delta": 0.7277007085293384,
+   "sealed_delta": 0.6832842455649646,
+   "train_delta": 0.07735442358984623,
+   "train_margin": 0.035,
+   "overfit_suspect": false,
+   "review": "accept",
+   "replicated": true,
+   "awaiting_replication": false,
+   "diff_summary": "M model.py (+4/-16 lines)",
+   "parent_exp_id": "e000",
+   "blocked_reason": null,
+   "protected": [],
+   "claim_ids": [],
+   "finding_ids": [],
+   "planted_fault": null,
+   "started_ts": 1793019252.0323598,
+   "ended_ts": 1793019252.9744701,
+   "cost_usd": 0.012066,
+   "tokens": 9037,
+   "llm_calls": 4,
+   "cost_by_role": {
+    "implementer": 0.007344,
+    "reviewer": 0.004722
+   }
+  },
+  {
+   "exp_id": "e002",
+   "lane": "B",
+   "hypothesis": "A flexible degree-9 polynomial can follow the oscillation and so extrapolates better.",
+   "status": "recorded",
+   "stage": "record",
+   "worker": "patch-worker[muse-spark-1.3]",
+   "reviewer": "reviewer[muse-spark-1.3]",
+   "outcome": "worse",
+   "dev_outcome": "worse",
+   "score": 532.3217546909013,
+   "train": 0.07674105867317282,
+   "delta": -530.6948736369263,
+   "sealed_delta": null,
+   "train_delta": 0.13513388024913675,
+   "train_margin": 0.035,
+   "overfit_suspect": true,
+   "review": "accept",
+   "replicated": false,
+   "awaiting_replication": false,
+   "diff_summary": "M model.py (+4/-16 lines)",
+   "parent_exp_id": "e000",
+   "blocked_reason": null,
+   "protected": [],
+   "claim_ids": [],
+   "finding_ids": [],
+   "planted_fault": null,
+   "started_ts": 1793019252.0357602,
+   "ended_ts": 1793019252.9437912,
+   "cost_usd": 0.01252,
+   "tokens": 9092,
+   "llm_calls": 4,
+   "cost_by_role": {
+    "implementer": 0.006472,
+    "reviewer": 0.006049
+   }
+  },
+  {
+   "exp_id": "e003",
+   "lane": "C",
+   "hypothesis": "A tiny ridge penalty on the straight line makes its extrapolation more conservative.",
+   "status": "recorded",
+   "stage": "record",
+   "worker": "patch-worker[muse-spark-1.3]",
+   "reviewer": "reviewer[muse-spark-1.3]",
+   "outcome": "no_gain",
+   "dev_outcome": "no_gain",
+   "score": 1.6268810225803716,
+   "train": 0.21187493892230988,
+   "delta": 3.139466997481577e-08,
+   "sealed_delta": null,
+   "train_delta": -2.6830389761774615e-16,
+   "train_margin": 0.035,
+   "overfit_suspect": false,
+   "review": "accept",
+   "replicated": false,
+   "awaiting_replication": false,
+   "diff_summary": "M model.py (+4/-16 lines)",
+   "parent_exp_id": "e000",
+   "blocked_reason": null,
+   "protected": [],
+   "claim_ids": [],
+   "finding_ids": [],
+   "planted_fault": null,
+   "started_ts": 1793019252.0384283,
+   "ended_ts": 1793019252.9802258,
+   "cost_usd": 0.01117,
+   "tokens": 9057,
+   "llm_calls": 4,
+   "cost_by_role": {
+    "implementer": 0.006445,
+    "reviewer": 0.004725
+   }
+  },
+  {
+   "exp_id": "e004",
+   "lane": "D",
+   "hypothesis": "The readings follow a damped oscillation exp(-g t) (A cos(w t) + B sin(w t)) + C with an unknown decay g and frequency w.",
+   "status": "recorded",
+   "stage": "record",
+   "worker": "patch-worker[muse-spark-1.3]",
+   "reviewer": "reviewer-hard[muse-wonder-1.0]",
+   "outcome": "improved",
+   "dev_outcome": "improved",
+   "score": 0.06147135267817346,
+   "train": 0.05261844022869929,
+   "delta": 0.8377089927675296,
+   "sealed_delta": 0.8792977759968709,
+   "train_delta": 0.08190207510376406,
+   "train_margin": 0.035,
+   "overfit_suspect": false,
+   "review": "accept",
+   "replicated": true,
+   "awaiting_replication": false,
+   "diff_summary": "M model.py (+48/-4 lines)",
+   "parent_exp_id": "e001",
+   "blocked_reason": null,
+   "protected": [],
+   "claim_ids": [],
+   "finding_ids": [],
+   "planted_fault": null,
+   "started_ts": 1793019254.898813,
+   "ended_ts": 1793019256.423112,
+   "cost_usd": 0.036371,
+   "tokens": 14303,
+   "llm_calls": 5,
+   "cost_by_role": {
+    "implementer": 0.009828,
+    "reviewer": 0.005134,
+    "reviewer_hard": 0.021409
+   }
+  },
+  {
+   "exp_id": "e005",
+   "lane": "E",
+   "hypothesis": "Choosing the polynomial degree and ridge strength by backtesting on the latest part of the training window beats a fixed degree.",
+   "status": "recorded",
+   "stage": "record",
+   "worker": "patch-worker[muse-spark-1.3]",
+   "reviewer": "reviewer-hard[muse-wonder-1.0]",
+   "outcome": "improved",
+   "dev_outcome": "improved",
+   "score": 0.46488867704764175,
+   "train": 0.16618038595282827,
+   "delta": 0.4342916683980613,
+   "sealed_delta": null,
+   "train_delta": -0.03165987062036491,
+   "train_margin": 0.035,
+   "overfit_suspect": false,
+   "review": "accept",
+   "replicated": false,
+   "awaiting_replication": true,
+   "diff_summary": "M model.py (+29/-2 lines)",
+   "parent_exp_id": "e001",
+   "blocked_reason": null,
+   "protected": [],
+   "claim_ids": [],
+   "finding_ids": [],
+   "planted_fault": null,
+   "started_ts": 1793019254.9085245,
+   "ended_ts": 1793019255.734889,
+   "cost_usd": 0.039434,
+   "tokens": 13768,
+   "llm_calls": 5,
+   "cost_by_role": {
+    "implementer": 0.009128,
+    "reviewer": 0.004958,
+    "reviewer_hard": 0.025348
+   }
+  }
+ ],
+ "series": [
+  {
+   "seq": 11,
+   "ts": 1793019251.9774036,
+   "exp_id": "e000",
+   "score": 1.6268810539750416,
+   "train": 0.21187493892230957,
+   "std": 0.010011586886610222,
+   "kind": "baseline",
+   "replicated": false
+  },
+  {
+   "seq": 63,
+   "ts": 1793019252.8909104,
+   "exp_id": "e002",
+   "score": 532.3217546909013,
+   "train": 0.07674105867317282,
+   "std": 37.00538200906031,
+   "kind": "candidate",
+   "replicated": false
+  },
+  {
+   "seq": 64,
+   "ts": 1793019252.9005115,
+   "exp_id": "e001",
+   "score": 0.8991803454457031,
+   "train": 0.13452051533246334,
+   "std": 0.030661774668800924,
+   "kind": "promoted",
+   "replicated": true
+  },
+  {
+   "seq": 65,
+   "ts": 1793019252.9197443,
+   "exp_id": "e003",
+   "score": 1.6268810225803716,
+   "train": 0.21187493892230988,
+   "std": 0.010011586347806568,
+   "kind": "candidate",
+   "replicated": false
+  },
+  {
+   "seq": 161,
+   "ts": 1793019255.6761892,
+   "exp_id": "e005",
+   "score": 0.46488867704764175,
+   "train": 0.16618038595282827,
+   "std": 0.011769036991707896,
+   "kind": "candidate",
+   "replicated": false
+  },
+  {
+   "seq": 171,
+   "ts": 1793019256.3492517,
+   "exp_id": "e004",
+   "score": 0.06147135267817346,
+   "train": 0.05261844022869929,
+   "std": 0.002607498220393869,
+   "kind": "promoted",
+   "replicated": true
+  }
+ ],
+ "claims": [],
+ "finish": {
+  "requests": [
+   {
+    "claim_ids": [],
+    "summary": "I ran 5 lanes in 2 round(s) and asked for 2 independent re-check(s), always for the strongest development gain. These replicated: e001 (A quadratic trend extrapolates better than a straight line.); e004 (The readings follow a damped oscillation exp(-g t) (A cos(w t) + B sin(w t)) + C with an u). These improved on the development data but were not re-checked or did not replicate, so they are not findings: e005. The current best is e004, which replicated. The re-check says only pass or fail, so I report no size for the gain. Caveat: one task, a small pool of measurements, and the development numbers are optimistic because they were used to choose lanes.",
+    "seq": 214,
+    "ts": 1793019258.437544
+   }
+  ],
+  "refusals": [],
+  "accepted": true,
+  "accepted_claims": []
+ },
+ "lessons": [
+  {
+   "classification": "model",
+   "kind": "observation",
+   "lesson_id": "L001",
+   "source_exps": [
+    "e002"
+   ],
+   "text": "e002 ended worse than the incumbent e000 on the dev split (dev delta -530.7, margin 62.37). Train delta +0.1351. The training error improved without a held-out gain: possible overfitting.",
+   "seq": 69,
+   "ts": 1793019252.9447367,
+   "actor": "engine"
+  },
+  {
+   "classification": "model",
+   "kind": "observation",
+   "lesson_id": "L002",
+   "source_exps": [
+    "e003"
+   ],
+   "text": "e003 ended without a gain over the incumbent e000 on the dev split (dev delta +3.139e-08, margin 0.035). Train delta -2.683e-16.",
+   "seq": 78,
+   "ts": 1793019252.9823058,
+   "actor": "engine"
+  },
+  {
+   "classification": "model",
+   "kind": "strategy",
+   "lesson_id": "L003",
+   "source_exps": [
+    "e002",
+    "e001",
+    "e003"
+   ],
+   "text": "Models with a functional form matching the physical system extrapolate more safely than extra flexibility.",
+   "seq": 128,
+   "ts": 1793019254.8454046,
+   "actor": "reflector"
+  }
+ ],
+ "pivots": [
+  "Try a physically motivated damped-oscillation form."
+ ],
+ "findings": [],
+ "invariants": [
+  {
+   "id": "I01",
+   "title": "Claims need evidence",
+   "kind": "deterministic",
+   "state": "ok",
+   "open": 0
+  },
+  {
+   "id": "I02",
+   "title": "Held-out, not train",
+   "kind": "deterministic",
+   "state": "ok",
+   "open": 0
+  },
+  {
+   "id": "I03",
+   "title": "Protected surface",
+   "kind": "deterministic",
+   "state": "ok",
+   "open": 0
+  },
+  {
+   "id": "I04",
+   "title": "No duplicate work",
+   "kind": "deterministic",
+   "state": "ok",
+   "open": 0
+  },
+  {
+   "id": "I05",
+   "title": "Progress, not PID",
+   "kind": "deterministic",
+   "state": "ok",
+   "open": 0
+  },
+  {
+   "id": "I06",
+   "title": "Evaluation handoff",
+   "kind": "deterministic",
+   "state": "ok",
+   "open": 0
+  },
+  {
+   "id": "I07",
+   "title": "Infrastructure is not model failure",
+   "kind": "both",
+   "state": "ok",
+   "open": 0
+  },
+  {
+   "id": "I08",
+   "title": "Budget and authority",
+   "kind": "both",
+   "state": "ok",
+   "open": 0
+  },
+  {
+   "id": "I09",
+   "title": "Replicate before final",
+   "kind": "deterministic",
+   "state": "ok",
+   "open": 0
+  },
+  {
+   "id": "I10",
+   "title": "Comparable conditions",
+   "kind": "deterministic",
+   "state": "ok",
+   "open": 0
+  },
+  {
+   "id": "I11",
+   "title": "No endless preparation",
+   "kind": "deterministic",
+   "state": "ok",
+   "open": 0
+  },
+  {
+   "id": "I12",
+   "title": "Independent review",
+   "kind": "deterministic",
+   "state": "ok",
+   "open": 0
+  },
+  {
+   "id": "I13",
+   "title": "Untrusted instructions",
+   "kind": "llm",
+   "state": "ok",
+   "open": 0
+  },
+  {
+   "id": "I14",
+   "title": "Summary matches ledger",
+   "kind": "both",
+   "state": "ok",
+   "open": 0
+  }
+ ],
+ "models_usage": [
+  {
+   "role": "auditor_final",
+   "model": "muse-wonder-1.0",
+   "calls": 4,
+   "prompt_tokens": 8386,
+   "completion_tokens": 3340,
+   "cached_tokens": 1248,
+   "cache": "known",
+   "usd": 0.095602,
+   "effort": "high",
+   "strict_schema_calls": 4,
+   "schema_ok": 4,
+   "retries": 0
+  },
+  {
+   "role": "designer",
+   "model": "muse-spark-1.3",
+   "calls": 5,
+   "prompt_tokens": 6962,
+   "completion_tokens": 1304,
+   "cached_tokens": 3128,
+   "cache": "known",
+   "usd": 0.010804,
+   "effort": "low",
+   "strict_schema_calls": 5,
+   "schema_ok": 5,
+   "retries": 0
+  },
+  {
+   "role": "implementer",
+   "model": "muse-spark-1.3",
+   "calls": 15,
+   "prompt_tokens": 31253,
+   "completion_tokens": 3148,
+   "cached_tokens": 12026,
+   "cache": "known",
+   "usd": 0.039217,
+   "effort": "low",
+   "strict_schema_calls": 0,
+   "schema_ok": 0,
+   "retries": 0
+  },
+  {
+   "role": "judge",
+   "model": "muse-spark-1.3",
+   "calls": 10,
+   "prompt_tokens": 14354,
+   "completion_tokens": 8350,
+   "cached_tokens": 2912,
+   "cache": "known",
+   "usd": 0.050227,
+   "effort": "high",
+   "strict_schema_calls": 10,
+   "schema_ok": 10,
+   "retries": 0
+  },
+  {
+   "role": "reflector",
+   "model": "muse-spark-1.3",
+   "calls": 1,
+   "prompt_tokens": 1248,
+   "completion_tokens": 445,
+   "cached_tokens": 0,
+   "cache": "known",
+   "usd": 0.003451,
+   "effort": "medium",
+   "strict_schema_calls": 1,
+   "schema_ok": 1,
+   "retries": 0
+  },
+  {
+   "role": "reviewer",
+   "model": "muse-spark-1.3",
+   "calls": 5,
+   "prompt_tokens": 10531,
+   "completion_tokens": 4150,
+   "cached_tokens": 4740,
+   "cache": "known",
+   "usd": 0.025587,
+   "effort": "high",
+   "strict_schema_calls": 5,
+   "schema_ok": 5,
+   "retries": 0
+  },
+  {
+   "role": "reviewer_hard",
+   "model": "muse-wonder-1.0",
+   "calls": 2,
+   "prompt_tokens": 4515,
+   "completion_tokens": 1660,
+   "cached_tokens": 1185,
+   "cache": "known",
+   "usd": 0.046757,
+   "effort": "high",
+   "strict_schema_calls": 2,
+   "schema_ok": 2,
+   "retries": 0
+  },
+  {
+   "role": "supervisor",
+   "model": "muse-spark-1.3",
+   "calls": 12,
+   "prompt_tokens": 52774,
+   "completion_tokens": 4833,
+   "cached_tokens": 19085,
+   "cache": "known",
+   "usd": 0.065514,
+   "effort": "medium",
+   "strict_schema_calls": 0,
+   "schema_ok": 0,
+   "retries": 0
+  }
+ ],
+ "turns": [
+  {
+   "seq": 16,
+   "source": "supervisor",
+   "model": "muse-spark-1.3",
+   "say": "",
+   "tool_calls": [
+    {
+     "args_summary": "{}",
+     "name": "get_state"
+    }
+   ],
+   "reasoning_effort": "medium",
+   "latency_ms": 20.3,
+   "text": "Reading the budget, the baseline and what has been tried before I plan a round."
+  },
+  {
+   "seq": 19,
+   "source": "supervisor",
+   "model": "muse-spark-1.3",
+   "say": "",
+   "tool_calls": [
+    {
+     "args_summary": "{\"lanes\": [{\"approach\": \"Replace the straight-line fit with a degree-2 least-squares polynomial in time (linalg.polyfit).\", \"hypothesis\": \"A quadratic trend extrapolates better than a straight line...",
+     "name": "launch_experiments"
+    },
+    {
+     "args_summary": "{\"lanes\": [{\"approach\": \"Add a ridge term of 1e-6 to the straight-line fit.\", \"hypothesis\": \"A tiny ridge penalty on the straight line makes its extrapolation more conservative.\", \"lane\": \"C\"}], \"t...",
+     "name": "launch_experiments"
+    }
+   ],
+   "reasoning_effort": "medium",
+   "latency_ms": 22.0,
+   "text": ""
+  },
+  {
+   "seq": 86,
+   "source": "supervisor",
+   "model": "muse-spark-1.3",
+   "say": "",
+   "tool_calls": [
+    {
+     "args_summary": "{}",
+     "name": "get_state"
+    }
+   ],
+   "reasoning_effort": "medium",
+   "latency_ms": 41.2,
+   "text": ""
+  },
+  {
+   "seq": 89,
+   "source": "supervisor",
+   "model": "muse-spark-1.3",
+   "say": "",
+   "tool_calls": [
+    {
+     "args_summary": "{\"exp_id\": \"e001\"}",
+     "name": "replicate"
+    }
+   ],
+   "reasoning_effort": "medium",
+   "latency_ms": 19.5,
+   "text": "The strongest development gain still needs its independent re-check."
+  },
+  {
+   "seq": 122,
+   "source": "supervisor",
+   "model": "muse-spark-1.3",
+   "say": "",
+   "tool_calls": [
+    {
+     "args_summary": "{}",
+     "name": "get_state"
+    }
+   ],
+   "reasoning_effort": "medium",
+   "latency_ms": 23.8,
+   "text": ""
+  },
+  {
+   "seq": 125,
+   "source": "supervisor",
+   "model": "muse-spark-1.3",
+   "say": "",
+   "tool_calls": [
+    {
+     "args_summary": "{}",
+     "name": "reflect"
+    }
+   ],
+   "reasoning_effort": "medium",
+   "latency_ms": 21.2,
+   "text": "Two lanes of this round gained nothing; I want the lessons consolidated before I plan the next round."
+  },
+  {
+   "seq": 131,
+   "source": "supervisor",
+   "model": "muse-spark-1.3",
+   "say": "",
+   "tool_calls": [
+    {
+     "args_summary": "{}",
+     "name": "get_state"
+    }
+   ],
+   "reasoning_effort": "medium",
+   "latency_ms": 20.1,
+   "text": ""
+  },
+  {
+   "seq": 134,
+   "source": "supervisor",
+   "model": "muse-spark-1.3",
+   "say": "",
+   "tool_calls": [
+    {
+     "args_summary": "{\"lanes\": [{\"approach\": \"Grid-search the decay and frequency, solve for A, B and C by linear least squares, then refine around the best cell.\", \"hypothesis\": \"The readings follow a damped oscillati...",
+     "name": "launch_experiments"
+    }
+   ],
+   "reasoning_effort": "medium",
+   "latency_ms": 23.3,
+   "text": ""
+  },
+  {
+   "seq": 184,
+   "source": "supervisor",
+   "model": "muse-spark-1.3",
+   "say": "",
+   "tool_calls": [
+    {
+     "args_summary": "{}",
+     "name": "get_state"
+    }
+   ],
+   "reasoning_effort": "medium",
+   "latency_ms": 30.9,
+   "text": ""
+  },
+  {
+   "seq": 187,
+   "source": "supervisor",
+   "model": "muse-spark-1.3",
+   "say": "",
+   "tool_calls": [
+    {
+     "args_summary": "{\"exp_id\": \"e004\"}",
+     "name": "replicate"
+    }
+   ],
+   "reasoning_effort": "medium",
+   "latency_ms": 36.2,
+   "text": "The strongest development gain still needs its independent re-check."
+  },
+  {
+   "seq": 209,
+   "source": "supervisor",
+   "model": "muse-spark-1.3",
+   "say": "",
+   "tool_calls": [
+    {
+     "args_summary": "{}",
+     "name": "get_state"
+    }
+   ],
+   "reasoning_effort": "medium",
+   "latency_ms": 22.4,
+   "text": ""
+  },
+  {
+   "seq": 212,
+   "source": "supervisor",
+   "model": "muse-spark-1.3",
+   "say": "",
+   "tool_calls": [
+    {
+     "args_summary": "{\"summary\": \"I ran 5 lanes in 2 round(s) and asked for 2 independent re-check(s), always for the strongest development gain. These replicated: e001 (A quadratic trend extrapolates better than a str...",
+     "name": "finish"
+    }
+   ],
+   "reasoning_effort": "medium",
+   "latency_ms": 23.9,
+   "text": ""
+  }
+ ],
+ "timeline": [
+  {
+   "seq": 1,
+   "ts": 1793019251.466717,
+   "kind": "run.started",
+   "actor": "engine",
+   "text": "run started: task law-discovery, backend meta (loopback endpoint), isolation userns"
+  },
+  {
+   "seq": 2,
+   "ts": 1793019251.4711862,
+   "kind": "budget.charged",
+   "actor": "engine",
+   "text": "experiment charge 0 count"
+  },
+  {
+   "seq": 3,
+   "ts": 1793019251.472326,
+   "kind": "experiment.proposed",
+   "actor": "engine",
+   "text": "e000 proposed on lane baseline: unmodified template"
+  },
+  {
+   "seq": 4,
+   "ts": 1793019251.4754848,
+   "kind": "experiment.workspace_ready",
+   "actor": "engine",
+   "text": "e000 workspace ready"
+  },
+  {
+   "seq": 5,
+   "ts": 1793019251.4846225,
+   "kind": "experiment.run_started",
+   "actor": "engine",
+   "text": "e000 run 0 started (baseline, seed 0)"
+  },
+  {
+   "seq": 6,
+   "ts": 1793019251.573637,
+   "kind": "experiment.run_finished",
+   "actor": "engine",
+   "text": "e000 run 0 finished: ok, exit 0"
+  },
+  {
+   "seq": 7,
+   "ts": 1793019251.6810865,
+   "kind": "experiment.run_started",
+   "actor": "engine",
+   "text": "e000 run 1 started (baseline, seed 1)"
+  },
+  {
+   "seq": 8,
+   "ts": 1793019251.7757425,
+   "kind": "experiment.run_finished",
+   "actor": "engine",
+   "text": "e000 run 1 finished: ok, exit 0"
+  },
+  {
+   "seq": 9,
+   "ts": 1793019251.8594892,
+   "kind": "experiment.run_started",
+   "actor": "engine",
+   "text": "e000 run 2 started (baseline, seed 2)"
+  },
+  {
+   "seq": 10,
+   "ts": 1793019251.9273837,
+   "kind": "experiment.run_finished",
+   "actor": "engine",
+   "text": "e000 run 2 finished: ok, exit 0"
+  },
+  {
+   "seq": 11,
+   "ts": 1793019251.9774036,
+   "kind": "experiment.graded",
+   "actor": "engine",
+   "text": "e000 graded on dev (baseline): score 1.627, valid=True"
+  },
+  {
+   "seq": 12,
+   "ts": 1793019251.9785616,
+   "kind": "experiment.recorded",
+   "actor": "engine",
+   "text": "e000 recorded: baseline, dev delta n/a"
+  },
+  {
+   "seq": 13,
+   "ts": 1793019251.9811277,
+   "kind": "budget.charged",
+   "actor": "engine",
+   "text": "wall charge 0.6215 sec"
+  },
+  {
+   "seq": 14,
+   "ts": 1793019251.9825134,
+   "kind": "budget.charged",
+   "actor": "engine",
+   "text": "wall charge 0.001394 sec"
+  },
+  {
+   "seq": 15,
+   "ts": 1793019252.0028284,
+   "kind": "budget.charged",
+   "actor": "supervisor",
+   "text": "llm call charged $0.005 (muse-spark-1.3)"
+  },
+  {
+   "seq": 16,
+   "ts": 1793019252.0042603,
+   "kind": "supervisor.turn",
+   "actor": "supervisor",
+   "text": "supervisor turn 1: get_state"
+  },
+  {
+   "seq": 17,
+   "ts": 1793019252.0049448,
+   "kind": "budget.charged",
+   "actor": "engine",
+   "text": "wall charge 0.02243 sec"
+  },
+  {
+   "seq": 18,
+   "ts": 1793019252.0265582,
+   "kind": "budget.charged",
+   "actor": "supervisor",
+   "text": "llm call charged $0.00396 (muse-spark-1.3)"
+  },
+  {
+   "seq": 19,
+   "ts": 1793019252.028223,
+   "kind": "supervisor.turn",
+   "actor": "supervisor",
+   "text": "supervisor turn 2: launch_experiments x2"
+  },
+  {
+   "seq": 20,
+   "ts": 1793019252.0289688,
+   "kind": "budget.charged",
+   "actor": "engine",
+   "text": "wall charge 0.02402 sec"
+  },
+  {
+   "seq": 21,
+   "ts": 1793019252.0317082,
+   "kind": "budget.charged",
+   "actor": "engine",
+   "text": "experiment charge 1 count"
+  },
+  {
+   "seq": 22,
+   "ts": 1793019252.0323598,
+   "kind": "experiment.proposed",
+   "actor": "designer:A",
+   "text": "e001 proposed on lane A: A quadratic trend extrapolates better than a straight line."
+  },
+  {
+   "seq": 23,
+   "ts": 1793019252.0351403,
+   "kind": "budget.charged",
+   "actor": "engine",
+   "text": "experiment charge 1 count"
+  },
+  {
+   "seq": 24,
+   "ts": 1793019252.0357602,
+   "kind": "experiment.proposed",
+   "actor": "designer:B",
+   "text": "e002 proposed on lane B: A flexible degree-9 polynomial can follow the oscillation and so extrapolates better."
+  },
+  {
+   "seq": 25,
+   "ts": 1793019252.0371542,
+   "kind": "budget.charged",
+   "actor": "engine",
+   "text": "experiment charge 1 count"
+  },
+  {
+   "seq": 26,
+   "ts": 1793019252.0384283,
+   "kind": "experiment.proposed",
+   "actor": "designer:C",
+   "text": "e003 proposed on lane C: A tiny ridge penalty on the straight line makes its extrapolation more conservative."
+  },
+  {
+   "seq": 27,
+   "ts": 1793019252.0987098,
+   "kind": "budget.charged",
+   "actor": "designer:A",
+   "text": "llm call charged $0.00268 (muse-spark-1.3)"
+  },
+  {
+   "seq": 28,
+   "ts": 1793019252.1027668,
+   "kind": "experiment.workspace_ready",
+   "actor": "engine",
+   "text": "e001 workspace ready"
+  },
+  {
+   "seq": 29,
+   "ts": 1793019252.1261425,
+   "kind": "budget.charged",
+   "actor": "designer:C",
+   "text": "llm call charged $0.00179 (muse-spark-1.3)"
+  },
+  {
+   "seq": 30,
+   "ts": 1793019252.1283798,
+   "kind": "budget.charged",
+   "actor": "designer:B",
+   "text": "llm call charged $0.00181 (muse-spark-1.3)"
+  },
+  {
+   "seq": 31,
+   "ts": 1793019252.131572,
+   "kind": "experiment.workspace_ready",
+   "actor": "engine",
+   "text": "e002 workspace ready"
+  },
+  {
+   "seq": 32,
+   "ts": 1793019252.1394777,
+   "kind": "experiment.workspace_ready",
+   "actor": "engine",
+   "text": "e003 workspace ready"
+  },
+  {
+   "seq": 33,
+   "ts": 1793019252.146239,
+   "kind": "budget.charged",
+   "actor": "implementer:A",
+   "text": "llm call charged $0.00263 (muse-spark-1.3) for e001"
+  },
+  {
+   "seq": 34,
+   "ts": 1793019252.2185125,
+   "kind": "budget.charged",
+   "actor": "implementer:B",
+   "text": "llm call charged $0.00169 (muse-spark-1.3) for e002"
+  },
+  {
+   "seq": 35,
+   "ts": 1793019252.221319,
+   "kind": "budget.charged",
+   "actor": "implementer:C",
+   "text": "llm call charged $0.00169 (muse-spark-1.3) for e003"
+  },
+  {
+   "seq": 36,
+   "ts": 1793019252.2249177,
+   "kind": "budget.charged",
+   "actor": "implementer:A",
+   "text": "llm call charged $0.00236 (muse-spark-1.3) for e001"
+  },
+  {
+   "seq": 37,
+   "ts": 1793019252.2996144,
+   "kind": "budget.charged",
+   "actor": "implementer:B",
+   "text": "llm call charged $0.00241 (muse-spark-1.3) for e002"
+  },
+  {
+   "seq": 38,
+   "ts": 1793019252.3017547,
+   "kind": "budget.charged",
+   "actor": "implementer:A",
+   "text": "llm call charged $0.00236 (muse-spark-1.3) for e001"
+  },
+  {
+   "seq": 39,
+   "ts": 1793019252.3082087,
+   "kind": "experiment.implemented",
+   "actor": "implementer:A",
+   "text": "e001 implemented by patch-worker[muse-spark-1.3]: M model.py (+4/-16 lines)"
+  },
+  {
+   "seq": 40,
+   "ts": 1793019252.3093815,
+   "kind": "budget.charged",
+   "actor": "implementer:C",
+   "text": "llm call charged $0.00238 (muse-spark-1.3) for e003"
+  },
+  {
+   "seq": 41,
+   "ts": 1793019252.3151066,
+   "kind": "experiment.run_started",
+   "actor": "engine",
+   "text": "e001 run 0 started (primary, seed 0)"
+  },
+  {
+   "seq": 42,
+   "ts": 1793019252.3403018,
+   "kind": "budget.charged",
+   "actor": "implementer:B",
+   "text": "llm call charged $0.00237 (muse-spark-1.3) for e002"
+  },
+  {
+   "seq": 43,
+   "ts": 1793019252.342898,
+   "kind": "experiment.implemented",
+   "actor": "implementer:B",
+   "text": "e002 implemented by patch-worker[muse-spark-1.3]: M model.py (+4/-16 lines)"
+  },
+  {
+   "seq": 44,
+   "ts": 1793019252.3466105,
+   "kind": "budget.charged",
+   "actor": "implementer:C",
+   "text": "llm call charged $0.00237 (muse-spark-1.3) for e003"
+  },
+  {
+   "seq": 45,
+   "ts": 1793019252.3512442,
+   "kind": "experiment.implemented",
+   "actor": "implementer:C",
+   "text": "e003 implemented by patch-worker[muse-spark-1.3]: M model.py (+4/-16 lines)"
+  },
+  {
+   "seq": 46,
+   "ts": 1793019252.3595116,
+   "kind": "experiment.run_started",
+   "actor": "engine",
+   "text": "e002 run 0 started (primary, seed 0)"
+  },
+  {
+   "seq": 47,
+   "ts": 1793019252.3602374,
+   "kind": "experiment.run_started",
+   "actor": "engine",
+   "text": "e003 run 0 started (primary, seed 0)"
+  },
+  {
+   "seq": 48,
+   "ts": 1793019252.4015212,
+   "kind": "experiment.run_finished",
+   "actor": "engine",
+   "text": "e001 run 0 finished: ok, exit 0"
+  },
+  {
+   "seq": 49,
+   "ts": 1793019252.460753,
+   "kind": "experiment.run_finished",
+   "actor": "engine",
+   "text": "e002 run 0 finished: ok, exit 0"
+  },
+  {
+   "seq": 50,
+   "ts": 1793019252.4818263,
+   "kind": "experiment.run_finished",
+   "actor": "engine",
+   "text": "e003 run 0 finished: ok, exit 0"
+  },
+  {
+   "seq": 51,
+   "ts": 1793019252.497749,
+   "kind": "experiment.run_started",
+   "actor": "engine",
+   "text": "e001 run 1 started (primary, seed 1)"
+  },
+  {
+   "seq": 52,
+   "ts": 1793019252.5471196,
+   "kind": "experiment.run_started",
+   "actor": "engine",
+   "text": "e002 run 1 started (primary, seed 1)"
+  },
+  {
+   "seq": 53,
+   "ts": 1793019252.5807803,
+   "kind": "experiment.run_started",
+   "actor": "engine",
+   "text": "e003 run 1 started (primary, seed 1)"
+  },
+  {
+   "seq": 54,
+   "ts": 1793019252.5927222,
+   "kind": "experiment.run_finished",
+   "actor": "engine",
+   "text": "e001 run 1 finished: ok, exit 0"
+  },
+  {
+   "seq": 55,
+   "ts": 1793019252.631513,
+   "kind": "experiment.run_finished",
+   "actor": "engine",
+   "text": "e002 run 1 finished: ok, exit 0"
+  },
+  {
+   "seq": 56,
+   "ts": 1793019252.6631672,
+   "kind": "experiment.run_finished",
+   "actor": "engine",
+   "text": "e003 run 1 finished: ok, exit 0"
+  },
+  {
+   "seq": 57,
+   "ts": 1793019252.7014728,
+   "kind": "experiment.run_started",
+   "actor": "engine",
+   "text": "e001 run 2 started (primary, seed 2)"
+  },
+  {
+   "seq": 58,
+   "ts": 1793019252.7040105,
+   "kind": "experiment.run_started",
+   "actor": "engine",
+   "text": "e002 run 2 started (primary, seed 2)"
+  },
+  {
+   "seq": 59,
+   "ts": 1793019252.7266648,
+   "kind": "experiment.run_started",
+   "actor": "engine",
+   "text": "e003 run 2 started (primary, seed 2)"
+  },
+  {
+   "seq": 60,
+   "ts": 1793019252.7997384,
+   "kind": "experiment.run_finished",
+   "actor": "engine",
+   "text": "e001 run 2 finished: ok, exit 0"
+  },
+  {
+   "seq": 61,
+   "ts": 1793019252.8032281,
+   "kind": "experiment.run_finished",
+   "actor": "engine",
+   "text": "e002 run 2 finished: ok, exit 0"
+  },
+  {
+   "seq": 62,
+   "ts": 1793019252.8503444,
+   "kind": "experiment.run_finished",
+   "actor": "engine",
+   "text": "e003 run 2 finished: ok, exit 0"
+  },
+  {
+   "seq": 63,
+   "ts": 1793019252.8909104,
+   "kind": "experiment.graded",
+   "actor": "engine",
+   "text": "e002 graded on dev (primary): score 532.3, valid=True"
+  },
+  {
+   "seq": 64,
+   "ts": 1793019252.9005115,
+   "kind": "experiment.graded",
+   "actor": "engine",
+   "text": "e001 graded on dev (primary): score 0.8992, valid=True"
+  },
+  {
+   "seq": 65,
+   "ts": 1793019252.9197443,
+   "kind": "experiment.graded",
+   "actor": "engine",
+   "text": "e003 graded on dev (primary): score 1.627, valid=True"
+  },
+  {
+   "seq": 66,
+   "ts": 1793019252.941702,
+   "kind": "budget.charged",
+   "actor": "reviewer",
+   "text": "llm call charged $0.00605 (muse-spark-1.3) for e002"
+  },
+  {
+   "seq": 67,
+   "ts": 1793019252.9425995,
+   "kind": "experiment.reviewed",
+   "actor": "reviewer:B",
+   "text": "e002 reviewed by reviewer[muse-spark-1.3]: accept (0 findings)"
+  },
+  {
+   "seq": 68,
+   "ts": 1793019252.9437912,
+   "kind": "experiment.recorded",
+   "actor": "engine",
+   "text": "e002 recorded: worse, dev delta -530.7"
+  },
+  {
+   "seq": 69,
+   "ts": 1793019252.9447367,
+   "kind": "memory.lesson",
+   "actor": "engine",
+   "text": "lesson L001 (observation): e002 ended worse than the incumbent e000 on the dev split (dev delta -530.7, margin 62.37). Train delta +0.1351. The training erro..."
+  },
+  {
+   "seq": 70,
+   "ts": 1793019252.9470832,
+   "kind": "budget.charged",
+   "actor": "engine",
+   "text": "wall charge 0.9181 sec"
+  },
+  {
+   "seq": 71,
+   "ts": 1793019252.968655,
+   "kind": "budget.charged",
+   "actor": "reviewer",
+   "text": "llm call charged $0.00472 (muse-spark-1.3) for e001"
+  },
+  {
+   "seq": 72,
+   "ts": 1793019252.9701316,
+   "kind": "experiment.reviewed",
+   "actor": "reviewer:A",
+   "text": "e001 reviewed by reviewer[muse-spark-1.3]: accept (0 findings)"
+  },
+  {
+   "seq": 73,
+   "ts": 1793019252.9744701,
+   "kind": "experiment.recorded",
+   "actor": "engine",
+   "text": "e001 recorded: improved, dev delta 0.7277"
+  },
+  {
+   "seq": 74,
+   "ts": 1793019252.9769936,
+   "kind": "budget.charged",
+   "actor": "reviewer",
+   "text": "llm call charged $0.00473 (muse-spark-1.3) for e003"
+  },
+  {
+   "seq": 75,
+   "ts": 1793019252.9788854,
+   "kind": "experiment.reviewed",
+   "actor": "reviewer:C",
+   "text": "e003 reviewed by reviewer[muse-spark-1.3]: accept (0 findings)"
+  },
+  {
+   "seq": 76,
+   "ts": 1793019252.9802258,
+   "kind": "experiment.recorded",
+   "actor": "engine",
+   "text": "e003 recorded: no_gain, dev delta 3.139e-08"
+  },
+  {
+   "seq": 77,
+   "ts": 1793019252.9813845,
+   "kind": "budget.charged",
+   "actor": "engine",
+   "text": "wall charge 0.03384 sec"
+  },
+  {
+   "seq": 78,
+   "ts": 1793019252.9823058,
+   "kind": "memory.lesson",
+   "actor": "engine",
+   "text": "lesson L002 (observation): e003 ended without a gain over the incumbent e000 on the dev split (dev delta +3.139e-08, margin 0.035). Train delta -2.683e-16."
+  },
+  {
+   "seq": 79,
+   "ts": 1793019252.9849887,
+   "kind": "budget.charged",
+   "actor": "engine",
+   "text": "wall charge 0.004067 sec"
+  },
+  {
+   "seq": 80,
+   "ts": 1793019252.9868565,
+   "kind": "budget.charged",
+   "actor": "engine",
+   "text": "wall charge 0.001868 sec"
+  },
+  {
+   "seq": 81,
+   "ts": 1793019253.0914717,
+   "kind": "budget.charged",
+   "actor": "judge",
+   "text": "llm call charged $0.00485 (muse-spark-1.3)"
+  },
+  {
+   "seq": 82,
+   "ts": 1793019253.097132,
+   "kind": "budget.charged",
+   "actor": "judge",
+   "text": "llm call charged $0.00511 (muse-spark-1.3)"
+  },
+  {
+   "seq": 83,
+   "ts": 1793019253.0999398,
+   "kind": "budget.charged",
+   "actor": "judge",
+   "text": "llm call charged $0.00672 (muse-spark-1.3)"
+  },
+  {
+   "seq": 84,
+   "ts": 1793019253.1031523,
+   "kind": "audit.window",
+   "actor": "auditor",
+   "text": "audit window 1-80: 14 checked, 3 judged"
+  },
+  {
+   "seq": 85,
+   "ts": 1793019253.148597,
+   "kind": "budget.charged",
+   "actor": "supervisor",
+   "text": "llm call charged $0.00383 (muse-spark-1.3)"
+  },
+  {
+   "seq": 86,
+   "ts": 1793019253.1497707,
+   "kind": "supervisor.turn",
+   "actor": "supervisor",
+   "text": "supervisor turn 3: get_state"
+  },
+  {
+   "seq": 87,
+   "ts": 1793019253.150184,
+   "kind": "budget.charged",
+   "actor": "engine",
+   "text": "wall charge 0.1633 sec"
+  },
+  {
+   "seq": 88,
+   "ts": 1793019253.1698701,
+   "kind": "budget.charged",
+   "actor": "supervisor",
+   "text": "llm call charged $0.00439 (muse-spark-1.3)"
+  },
+  {
+   "seq": 89,
+   "ts": 1793019253.1717896,
+   "kind": "supervisor.turn",
+   "actor": "supervisor",
+   "text": "supervisor turn 4: replicate"
+  },
+  {
+   "seq": 90,
+   "ts": 1793019253.1724918,
+   "kind": "budget.charged",
+   "actor": "engine",
+   "text": "wall charge 0.0223 sec"
+  },
+  {
+   "seq": 91,
+   "ts": 1793019253.1741993,
+   "kind": "budget.charged",
+   "actor": "engine",
+   "text": "replication charge 1 count"
+  },
+  {
+   "seq": 92,
+   "ts": 1793019253.1793232,
+   "kind": "experiment.run_started",
+   "actor": "engine",
+   "text": "e000 run 3 started (replication_baseline, seed 100)"
+  },
+  {
+   "seq": 93,
+   "ts": 1793019253.2528949,
+   "kind": "experiment.run_finished",
+   "actor": "engine",
+   "text": "e000 run 3 finished: ok, exit 0"
+  },
+  {
+   "seq": 94,
+   "ts": 1793019253.3202183,
+   "kind": "experiment.run_started",
+   "actor": "engine",
+   "text": "e000 run 4 started (replication_baseline, seed 101)"
+  },
+  {
+   "seq": 95,
+   "ts": 1793019253.4101174,
+   "kind": "experiment.run_finished",
+   "actor": "engine",
+   "text": "e000 run 4 finished: ok, exit 0"
+  },
+  {
+   "seq": 96,
+   "ts": 1793019253.4685159,
+   "kind": "experiment.run_started",
+   "actor": "engine",
+   "text": "e000 run 5 started (replication_baseline, seed 102)"
+  },
+  {
+   "seq": 97,
+   "ts": 1793019253.5412276,
+   "kind": "experiment.run_finished",
+   "actor": "engine",
+   "text": "e000 run 5 finished: ok, exit 0"
+  },
+  {
+   "seq": 98,
+   "ts": 1793019253.6110065,
+   "kind": "experiment.run_started",
+   "actor": "engine",
+   "text": "e000 run 6 started (replication_baseline, seed 103)"
+  },
+  {
+   "seq": 99,
+   "ts": 1793019253.7063284,
+   "kind": "experiment.run_finished",
+   "actor": "engine",
+   "text": "e000 run 6 finished: ok, exit 0"
+  },
+  {
+   "seq": 100,
+   "ts": 1793019253.7786305,
+   "kind": "experiment.run_started",
+   "actor": "engine",
+   "text": "e000 run 7 started (replication_baseline, seed 104)"
+  },
+  {
+   "seq": 101,
+   "ts": 1793019253.868364,
+   "kind": "experiment.run_finished",
+   "actor": "engine",
+   "text": "e000 run 7 finished: ok, exit 0"
+  },
+  {
+   "seq": 102,
+   "ts": 1793019253.9457405,
+   "kind": "experiment.graded",
+   "actor": "engine",
+   "text": "e000 graded on the sealed split (replication_baseline); valid=True"
+  },
+  {
+   "seq": 103,
+   "ts": 1793019253.9522943,
+   "kind": "experiment.run_started",
+   "actor": "engine",
+   "text": "e001 run 3 started (replication, seed 100)"
+  },
+  {
+   "seq": 104,
+   "ts": 1793019254.0339653,
+   "kind": "experiment.run_finished",
+   "actor": "engine",
+   "text": "e001 run 3 finished: ok, exit 0"
+  },
+  {
+   "seq": 105,
+   "ts": 1793019254.105768,
+   "kind": "experiment.run_started",
+   "actor": "engine",
+   "text": "e001 run 4 started (replication, seed 101)"
+  },
+  {
+   "seq": 106,
+   "ts": 1793019254.186777,
+   "kind": "experiment.run_finished",
+   "actor": "engine",
+   "text": "e001 run 4 finished: ok, exit 0"
+  },
+  {
+   "seq": 107,
+   "ts": 1793019254.2498808,
+   "kind": "experiment.run_started",
+   "actor": "engine",
+   "text": "e001 run 5 started (replication, seed 102)"
+  },
+  {
+   "seq": 108,
+   "ts": 1793019254.3220894,
+   "kind": "experiment.run_finished",
+   "actor": "engine",
+   "text": "e001 run 5 finished: ok, exit 0"
+  },
+  {
+   "seq": 109,
+   "ts": 1793019254.4030557,
+   "kind": "experiment.run_started",
+   "actor": "engine",
+   "text": "e001 run 6 started (replication, seed 103)"
+  },
+  {
+   "seq": 110,
+   "ts": 1793019254.4726772,
+   "kind": "experiment.run_finished",
+   "actor": "engine",
+   "text": "e001 run 6 finished: ok, exit 0"
+  },
+  {
+   "seq": 111,
+   "ts": 1793019254.5319552,
+   "kind": "experiment.run_started",
+   "actor": "engine",
+   "text": "e001 run 7 started (replication, seed 104)"
+  },
+  {
+   "seq": 112,
+   "ts": 1793019254.6311445,
+   "kind": "experiment.run_finished",
+   "actor": "engine",
+   "text": "e001 run 7 finished: ok, exit 0"
+  },
+  {
+   "seq": 113,
+   "ts": 1793019254.70497,
+   "kind": "experiment.graded",
+   "actor": "engine",
+   "text": "e001 graded on the sealed split (replication); valid=True"
+  },
+  {
+   "seq": 114,
+   "ts": 1793019254.7069542,
+   "kind": "experiment.recorded",
+   "actor": "engine",
+   "text": "e001 replication recorded: improved, replicated=True"
+  },
+  {
+   "seq": 115,
+   "ts": 1793019254.7085752,
+   "kind": "incumbent.promoted",
+   "actor": "engine",
+   "text": "e001 promoted to incumbent (replicated=True), dev score 0.8992"
+  },
+  {
+   "seq": 116,
+   "ts": 1793019254.711098,
+   "kind": "budget.charged",
+   "actor": "engine",
+   "text": "wall charge 1.539 sec"
+  },
+  {
+   "seq": 117,
+   "ts": 1793019254.712065,
+   "kind": "budget.charged",
+   "actor": "engine",
+   "text": "wall charge 0.0009713 sec"
+  },
+  {
+   "seq": 118,
+   "ts": 1793019254.7629533,
+   "kind": "budget.charged",
+   "actor": "judge",
+   "text": "llm call charged $0.00438 (muse-spark-1.3)"
+  },
+  {
+   "seq": 119,
+   "ts": 1793019254.7666056,
+   "kind": "budget.charged",
+   "actor": "judge",
+   "text": "llm call charged $0.00501 (muse-spark-1.3)"
+  },
+  {
+   "seq": 120,
+   "ts": 1793019254.7679288,
+   "kind": "audit.window",
+   "actor": "auditor",
+   "text": "audit window 81-117: 14 checked, 2 judged"
+  },
+  {
+   "seq": 121,
+   "ts": 1793019254.7929854,
+   "kind": "budget.charged",
+   "actor": "supervisor",
+   "text": "llm call charged $0.00444 (muse-spark-1.3)"
+  },
+  {
+   "seq": 122,
+   "ts": 1793019254.7946055,
+   "kind": "supervisor.turn",
+   "actor": "supervisor",
+   "text": "supervisor turn 5: get_state"
+  },
+  {
+   "seq": 123,
+   "ts": 1793019254.7952304,
+   "kind": "budget.charged",
+   "actor": "engine",
+   "text": "wall charge 0.08317 sec"
+  },
+  {
+   "seq": 124,
+   "ts": 1793019254.8184278,
+   "kind": "budget.charged",
+   "actor": "supervisor",
+   "text": "llm call charged $0.00502 (muse-spark-1.3)"
+  },
+  {
+   "seq": 125,
+   "ts": 1793019254.8197532,
+   "kind": "supervisor.turn",
+   "actor": "supervisor",
+   "text": "supervisor turn 6: reflect"
+  },
+  {
+   "seq": 126,
+   "ts": 1793019254.820321,
+   "kind": "budget.charged",
+   "actor": "engine",
+   "text": "wall charge 0.02509 sec"
+  },
+  {
+   "seq": 127,
+   "ts": 1793019254.843846,
+   "kind": "budget.charged",
+   "actor": "reflector",
+   "text": "llm call charged $0.00345 (muse-spark-1.3)"
+  },
+  {
+   "seq": 128,
+   "ts": 1793019254.8454046,
+   "kind": "memory.lesson",
+   "actor": "reflector",
+   "text": "lesson L003 (strategy): Models with a functional form matching the physical system extrapolate more safely than extra flexibility."
+  },
+  {
+   "seq": 129,
+   "ts": 1793019254.8457575,
+   "kind": "memory.reflection",
+   "actor": "reflector",
+   "text": "reflection (manual): 1 lessons consolidated, 1 pivots"
+  },
+  {
+   "seq": 130,
+   "ts": 1793019254.8674304,
+   "kind": "budget.charged",
+   "actor": "supervisor",
+   "text": "llm call charged $0.00511 (muse-spark-1.3)"
+  },
+  {
+   "seq": 131,
+   "ts": 1793019254.8685381,
+   "kind": "supervisor.turn",
+   "actor": "supervisor",
+   "text": "supervisor turn 7: get_state"
+  },
+  {
+   "seq": 132,
+   "ts": 1793019254.8688686,
+   "kind": "budget.charged",
+   "actor": "engine",
+   "text": "wall charge 0.04855 sec"
+  },
+  {
+   "seq": 133,
+   "ts": 1793019254.89278,
+   "kind": "budget.charged",
+   "actor": "supervisor",
+   "text": "llm call charged $0.00638 (muse-spark-1.3)"
+  },
+  {
+   "seq": 134,
+   "ts": 1793019254.8941183,
+   "kind": "supervisor.turn",
+   "actor": "supervisor",
+   "text": "supervisor turn 8: launch_experiments"
+  },
+  {
+   "seq": 135,
+   "ts": 1793019254.8949592,
+   "kind": "budget.charged",
+   "actor": "engine",
+   "text": "wall charge 0.02609 sec"
+  },
+  {
+   "seq": 136,
+   "ts": 1793019254.8975637,
+   "kind": "budget.charged",
+   "actor": "engine",
+   "text": "experiment charge 1 count"
+  },
+  {
+   "seq": 137,
+   "ts": 1793019254.898813,
+   "kind": "experiment.proposed",
+   "actor": "designer:D",
+   "text": "e004 proposed on lane D: The readings follow a damped oscillation exp(-g t) (A cos(w t) + B sin(w t)) + C with an unknown decay g and frequency w."
+  },
+  {
+   "seq": 138,
+   "ts": 1793019254.9077609,
+   "kind": "budget.charged",
+   "actor": "engine",
+   "text": "experiment charge 1 count"
+  },
+  {
+   "seq": 139,
+   "ts": 1793019254.9085245,
+   "kind": "experiment.proposed",
+   "actor": "designer:E",
+   "text": "e005 proposed on lane E: Choosing the polynomial degree and ridge strength by backtesting on the latest part of the training window beats a fixed degree."
+  },
+  {
+   "seq": 140,
+   "ts": 1793019254.9605515,
+   "kind": "budget.charged",
+   "actor": "designer:E",
+   "text": "llm call charged $0.00227 (muse-spark-1.3)"
+  },
+  {
+   "seq": 141,
+   "ts": 1793019254.9632175,
+   "kind": "experiment.workspace_ready",
+   "actor": "engine",
+   "text": "e005 workspace ready"
+  },
+  {
+   "seq": 142,
+   "ts": 1793019254.9669912,
+   "kind": "budget.charged",
+   "actor": "designer:D",
+   "text": "llm call charged $0.00226 (muse-spark-1.3)"
+  },
+  {
+   "seq": 143,
+   "ts": 1793019254.9715116,
+   "kind": "experiment.workspace_ready",
+   "actor": "engine",
+   "text": "e004 workspace ready"
+  },
+  {
+   "seq": 144,
+   "ts": 1793019255.0205245,
+   "kind": "budget.charged",
+   "actor": "implementer:D",
+   "text": "llm call charged $0.00221 (muse-spark-1.3) for e004"
+  },
+  {
+   "seq": 145,
+   "ts": 1793019255.0224345,
+   "kind": "budget.charged",
+   "actor": "implementer:E",
+   "text": "llm call charged $0.00222 (muse-spark-1.3) for e005"
+  },
+  {
+   "seq": 146,
+   "ts": 1793019255.066751,
+   "kind": "budget.charged",
+   "actor": "implementer:D",
+   "text": "llm call charged $0.0044 (muse-spark-1.3) for e004"
+  },
+  {
+   "seq": 147,
+   "ts": 1793019255.073003,
+   "kind": "budget.charged",
+   "actor": "implementer:E",
+   "text": "llm call charged $0.00386 (muse-spark-1.3) for e005"
+  },
+  {
+   "seq": 148,
+   "ts": 1793019255.118605,
+   "kind": "budget.charged",
+   "actor": "implementer:D",
+   "text": "llm call charged $0.00321 (muse-spark-1.3) for e004"
+  },
+  {
+   "seq": 149,
+   "ts": 1793019255.1214986,
+   "kind": "experiment.implemented",
+   "actor": "implementer:D",
+   "text": "e004 implemented by patch-worker[muse-spark-1.3]: M model.py (+48/-4 lines)"
+  },
+  {
+   "seq": 150,
+   "ts": 1793019255.127949,
+   "kind": "experiment.run_started",
+   "actor": "engine",
+   "text": "e004 run 0 started (primary, seed 0)"
+  },
+  {
+   "seq": 151,
+   "ts": 1793019255.1311002,
+   "kind": "budget.charged",
+   "actor": "implementer:E",
+   "text": "llm call charged $0.00305 (muse-spark-1.3) for e005"
+  },
+  {
+   "seq": 152,
+   "ts": 1793019255.1337955,
+   "kind": "experiment.implemented",
+   "actor": "implementer:E",
+   "text": "e005 implemented by patch-worker[muse-spark-1.3]: M model.py (+29/-2 lines)"
+  },
+  {
+   "seq": 153,
+   "ts": 1793019255.1375306,
+   "kind": "experiment.run_started",
+   "actor": "engine",
+   "text": "e005 run 0 started (primary, seed 0)"
+  },
+  {
+   "seq": 154,
+   "ts": 1793019255.2565498,
+   "kind": "experiment.run_finished",
+   "actor": "engine",
+   "text": "e005 run 0 finished: ok, exit 0"
+  },
+  {
+   "seq": 155,
+   "ts": 1793019255.3233278,
+   "kind": "experiment.run_started",
+   "actor": "engine",
+   "text": "e005 run 1 started (primary, seed 1)"
+  },
+  {
+   "seq": 156,
+   "ts": 1793019255.3960805,
+   "kind": "experiment.run_finished",
+   "actor": "engine",
+   "text": "e004 run 0 finished: ok, exit 0"
+  },
+  {
+   "seq": 157,
+   "ts": 1793019255.4107208,
+   "kind": "experiment.run_finished",
+   "actor": "engine",
+   "text": "e005 run 1 finished: ok, exit 0"
+  },
+  {
+   "seq": 158,
+   "ts": 1793019255.4906914,
+   "kind": "experiment.run_started",
+   "actor": "engine",
+   "text": "e004 run 1 started (primary, seed 1)"
+  },
+  {
+   "seq": 159,
+   "ts": 1793019255.4931479,
+   "kind": "experiment.run_started",
+   "actor": "engine",
+   "text": "e005 run 2 started (primary, seed 2)"
+  },
+  {
+   "seq": 160,
+   "ts": 1793019255.5823069,
+   "kind": "experiment.run_finished",
+   "actor": "engine",
+   "text": "e005 run 2 finished: ok, exit 0"
+  },
+  {
+   "seq": 161,
+   "ts": 1793019255.6761892,
+   "kind": "experiment.graded",
+   "actor": "engine",
+   "text": "e005 graded on dev (primary): score 0.4649, valid=True"
+  },
+  {
+   "seq": 162,
+   "ts": 1793019255.7019088,
+   "kind": "budget.charged",
+   "actor": "reviewer",
+   "text": "llm call charged $0.00496 (muse-spark-1.3) for e005"
+  },
+  {
+   "seq": 163,
+   "ts": 1793019255.7028623,
+   "kind": "experiment.reviewed",
+   "actor": "reviewer:E",
+   "text": "e005 reviewed by reviewer[muse-spark-1.3]: accept (0 findings)"
+  },
+  {
+   "seq": 164,
+   "ts": 1793019255.7315595,
+   "kind": "budget.charged",
+   "actor": "reviewer_hard",
+   "text": "llm call charged $0.0253 (muse-wonder-1.0) for e005"
+  },
+  {
+   "seq": 165,
+   "ts": 1793019255.7332764,
+   "kind": "experiment.reviewed",
+   "actor": "reviewer:E",
+   "text": "e005 reviewed by reviewer-hard[muse-wonder-1.0]: accept (0 findings)"
+  },
+  {
+   "seq": 166,
+   "ts": 1793019255.734889,
+   "kind": "experiment.recorded",
+   "actor": "engine",
+   "text": "e005 recorded: improved, dev delta 0.4343"
+  },
+  {
+   "seq": 167,
+   "ts": 1793019255.7375994,
+   "kind": "budget.charged",
+   "actor": "engine",
+   "text": "wall charge 0.8426 sec"
+  },
+  {
+   "seq": 168,
+   "ts": 1793019255.8403354,
+   "kind": "experiment.run_finished",
+   "actor": "engine",
+   "text": "e004 run 1 finished: ok, exit 0"
+  },
+  {
+   "seq": 169,
+   "ts": 1793019255.9096568,
+   "kind": "experiment.run_started",
+   "actor": "engine",
+   "text": "e004 run 2 started (primary, seed 2)"
+  },
+  {
+   "seq": 170,
+   "ts": 1793019256.2872646,
+   "kind": "experiment.run_finished",
+   "actor": "engine",
+   "text": "e004 run 2 finished: ok, exit 0"
+  },
+  {
+   "seq": 171,
+   "ts": 1793019256.3492517,
+   "kind": "experiment.graded",
+   "actor": "engine",
+   "text": "e004 graded on dev (primary): score 0.06147, valid=True"
+  },
+  {
+   "seq": 172,
+   "ts": 1793019256.3847315,
+   "kind": "budget.charged",
+   "actor": "reviewer",
+   "text": "llm call charged $0.00513 (muse-spark-1.3) for e004"
+  },
+  {
+   "seq": 173,
+   "ts": 1793019256.385954,
+   "kind": "experiment.reviewed",
+   "actor": "reviewer:D",
+   "text": "e004 reviewed by reviewer[muse-spark-1.3]: accept (0 findings)"
+  },
+  {
+   "seq": 174,
+   "ts": 1793019256.4199545,
+   "kind": "budget.charged",
+   "actor": "reviewer_hard",
+   "text": "llm call charged $0.0214 (muse-wonder-1.0) for e004"
+  },
+  {
+   "seq": 175,
+   "ts": 1793019256.4212494,
+   "kind": "experiment.reviewed",
+   "actor": "reviewer:D",
+   "text": "e004 reviewed by reviewer-hard[muse-wonder-1.0]: accept (0 findings)"
+  },
+  {
+   "seq": 176,
+   "ts": 1793019256.423112,
+   "kind": "experiment.recorded",
+   "actor": "engine",
+   "text": "e004 recorded: improved, dev delta 0.8377"
+  },
+  {
+   "seq": 177,
+   "ts": 1793019256.4265707,
+   "kind": "budget.charged",
+   "actor": "engine",
+   "text": "wall charge 0.689 sec"
+  },
+  {
+   "seq": 178,
+   "ts": 1793019256.4286993,
+   "kind": "budget.charged",
+   "actor": "engine",
+   "text": "wall charge 0.002126 sec"
+  },
+  {
+   "seq": 179,
+   "ts": 1793019256.5135846,
+   "kind": "budget.charged",
+   "actor": "judge",
+   "text": "llm call charged $0.00452 (muse-spark-1.3)"
+  },
+  {
+   "seq": 180,
+   "ts": 1793019256.5468397,
+   "kind": "budget.charged",
+   "actor": "judge",
+   "text": "llm call charged $0.00458 (muse-spark-1.3)"
+  },
+  {
+   "seq": 181,
+   "ts": 1793019256.5522327,
+   "kind": "budget.charged",
+   "actor": "judge",
+   "text": "llm call charged $0.00584 (muse-spark-1.3)"
+  },
+  {
+   "seq": 182,
+   "ts": 1793019256.554383,
+   "kind": "audit.window",
+   "actor": "auditor",
+   "text": "audit window 118-178: 14 checked, 3 judged"
+  },
+  {
+   "seq": 183,
+   "ts": 1793019256.5877364,
+   "kind": "budget.charged",
+   "actor": "supervisor",
+   "text": "llm call charged $0.00613 (muse-spark-1.3)"
+  },
+  {
+   "seq": 184,
+   "ts": 1793019256.5901544,
+   "kind": "supervisor.turn",
+   "actor": "supervisor",
+   "text": "supervisor turn 9: get_state"
+  },
+  {
+   "seq": 185,
+   "ts": 1793019256.591581,
+   "kind": "budget.charged",
+   "actor": "engine",
+   "text": "wall charge 0.1629 sec"
+  },
+  {
+   "seq": 186,
+   "ts": 1793019256.6304953,
+   "kind": "budget.charged",
+   "actor": "supervisor",
+   "text": "llm call charged $0.00684 (muse-spark-1.3)"
+  },
+  {
+   "seq": 187,
+   "ts": 1793019256.6333196,
+   "kind": "supervisor.turn",
+   "actor": "supervisor",
+   "text": "supervisor turn 10: replicate"
+  },
+  {
+   "seq": 188,
+   "ts": 1793019256.6344514,
+   "kind": "budget.charged",
+   "actor": "engine",
+   "text": "wall charge 0.04287 sec"
+  },
+  {
+   "seq": 189,
+   "ts": 1793019256.6380126,
+   "kind": "budget.charged",
+   "actor": "engine",
+   "text": "replication charge 1 count"
+  },
+  {
+   "seq": 190,
+   "ts": 1793019256.646242,
+   "kind": "experiment.run_started",
+   "actor": "engine",
+   "text": "e004 run 3 started (replication, seed 100)"
+  },
+  {
+   "seq": 191,
+   "ts": 1793019256.9047472,
+   "kind": "experiment.run_finished",
+   "actor": "engine",
+   "text": "e004 run 3 finished: ok, exit 0"
+  },
+  {
+   "seq": 192,
+   "ts": 1793019256.9800115,
+   "kind": "experiment.run_started",
+   "actor": "engine",
+   "text": "e004 run 4 started (replication, seed 101)"
+  },
+  {
+   "seq": 193,
+   "ts": 1793019257.2895827,
+   "kind": "experiment.run_finished",
+   "actor": "engine",
+   "text": "e004 run 4 finished: ok, exit 0"
+  },
+  {
+   "seq": 194,
+   "ts": 1793019257.3566017,
+   "kind": "experiment.run_started",
+   "actor": "engine",
+   "text": "e004 run 5 started (replication, seed 102)"
+  },
+  {
+   "seq": 195,
+   "ts": 1793019257.6110923,
+   "kind": "experiment.run_finished",
+   "actor": "engine",
+   "text": "e004 run 5 finished: ok, exit 0"
+  },
+  {
+   "seq": 196,
+   "ts": 1793019257.6696765,
+   "kind": "experiment.run_started",
+   "actor": "engine",
+   "text": "e004 run 6 started (replication, seed 103)"
+  },
+  {
+   "seq": 197,
+   "ts": 1793019257.9184315,
+   "kind": "experiment.run_finished",
+   "actor": "engine",
+   "text": "e004 run 6 finished: ok, exit 0"
+  },
+  {
+   "seq": 198,
+   "ts": 1793019257.9803445,
+   "kind": "experiment.run_started",
+   "actor": "engine",
+   "text": "e004 run 7 started (replication, seed 104)"
+  },
+  {
+   "seq": 199,
+   "ts": 1793019258.235849,
+   "kind": "experiment.run_finished",
+   "actor": "engine",
+   "text": "e004 run 7 finished: ok, exit 0"
+  },
+  {
+   "seq": 200,
+   "ts": 1793019258.307561,
+   "kind": "experiment.graded",
+   "actor": "engine",
+   "text": "e004 graded on the sealed split (replication); valid=True"
+  },
+  {
+   "seq": 201,
+   "ts": 1793019258.3099444,
+   "kind": "experiment.recorded",
+   "actor": "engine",
+   "text": "e004 replication recorded: improved, replicated=True"
+  },
+  {
+   "seq": 202,
+   "ts": 1793019258.312632,
+   "kind": "incumbent.promoted",
+   "actor": "engine",
+   "text": "e004 promoted to incumbent (replicated=True), dev score 0.06147"
+  },
+  {
+   "seq": 203,
+   "ts": 1793019258.316356,
+   "kind": "budget.charged",
+   "actor": "engine",
+   "text": "wall charge 1.682 sec"
+  },
+  {
+   "seq": 204,
+   "ts": 1793019258.3176892,
+   "kind": "budget.charged",
+   "actor": "engine",
+   "text": "wall charge 0.001337 sec"
+  },
+  {
+   "seq": 205,
+   "ts": 1793019258.3668551,
+   "kind": "budget.charged",
+   "actor": "judge",
+   "text": "llm call charged $0.00476 (muse-spark-1.3)"
+  },
+  {
+   "seq": 206,
+   "ts": 1793019258.3812695,
+   "kind": "budget.charged",
+   "actor": "judge",
+   "text": "llm call charged $0.00445 (muse-spark-1.3)"
+  },
+  {
+   "seq": 207,
+   "ts": 1793019258.3825521,
+   "kind": "audit.window",
+   "actor": "auditor",
+   "text": "audit window 179-204: 14 checked, 2 judged"
+  },
+  {
+   "seq": 208,
+   "ts": 1793019258.406013,
+   "kind": "budget.charged",
+   "actor": "supervisor",
+   "text": "llm call charged $0.00668 (muse-spark-1.3)"
+  },
+  {
+   "seq": 209,
+   "ts": 1793019258.4079092,
+   "kind": "supervisor.turn",
+   "actor": "supervisor",
+   "text": "supervisor turn 11: get_state"
+  },
+  {
+   "seq": 210,
+   "ts": 1793019258.40875,
+   "kind": "budget.charged",
+   "actor": "engine",
+   "text": "wall charge 0.09106 sec"
+  },
+  {
+   "seq": 211,
+   "ts": 1793019258.4335623,
+   "kind": "budget.charged",
+   "actor": "supervisor",
+   "text": "llm call charged $0.00774 (muse-spark-1.3)"
+  },
+  {
+   "seq": 212,
+   "ts": 1793019258.4358156,
+   "kind": "supervisor.turn",
+   "actor": "supervisor",
+   "text": "supervisor turn 12: finish"
+  },
+  {
+   "seq": 213,
+   "ts": 1793019258.436619,
+   "kind": "budget.charged",
+   "actor": "engine",
+   "text": "wall charge 0.02787 sec"
+  },
+  {
+   "seq": 214,
+   "ts": 1793019258.437544,
+   "kind": "supervisor.finish_requested",
+   "actor": "supervisor",
+   "text": "finish requested, citing 0 claims"
+  },
+  {
+   "seq": 215,
+   "ts": 1793019258.529414,
+   "kind": "budget.charged",
+   "actor": "auditor_final",
+   "text": "llm call charged $0.021 (muse-wonder-1.0)"
+  },
+  {
+   "seq": 216,
+   "ts": 1793019258.5688922,
+   "kind": "budget.charged",
+   "actor": "auditor_final",
+   "text": "llm call charged $0.0223 (muse-wonder-1.0)"
+  },
+  {
+   "seq": 217,
+   "ts": 1793019258.5739722,
+   "kind": "budget.charged",
+   "actor": "auditor_final",
+   "text": "llm call charged $0.0282 (muse-wonder-1.0)"
+  },
+  {
+   "seq": 218,
+   "ts": 1793019258.5762231,
+   "kind": "budget.charged",
+   "actor": "auditor_final",
+   "text": "llm call charged $0.0241 (muse-wonder-1.0)"
+  },
+  {
+   "seq": 219,
+   "ts": 1793019258.5776176,
+   "kind": "audit.window",
+   "actor": "auditor",
+   "text": "audit window 1-214: 14 checked, 4 judged"
+  },
+  {
+   "seq": 220,
+   "ts": 1793019258.5801287,
+   "kind": "budget.charged",
+   "actor": "engine",
+   "text": "wall charge 0.1435 sec"
+  },
+  {
+   "seq": 221,
+   "ts": 1793019258.5813696,
+   "kind": "run.finished",
+   "actor": "engine",
+   "text": "run finished: supervisor_finish, verdict success"
+  }
+ ],
+ "parallel": {
+  "wall_sec": 2.472,
+  "serial_sec": 5.143,
+  "speedup": 2.08,
+  "max_parallel": 3,
+  "reason": null
+ },
+ "fault_injection": {
+  "planted": [],
+  "detected": [],
+  "missed": [],
+  "not_evaluated": [],
+  "false_positives": [],
+  "explained": [],
+  "recall": {
+   "caught": 0,
+   "scored": 0,
+   "value": null,
+   "not_evaluated": 0,
+   "negatives_ok": 0,
+   "negatives_total": 0
+  }
+ },
+ "headline": {
+  "claims_made": 0,
+  "claims_accepted": 0,
+  "claims_refused": 0,
+  "unreplicated_blocked": 1,
+  "speedup": 2.08,
+  "cost_usd": 0.337159,
+  "cost_known": true,
+  "llm_calls": 54,
+  "cost_attributed_usd": 0.111561,
+  "cost_unattributed_usd": 0.225598,
+  "promoted": 2,
+  "cost_per_improvement_usd": 0.168579
+ },
+ "ledger": {
+  "events": 221,
+  "last_seq": 221,
+  "chain_ok": true,
+  "bad_seq": null,
+  "head_anchor": "221:716e5225a4d7a6ca"
+ },
+ "replay": null
+}

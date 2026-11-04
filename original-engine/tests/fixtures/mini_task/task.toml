@@ -1,0 +1,27 @@
+name = "mini-curve"
+description = "Test fixture: learn a noisy one-dimensional curve with the standard library only."
+brief = """Fit a model that predicts y from x. Edit model.py only: fit(xs, ys) receives the training rows and returns a
+function mapping x to a prediction. run.py trains on the provided data and predicts every row of eval_inputs.csv.
+The score is the root-mean-square error on held-out rows (lower is better). data.py, run.py and the CSV files are read-only."""
+objective = "minimize"
+primary_metric = "heldout_rmse"
+train_metric = "train_rmse"
+
+[workspace]
+editable = ["model.py"]
+scratch = ["outputs/**"]
+
+[run]
+cmd = ["python3", "run.py"]
+timeout_sec = 20
+
+[grade]
+cmd = ["python3", "{task_dir}/trusted/grade.py", "--workspace", "{workspace}", "--seed", "{seed}", "--split", "{split}"]
+timeout_sec = 20
+seeds = [0, 1, 2]
+replication_seeds = [100, 101, 102, 103, 104]
+noise_margin = 0.02
+sigma_floor = 0.0
+sealed = true
+requires = []
+stall_sec = 10

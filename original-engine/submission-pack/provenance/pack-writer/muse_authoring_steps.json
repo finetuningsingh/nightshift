@@ -1,0 +1,87 @@
+[
+ {
+  "session": "starter-author",
+  "step": "1",
+  "prompt_file": "step1_prompt.md",
+  "prompt_sha256": "c043b05fc8bab3f76ba4c43b085b74a3808bfc3b76cda316b635565380022545",
+  "model": "muse-wonder-full-1.0",
+  "muse_version": "Muse Code 1.4.14 (1.4.14-R7309.1)",
+  "host": "ankit-mac",
+  "started_utc": "2026-11-04T01:31:22.001727+00:00",
+  "finished_utc": "2026-11-04T01:31:22.051784+00:00",
+  "exit_code": 1,
+  "events_file": "step1.attempt0.events.jsonl",
+  "events_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "note": "driver bug (relative prompt path); the model was never called",
+  "usage": null
+ },
+ {
+  "session": "starter-author",
+  "step": "1",
+  "prompt_file": "step1_prompt.md",
+  "prompt_sha256": "c043b05fc8bab3f76ba4c43b085b74a3808bfc3b76cda316b635565380022545",
+  "model": "muse-wonder-full-1.0",
+  "muse_version": "Muse Code 1.4.14 (1.4.14-R7309.1)",
+  "host": "ankit-mac",
+  "started_utc": "2026-11-04T01:31:39.677028+00:00",
+  "finished_utc": "2026-11-04T01:39:30.451033+00:00",
+  "exit_code": 0,
+  "events_file": "step1.events.jsonl",
+  "events_sha256": "e9fb98fa5d14be45573d03bdcbaa7074e6c8387480fd57ce04e94b64c36898f8",
+  "note": null,
+  "usage": {
+   "input_tokens": 1667609,
+   "cached_tokens": 1577672,
+   "output_tokens": 34407,
+   "reasoning_tokens": 9357,
+   "calls": 27,
+   "weekly_used_percent_after": 1
+  }
+ },
+ {
+  "session": "starter-author",
+  "step": "2",
+  "prompt_file": "step2_prompt.md",
+  "prompt_sha256": "e98ef22bea14edab3f4ab5df7ea0367a963e90353d9729d848dba5a01301d2e5",
+  "model": "muse-wonder-full-1.0",
+  "muse_version": "Muse Code 1.4.14 (1.4.14-R7309.1)",
+  "host": "ankit-mac",
+  "started_utc": "2026-11-04T01:50:21.823005+00:00",
+  "finished_utc": "2026-11-04T01:56:32.136083+00:00",
+  "exit_code": 0,
+  "events_file": "step2.events.jsonl",
+  "events_sha256": "e420ff6ba326b25d8a80be63b82fcb9f7826c428c17fb60f0b08d50ed97a7ace",
+  "note": null,
+  "usage": {
+   "input_tokens": 1832092,
+   "cached_tokens": 1767728,
+   "output_tokens": 22684,
+   "reasoning_tokens": 8466,
+   "calls": 28,
+   "weekly_used_percent_after": 2
+  }
+ },
+ {
+  "session": "submission-pack-writer",
+  "step": "1",
+  "prompt_file": "step1_prompt.md",
+  "prompt_sha256": "7b207a6e762ef72a96aadccc64732a1992c51ebf629fbca932036e9e16ec17ff",
+  "model": "muse-wonder-full-1.0",
+  "muse_version": "Muse Code 1.4.14 (1.4.14-R7309.1)",
+  "host": "ankit-mac",
+  "started_utc": "2026-11-04T01:33:23.772260+00:00",
+  "finished_utc": "2026-11-04T01:43:46.027215+00:00",
+  "exit_code": 0,
+  "events_file": "step1.events.jsonl",
+  "events_sha256": "245f0e4db16bf47fd3b916c0a9434830ebd49436762d4f1480bddd2f9f08ffec",
+  "note": null,
+  "usage": {
+   "input_tokens": 1792724,
+   "cached_tokens": 1710792,
+   "output_tokens": 50505,
+   "reasoning_tokens": 3436,
+   "calls": 26,
+   "weekly_used_percent_after": 1
+  }
+ }
+]

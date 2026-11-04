@@ -1,0 +1,53 @@
+# law-discovery: the flagship Nightshift demo task. Standard library only, so it runs on any laptop.
+#
+# Timing (measured on a laptop, one run = one seed): baseline, quadratic and the other polynomial models take about
+# 0.05 s; the damped-oscillation grid search (the slowest honest model) about 0.3 s. A hung run is killed by the
+# stall watchdog after stall_sec = 3 s of silence (about 3 x 3 s = 9 s for a three-seed hang experiment), so the whole
+# scripted demo (11 experiments, 3 replications) stays well under a minute. The run timeout is a backstop only.
+name = "law-discovery"
+description = "Recover the law of a damped oscillator from noisy measurements and predict what it does later."
+brief = """Recover the law of a damped oscillator from noisy measurements, then predict what it does later.
+
+A mass on a spring with friction is measured repeatedly between time 0 and time 4. Each reading y is the true
+displacement plus measurement noise of about 0.05. The task is extrapolation: predict the readings that will be
+taken later, at times between 4 and 8. Those later readings are not shown to you.
+
+Edit model.py only. fit_predict(train, query_times) receives the training readings as a list of (t, y) pairs and a
+list of times to predict (the later times first, then the times of the training window). It returns one float per
+query time, in the same order. The starting model is an ordinary least-squares straight line.
+
+The score is heldout_rmse: the root-mean-square error between your predictions at the later times and the readings
+that were actually taken there. Lower is better. train_rmse (the error on the training window) is reported too:
+a model that fits the past well but extrapolates badly is not an improvement.
+
+Rules: pure Python standard library only (linalg.py in the workspace has small least-squares helpers). run.py,
+data.py, linalg.py and the CSV files are read-only; changing any of them invalidates the experiment. Do not read
+anything outside the workspace. Keep a run under a few seconds. Only a lower heldout_rmse counts as progress; claims
+without a measured result do not."""
+objective = "minimize"
+primary_metric = "heldout_rmse"
+train_metric = "train_rmse"
+
+[workspace]
+editable = ["model.py"]
+scratch = ["outputs/**"]
+
+[run]
+cmd = ["python3", "run.py"]
+timeout_sec = 10
+
+[grade]
+cmd = ["python3", "{task_dir}/trusted/grade.py", "--workspace", "{workspace}", "--seed", "{seed}", "--split", "{split}"]
+timeout_sec = 10
+seeds = [0, 1, 2]
+replication_seeds = [100, 101, 102, 103, 104]
+# The unmodified baseline's per-seed std is about 0.036 to 0.040 on both splits (0.0363 dev and 0.0380 sealed over 60 seeds;
+# 0.0385 and 0.0401 over 200 seeds; `nightshift tasks` estimates it over 20 seeds, good to about +-16%, and printed 0.0335 and
+# 0.0293). noise_margin is set to about 1x that. sigma_floor MUST be about that std too: the statistical prior of every comparison is the baseline's own std
+# on the 3 dev seeds, a very noisy estimate (5/50/95% quantiles 0.009/0.030/0.064 for a true 0.036), and with a floor below it
+# the prior is inert and the dev gate for a noisy candidate is only a 5% one-sided t-test on 3 seeds (docs/NULL_BENCHMARK.md).
+noise_margin = 0.035
+sigma_floor = 0.036
+sealed = true
+requires = []
+stall_sec = 3

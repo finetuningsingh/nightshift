@@ -1,0 +1,4 @@
+{
+  "0": {"uuid": "od510vbf", "status": "RUNNING", "createdAt": "2026-11-01T03:41:28Z", "storage": 100, "cpuCores": "8", "memory": "64", "template": "base", "gpuType": "A100XL", "numGpus": "1", "promoted": false, "k8s": false, "provisioningTime": "75", "sshPublicKeys": ["ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFOREIGNKEYFOREIGNKEYFOREIGNKEYFOREIGNKEYxx other@project"], "ip": "203.0.113.10", "port": 31022},
+  "1": {"uuid": "ab12cd34", "status": "RUNNING", "createdAt": "2026-11-01T05:00:00Z", "storage": 300, "cpuCores": "12", "memory": "96", "template": "base", "gpuType": "A100XL", "numGpus": "1", "promoted": false, "k8s": false, "provisioningTime": "80", "sshPublicKeys": ["ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOURKEYOURKEYOURKEYOURKEYOURKEYOURKEYOURKEYxx lab-test"], "ip": "203.0.113.11", "port": 31023}
+}

@@ -1,0 +1,2041 @@
+{
+ "what": "Sanitized public summary of the recorded Glimmer Lab study (lab root lab2p, 2026-11-04). Built from the private hash-chained ledgers by whitelisting fields; free-text decision records are omitted. Every event keeps its seq, hash and prev_hash, so anyone holding the private ledger can check this summary against it.",
+ "generated_utc": "2026-11-04T22:43:00Z",
+ "main_ledger_events": [
+  {
+   "seq": 1,
+   "kind": "lab.initialized",
+   "actor": "coordinator",
+   "ts": 1793778287.282366,
+   "hash": "ed9909b95326d1b22c833210bb7b1f8ec86d7bb05c0a11ea8b51b6b130627d27",
+   "prev_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+   "data": {
+    "lab_id": "glimmer-lab-2loop-e",
+    "layout_version": 1
+   }
+  },
+  {
+   "seq": 2,
+   "kind": "lab.gate_recorded",
+   "actor": "coordinator",
+   "ts": 1793778287.357785,
+   "hash": "d6d89062d67dfa1c39e9c3cd89ff7d044c0d5fa48ec4d9702e8fef9ec788dc5f",
+   "prev_hash": "ed9909b95326d1b22c833210bb7b1f8ec86d7bb05c0a11ea8b51b6b130627d27",
+   "data": {}
+  },
+  {
+   "seq": 3,
+   "kind": "lab.pack_committed",
+   "actor": "coordinator",
+   "ts": 1793778287.65386,
+   "hash": "1b4068f5cde529c47f435583d285bd6e0c8e7638180bb883e1f57c7a3a543d59",
+   "prev_hash": "d6d89062d67dfa1c39e9c3cd89ff7d044c0d5fa48ec4d9702e8fef9ec788dc5f",
+   "data": {
+    "pack": {
+     "commit": "9a153aebc6a584960e1b1f84b4574add5cfcd962",
+     "repo_path": "packs/pack.git"
+    }
+   }
+  },
+  {
+   "seq": 4,
+   "kind": "lab.assignments_frozen",
+   "actor": "coordinator",
+   "ts": 1793778322.447828,
+   "hash": "cd5ed55403ebdf888504d93ccdef3ed5b8840c4067c3c2c41128e8d07945f715",
+   "prev_hash": "1b4068f5cde529c47f435583d285bd6e0c8e7638180bb883e1f57c7a3a543d59",
+   "data": {
+    "file": {
+     "path": "frozen/assignments.json",
+     "sha256": "df2ac5a25b08c8eddf15b6b025897d007267a119417beae9e76e29b6f5dd58e5",
+     "size_bytes": 1608
+    }
+   }
+  },
+  {
+   "seq": 5,
+   "kind": "lab.budget_frozen",
+   "actor": "coordinator",
+   "ts": 1793778322.550045,
+   "hash": "fbcbd56552e21c2b4d27397d855a1ed4796936f36db4441b3807f42ca025fe88",
+   "prev_hash": "cd5ed55403ebdf888504d93ccdef3ed5b8840c4067c3c2c41128e8d07945f715",
+   "data": {
+    "file": {
+     "path": "frozen/budget.json",
+     "sha256": "12c3cc9afb93835886fd5b705edf4c8bd1cbd4987e210d391087ca398f5c3685",
+     "size_bytes": 126
+    }
+   }
+  },
+  {
+   "seq": 6,
+   "kind": "lab.spread_planned",
+   "actor": "coordinator",
+   "ts": 1793778322.674214,
+   "hash": "6722355ab752ec14ea30083829ac466de5ab09e05c73cbd07a62d767ed4f304a",
+   "prev_hash": "fbcbd56552e21c2b4d27397d855a1ed4796936f36db4441b3807f42ca025fe88",
+   "data": {}
+  },
+  {
+   "seq": 7,
+   "kind": "lab.trial_started",
+   "actor": "coordinator",
+   "ts": 1793778330.52015,
+   "hash": "cc5fa078fd90079a42d27b1c4c87725dcedc4521f2ad9778ef844425ccf70061",
+   "prev_hash": "6722355ab752ec14ea30083829ac466de5ab09e05c73cbd07a62d767ed4f304a",
+   "data": {
+    "trial_id": "t-0001",
+    "phase": "search",
+    "arm": null,
+    "assignment_id": "E1",
+    "pack_version": "v0",
+    "pack": {
+     "commit": "9a153aebc6a584960e1b1f84b4574add5cfcd962",
+     "repo_path": "packs/pack.git"
+    },
+    "seed": 0,
+    "base": {
+     "repo_id": "meta-models/Muse-Glimmer-30B",
+     "revision": "a4e59da52a7bc87ae7251dd5545c0dd437c44b68"
+    },
+    "budget": {
+     "dollars": 1.5,
+     "gpu_minutes": 72.0,
+     "researcher_tokens": 50000000,
+     "schema_version": 1,
+     "wall_seconds": 4800.0
+    },
+    "data_revisions": {
+     "dev_sha256": "03e6aacb5c660091e19a08cfe2e9e5d55d897c471d22ddb888af5321754c8ab2",
+     "selection_sha256": "afa477215bdcdedc5af0d977344066b04ed6d7b0499ccb5410c4e4771cfb4d51",
+     "train_sha256": "3656f99dc1b3dd27c699268708b0eb2250bbcb257fd8df4244b2377228fbc9bd"
+    }
+   }
+  },
+  {
+   "seq": 8,
+   "kind": "lab.trial_finished",
+   "actor": "coordinator",
+   "ts": 1793782692.070976,
+   "hash": "89874be09a7f30eb87fd961c08e6a303bee862268acaf064aeba050d7f7618b3",
+   "prev_hash": "cc5fa078fd90079a42d27b1c4c87725dcedc4521f2ad9778ef844425ccf70061",
+   "data": {
+    "trial_id": "t-0001",
+    "status": "no_submission",
+    "failure": "no submitted attempt names an adapter produced by this trial's own accepted jobs",
+    "selection_score_id": null,
+    "adapter_files": [],
+    "budget_used": {
+     "gpu_minutes": 51.0,
+     "gpu_usd": 0.9520000000000013,
+     "researcher_tokens": 0,
+     "researcher_usd": 0.0,
+     "wall_seconds": 4361.547692060471
+    },
+    "researcher_runtime": {
+     "runtime": "coral+muse_code+docker",
+     "model": "muse-spark-1.3",
+     "researcher_model_configured": "muse-spark-1.3",
+     "muse_version": "1.4.14-R7309.1",
+     "coral_commit": "0123dfb939b35228cf2c1fde224cd0561e727408",
+     "container_image": "glimmer-researcher:cli-1"
+    }
+   }
+  },
+  {
+   "seq": 9,
+   "kind": "lab.trial_started",
+   "actor": "coordinator",
+   "ts": 1793782750.866165,
+   "hash": "f3890e13e1e65f3be991216b118bd2ad95662eef83961e8345785289b83aaa25",
+   "prev_hash": "89874be09a7f30eb87fd961c08e6a303bee862268acaf064aeba050d7f7618b3",
+   "data": {
+    "trial_id": "t-0002",
+    "phase": "search",
+    "arm": null,
+    "assignment_id": "E1",
+    "pack_version": "v0",
+    "pack": {
+     "commit": "9a153aebc6a584960e1b1f84b4574add5cfcd962",
+     "repo_path": "packs/pack.git"
+    },
+    "seed": 1,
+    "base": {
+     "repo_id": "meta-models/Muse-Glimmer-30B",
+     "revision": "a4e59da52a7bc87ae7251dd5545c0dd437c44b68"
+    },
+    "budget": {
+     "dollars": 1.5,
+     "gpu_minutes": 72.0,
+     "researcher_tokens": 50000000,
+     "schema_version": 1,
+     "wall_seconds": 4800.0
+    },
+    "data_revisions": {
+     "dev_sha256": "03e6aacb5c660091e19a08cfe2e9e5d55d897c471d22ddb888af5321754c8ab2",
+     "selection_sha256": "afa477215bdcdedc5af0d977344066b04ed6d7b0499ccb5410c4e4771cfb4d51",
+     "train_sha256": "3656f99dc1b3dd27c699268708b0eb2250bbcb257fd8df4244b2377228fbc9bd"
+    }
+   }
+  },
+  {
+   "seq": 10,
+   "kind": "lab.score_recorded",
+   "actor": "scorer",
+   "ts": 1793785749.4949398,
+   "hash": "4992a03d974176d5cf1c52cc7656fe50ff9a818badde60eb4631cd291a32e66f",
+   "prev_hash": "f3890e13e1e65f3be991216b118bd2ad95662eef83961e8345785289b83aaa25",
+   "data": {
+    "score_id": "t-0002-dev2",
+    "assignment_id": "E1",
+    "split": "dev",
+    "trial_id": "t-0002",
+    "arm": null,
+    "phase": "search",
+    "n_prompts": 150,
+    "scorer_version": "sv1-7880d387c32e86d0",
+    "adapter_sha256": "9b9bc4e6a2c33bf92a191d021eaaf6881bd817e413b78e9a6d1845498ec11902",
+    "base": {
+     "repo_id": "meta-models/Muse-Glimmer-30B",
+     "revision": "a4e59da52a7bc87ae7251dd5545c0dd437c44b68"
+    },
+    "headline_metric": "prompt_all",
+    "per_seed": [
+     {
+      "seed": 0,
+      "n": 150,
+      "n_errors": 0,
+      "n_truncated": 0,
+      "metrics": {
+       "prompt_all": 0.4666666666666667,
+       "prompt_fraction": 0.7322222222222222
+      }
+     }
+    ],
+    "verifier_pins": {
+     "code_commit": "e6daab2d436f4c9e199bf5837a8969fcf81fbac7",
+     "code_dirty": "false",
+     "generator": "inspect",
+     "ifevalg_instructions_py": "dfc4629afac5d308fd170e117a0005a02188f65fbb15635e8f78ede7828ec205",
+     "ifevalg_instructions_registry_py": "5436911d616a7c38afcbbc18312551d8a9ed3f06bca44d74920071c1690c7fc3",
+     "ifevalg_instructions_util_py": "b0b21dd189474071c027cc377e7132dcbf7a6c921def4440b3d1df8eccffdcd9",
+     "inspect_ai": "0.3.287",
+     "inspect_log_seed0": "2026-11-04T09-42-57-00-00_glimmer-generate_4CNAVx5P9zSPLvrHNroxmk.eval",
+     "inspect_log_sha256_seed0": "25c92f8d94f16298c4546e3e38bab761144edde0e25e809e2c45bb2dcd928319",
+     "inspect_task": "glimmer_generate@1",
+     "open_instruct_commit": "b781e782a8fc530577f235aefe282dd046cb8ad2"
+    },
+    "per_prompt_sha256": "58d23667ce988a0ea7c94c56a24c6fe21d178b5fe4e563ed7c738f2679d4979c"
+   }
+  },
+  {
+   "seq": 11,
+   "kind": "lab.contamination_scanned",
+   "actor": "coordinator",
+   "ts": 1793785749.726253,
+   "hash": "0dd5f83d93d9fd9e5d845402420612e5e2a1ec2f6607ad07a536e5655fea4042",
+   "prev_hash": "4992a03d974176d5cf1c52cc7656fe50ff9a818badde60eb4631cd291a32e66f",
+   "data": {
+    "trial_id": "t-0002",
+    "job_id": "t-0002-j2",
+    "passed": true,
+    "n_rows": 91,
+    "n_exact_hits": 0,
+    "n_ngram_hits": 0,
+    "ngram_n": 13
+   }
+  },
+  {
+   "seq": 12,
+   "kind": "lab.score_failed",
+   "actor": "scorer",
+   "ts": 1793787834.570029,
+   "hash": "a8916184db4e8415bfb5fbc9c577d1f6ceace353463c3d78e7ceddd20ec391f1",
+   "prev_hash": "0dd5f83d93d9fd9e5d845402420612e5e2a1ec2f6607ad07a536e5655fea4042",
+   "data": {
+    "trial_id": "t-0002",
+    "split": "selection",
+    "assignment_id": "E1",
+    "failure": "GpuError: port forward exited (255) before it listened",
+    "result_revealed": false,
+    "request_id": "t-0002-sel"
+   }
+  },
+  {
+   "seq": 13,
+   "kind": "lab.score_failed",
+   "actor": "scorer",
+   "ts": 1793788666.78226,
+   "hash": "9d5c1452108bc32667735fe2ea131962a32af759b689d540d07ef8a90954ff47",
+   "prev_hash": "a8916184db4e8415bfb5fbc9c577d1f6ceace353463c3d78e7ceddd20ec391f1",
+   "data": {
+    "trial_id": "t-0002",
+    "split": "selection",
+    "assignment_id": "E1",
+    "failure": "GpuError: remote command failed (exit 255): kex_exchange_identification: read: Connection reset by peer",
+    "result_revealed": false,
+    "request_id": "t-0002-sel2"
+   }
+  },
+  {
+   "seq": 14,
+   "kind": "lab.trial_finished",
+   "actor": "coordinator",
+   "ts": 1793788666.786685,
+   "hash": "5107e5ef6c8f22497c0f331d86eb13ceb97f99fd29ad2f880db4c1c65adf5424",
+   "prev_hash": "9d5c1452108bc32667735fe2ea131962a32af759b689d540d07ef8a90954ff47",
+   "data": {
+    "trial_id": "t-0002",
+    "status": "failed",
+    "failure": "selection scoring failed twice: GpuError: remote command failed (exit 255): kex_exchange_identification: read: Connection reset by peer",
+    "selection_score_id": null,
+    "adapter_files": [
+     {
+      "name": "adapter_config.json",
+      "sha256": "ddb09e220723f711c7400c0251b8b88c59c39360cb19d47080bff11319c77574"
+     },
+     {
+      "name": "adapter_model.safetensors",
+      "sha256": "095cc4e689997101652d413ee8e232c29cb891b292f52367c1d2966a007b5fac"
+     }
+    ],
+    "budget_used": {
+     "gpu_minutes": 49.0,
+     "gpu_usd": 0.9146666666666678,
+     "researcher_tokens": 0,
+     "researcher_usd": 0.0,
+     "wall_seconds": 5915.917277812958
+    },
+    "researcher_runtime": {
+     "runtime": "coral+muse_code+docker",
+     "model": "muse-spark-1.3",
+     "researcher_model_configured": "muse-spark-1.3",
+     "muse_version": "1.4.14-R7309.1",
+     "coral_commit": "0123dfb939b35228cf2c1fde224cd0561e727408",
+     "container_image": "glimmer-researcher:cli-1"
+    }
+   }
+  },
+  {
+   "seq": 15,
+   "kind": "lab.spread_measured",
+   "actor": "coordinator",
+   "ts": 1793788964.242933,
+   "hash": "6a05d57aa09466525112947dced21581a72605683599509ccdc6b589280a326e",
+   "prev_hash": "5107e5ef6c8f22497c0f331d86eb13ceb97f99fd29ad2f880db4c1c65adf5424",
+   "data": {}
+  },
+  {
+   "seq": 16,
+   "kind": "lab.rule_frozen",
+   "actor": "coordinator",
+   "ts": 1793789008.7347,
+   "hash": "e136f6bd60ebb7e4821bc45cb1aafddaf4a75801c74c09e0cec5f3748ea8c461",
+   "prev_hash": "6a05d57aa09466525112947dced21581a72605683599509ccdc6b589280a326e",
+   "data": {
+    "file": {
+     "path": "frozen/rule.json",
+     "sha256": "0981bd55f3eec1de93b75d4f819d7a0f1fa1bd724268811dc542f1a0578c1a36",
+     "size_bytes": 1133
+    }
+   }
+  },
+  {
+   "seq": 17,
+   "kind": "lab.candidate_proposed",
+   "actor": "outer",
+   "ts": 1793789171.9439192,
+   "hash": "9f4b3c2daae244c4f96896550052fda5a34010c20ba14aeb4ca5594b15aee57f",
+   "prev_hash": "e136f6bd60ebb7e4821bc45cb1aafddaf4a75801c74c09e0cec5f3748ea8c461",
+   "data": {
+    "candidate_id": "cand-001",
+    "lever": "budget_use",
+    "lint_passed": true,
+    "proposer_model": "muse-wonder-full-1.0",
+    "proposer_served_model": "muse-wonder-full-1.0",
+    "fallback_used": false,
+    "pack": {
+     "commit": "3694c668f85ea5f03f9c6255fa761b14dc9e1bdb",
+     "repo_path": "packs/pack.git"
+    }
+   }
+  },
+  {
+   "seq": 18,
+   "kind": "lab.pack_committed",
+   "actor": "outer",
+   "ts": 1793789171.944347,
+   "hash": "e602426a703d6408af38128224df5aca9b21fcf447f8bf6dfee814e7e40b490f",
+   "prev_hash": "9f4b3c2daae244c4f96896550052fda5a34010c20ba14aeb4ca5594b15aee57f",
+   "data": {
+    "pack": {
+     "commit": "3694c668f85ea5f03f9c6255fa761b14dc9e1bdb",
+     "repo_path": "packs/pack.git"
+    }
+   }
+  },
+  {
+   "seq": 19,
+   "kind": "lab.trial_started",
+   "actor": "coordinator",
+   "ts": 1793789171.94927,
+   "hash": "8bb1510438130cf046201138781731486b19d4c7fcdb5f8af06089b5242aa786",
+   "prev_hash": "e602426a703d6408af38128224df5aca9b21fcf447f8bf6dfee814e7e40b490f",
+   "data": {
+    "trial_id": "t-0003",
+    "phase": "search",
+    "arm": null,
+    "assignment_id": "E1",
+    "pack_version": "cand-001",
+    "pack": {
+     "commit": "3694c668f85ea5f03f9c6255fa761b14dc9e1bdb",
+     "repo_path": "packs/pack.git"
+    },
+    "seed": 0,
+    "base": {
+     "repo_id": "meta-models/Muse-Glimmer-30B",
+     "revision": "a4e59da52a7bc87ae7251dd5545c0dd437c44b68"
+    },
+    "budget": {
+     "dollars": 1.5,
+     "gpu_minutes": 72.0,
+     "researcher_tokens": 50000000,
+     "schema_version": 1,
+     "wall_seconds": 4800.0
+    },
+    "data_revisions": {
+     "dev_sha256": "03e6aacb5c660091e19a08cfe2e9e5d55d897c471d22ddb888af5321754c8ab2",
+     "selection_sha256": "afa477215bdcdedc5af0d977344066b04ed6d7b0499ccb5410c4e4771cfb4d51",
+     "train_sha256": "3656f99dc1b3dd27c699268708b0eb2250bbcb257fd8df4244b2377228fbc9bd"
+    }
+   }
+  },
+  {
+   "seq": 20,
+   "kind": "lab.score_recorded",
+   "actor": "scorer",
+   "ts": 1793791857.915883,
+   "hash": "5b250e4d6d435fc771ea2462e8520f1a8fd4d6f10841ce056493c460e5b4a052",
+   "prev_hash": "8bb1510438130cf046201138781731486b19d4c7fcdb5f8af06089b5242aa786",
+   "data": {
+    "score_id": "t-0003-dev1",
+    "assignment_id": "E1",
+    "split": "dev",
+    "trial_id": "t-0003",
+    "arm": null,
+    "phase": "search",
+    "n_prompts": 150,
+    "scorer_version": "sv1-7880d387c32e86d0",
+    "adapter_sha256": "457b33e9f16b6a5ae454b10e0fe6bbd7d6fa1e96fc8ff66fb3d253fe5d915ee0",
+    "base": {
+     "repo_id": "meta-models/Muse-Glimmer-30B",
+     "revision": "a4e59da52a7bc87ae7251dd5545c0dd437c44b68"
+    },
+    "headline_metric": "prompt_all",
+    "per_seed": [
+     {
+      "seed": 0,
+      "n": 150,
+      "n_errors": 0,
+      "n_truncated": 0,
+      "metrics": {
+       "prompt_all": 0.5133333333333333,
+       "prompt_fraction": 0.7301111111111112
+      }
+     }
+    ],
+    "verifier_pins": {
+     "code_commit": "9780618bce7ea0fae48035a4260aafaacda6efa9",
+     "code_dirty": "false",
+     "generator": "inspect",
+     "ifevalg_instructions_py": "dfc4629afac5d308fd170e117a0005a02188f65fbb15635e8f78ede7828ec205",
+     "ifevalg_instructions_registry_py": "5436911d616a7c38afcbbc18312551d8a9ed3f06bca44d74920071c1690c7fc3",
+     "ifevalg_instructions_util_py": "b0b21dd189474071c027cc377e7132dcbf7a6c921def4440b3d1df8eccffdcd9",
+     "inspect_ai": "0.3.287",
+     "inspect_log_seed0": "2026-11-04T11-24-44-00-00_glimmer-generate_GAbThuuvjXyNM9aaGK5jaG.eval",
+     "inspect_log_sha256_seed0": "1010360ffc47756c167f9f9285251f2e893407989e408749f312ea9f069c4c4d",
+     "inspect_task": "glimmer_generate@1",
+     "open_instruct_commit": "b781e782a8fc530577f235aefe282dd046cb8ad2"
+    },
+    "per_prompt_sha256": "824e6d25254814858e5273e8dab2ed45ea4b6930168b582ac966b9a38a5a26cb"
+   }
+  },
+  {
+   "seq": 21,
+   "kind": "lab.contamination_scanned",
+   "actor": "coordinator",
+   "ts": 1793791858.215188,
+   "hash": "4491ec694c905535f6845d8b8f1b8ee483871f22aedb1a531609649c64e16339",
+   "prev_hash": "5b250e4d6d435fc771ea2462e8520f1a8fd4d6f10841ce056493c460e5b4a052",
+   "data": {
+    "trial_id": "t-0003",
+    "job_id": "t-0003-j1",
+    "passed": true,
+    "n_rows": 176,
+    "n_exact_hits": 0,
+    "n_ngram_hits": 0,
+    "ngram_n": 13
+   }
+  },
+  {
+   "seq": 22,
+   "kind": "lab.score_recorded",
+   "actor": "scorer",
+   "ts": 1793795120.205965,
+   "hash": "7e64d12cfa3462513fc279038da704b69c49b342420b767515637474ee0291f9",
+   "prev_hash": "4491ec694c905535f6845d8b8f1b8ee483871f22aedb1a531609649c64e16339",
+   "data": {
+    "score_id": "t-0003-sel",
+    "assignment_id": "E1",
+    "split": "selection",
+    "trial_id": "t-0003",
+    "arm": null,
+    "phase": "search",
+    "n_prompts": 300,
+    "scorer_version": "sv1-7880d387c32e86d0",
+    "adapter_sha256": "457b33e9f16b6a5ae454b10e0fe6bbd7d6fa1e96fc8ff66fb3d253fe5d915ee0",
+    "base": {
+     "repo_id": "meta-models/Muse-Glimmer-30B",
+     "revision": "a4e59da52a7bc87ae7251dd5545c0dd437c44b68"
+    },
+    "headline_metric": "prompt_all",
+    "per_seed": [
+     {
+      "seed": 0,
+      "n": 300,
+      "n_errors": 0,
+      "n_truncated": 0,
+      "metrics": {
+       "prompt_all": 0.52,
+       "prompt_fraction": 0.7538888888888888
+      }
+     }
+    ],
+    "verifier_pins": {
+     "code_commit": "7f43c6860c637928d183ffec9b9b8aa233576d74",
+     "code_dirty": "false",
+     "generator": "inspect",
+     "ifevalg_instructions_py": "dfc4629afac5d308fd170e117a0005a02188f65fbb15635e8f78ede7828ec205",
+     "ifevalg_instructions_registry_py": "5436911d616a7c38afcbbc18312551d8a9ed3f06bca44d74920071c1690c7fc3",
+     "ifevalg_instructions_util_py": "b0b21dd189474071c027cc377e7132dcbf7a6c921def4440b3d1df8eccffdcd9",
+     "inspect_ai": "0.3.287",
+     "inspect_log_seed0": "2026-11-04T12-13-39-00-00_glimmer-generate_GQhnTemZjTpFMqdXr2ndhm.eval",
+     "inspect_log_sha256_seed0": "0239a65d519b1341154ff4bac0cc2e72a1f32a97a5596943eaa1cbfa00b9fb3e",
+     "inspect_task": "glimmer_generate@1",
+     "open_instruct_commit": "b781e782a8fc530577f235aefe282dd046cb8ad2"
+    },
+    "per_prompt_sha256": "0ef93c9f04c5b02f300a72f2cede14bea61802d12cc6bc56327312a505e6fdfc"
+   }
+  },
+  {
+   "seq": 23,
+   "kind": "lab.score_cost",
+   "actor": "scorer",
+   "ts": 1793795120.2070808,
+   "hash": "84ce367d17d46652801143a491baf73d385d8107f18142c9c5cd5a2ce38bde0b",
+   "prev_hash": "7e64d12cfa3462513fc279038da704b69c49b342420b767515637474ee0291f9",
+   "data": {
+    "score_id": "t-0003-sel",
+    "gpu": {
+     "minutes": 27.0,
+     "rental_ids": [
+      "t-0003-srv-d76f3796"
+     ],
+     "usd": 0.504
+    }
+   }
+  },
+  {
+   "seq": 24,
+   "kind": "lab.trial_finished",
+   "actor": "coordinator",
+   "ts": 1793795120.209578,
+   "hash": "a2a85a940b7b1aa7ceaa2dfa47526984aba1f2985c23d5a895b2b51f79186e04",
+   "prev_hash": "84ce367d17d46652801143a491baf73d385d8107f18142c9c5cd5a2ce38bde0b",
+   "data": {
+    "trial_id": "t-0003",
+    "status": "budget_exhausted",
+    "failure": null,
+    "selection_score_id": "t-0003-sel",
+    "adapter_files": [
+     {
+      "name": "adapter_config.json",
+      "sha256": "ddb09e220723f711c7400c0251b8b88c59c39360cb19d47080bff11319c77574"
+     },
+     {
+      "name": "adapter_model.safetensors",
+      "sha256": "ee5d5e65803ab43737bcaaf463d337fdb9cd2c6a9759e625d6b38cc6266782f7"
+     }
+    ],
+    "budget_used": {
+     "gpu_minutes": 53.0,
+     "gpu_usd": 0.9893333333333347,
+     "researcher_tokens": 0,
+     "researcher_usd": 0.0,
+     "wall_seconds": 5948.257928371429
+    },
+    "researcher_runtime": {
+     "runtime": "coral+muse_code+docker",
+     "model": "muse-spark-1.3",
+     "researcher_model_configured": "muse-spark-1.3",
+     "muse_version": "1.4.14-R7309.1",
+     "coral_commit": "0123dfb939b35228cf2c1fde224cd0561e727408",
+     "container_image": "glimmer-researcher:cli-1"
+    }
+   }
+  },
+  {
+   "seq": 25,
+   "kind": "lab.trial_started",
+   "actor": "coordinator",
+   "ts": 1793795120.221855,
+   "hash": "f12d7e7f87f09ec468d604183dfc64427d105539268e99665747309c0cff7a91",
+   "prev_hash": "a2a85a940b7b1aa7ceaa2dfa47526984aba1f2985c23d5a895b2b51f79186e04",
+   "data": {
+    "trial_id": "t-0004",
+    "phase": "search",
+    "arm": null,
+    "assignment_id": "E1",
+    "pack_version": "cand-001",
+    "pack": {
+     "commit": "3694c668f85ea5f03f9c6255fa761b14dc9e1bdb",
+     "repo_path": "packs/pack.git"
+    },
+    "seed": 1,
+    "base": {
+     "repo_id": "meta-models/Muse-Glimmer-30B",
+     "revision": "a4e59da52a7bc87ae7251dd5545c0dd437c44b68"
+    },
+    "budget": {
+     "dollars": 1.5,
+     "gpu_minutes": 72.0,
+     "researcher_tokens": 50000000,
+     "schema_version": 1,
+     "wall_seconds": 4800.0
+    },
+    "data_revisions": {
+     "dev_sha256": "03e6aacb5c660091e19a08cfe2e9e5d55d897c471d22ddb888af5321754c8ab2",
+     "selection_sha256": "afa477215bdcdedc5af0d977344066b04ed6d7b0499ccb5410c4e4771cfb4d51",
+     "train_sha256": "3656f99dc1b3dd27c699268708b0eb2250bbcb257fd8df4244b2377228fbc9bd"
+    }
+   }
+  },
+  {
+   "seq": 26,
+   "kind": "lab.score_recorded",
+   "actor": "scorer",
+   "ts": 1793797558.974707,
+   "hash": "6a8b8a1af2cc826bf14e1bab57028f09fd471d683f22a51a80b1b9b3b8907e93",
+   "prev_hash": "f12d7e7f87f09ec468d604183dfc64427d105539268e99665747309c0cff7a91",
+   "data": {
+    "score_id": "t-0004-dev1",
+    "assignment_id": "E1",
+    "split": "dev",
+    "trial_id": "t-0004",
+    "arm": null,
+    "phase": "search",
+    "n_prompts": 150,
+    "scorer_version": "sv1-7880d387c32e86d0",
+    "adapter_sha256": "7d84e1aa2e8348b879447df779fdf1627d94247b44af435fb211cf0191341242",
+    "base": {
+     "repo_id": "meta-models/Muse-Glimmer-30B",
+     "revision": "a4e59da52a7bc87ae7251dd5545c0dd437c44b68"
+    },
+    "headline_metric": "prompt_all",
+    "per_seed": [
+     {
+      "seed": 0,
+      "n": 150,
+      "n_errors": 0,
+      "n_truncated": 0,
+      "metrics": {
+       "prompt_all": 0.5066666666666667,
+       "prompt_fraction": 0.7268888888888889
+      }
+     }
+    ],
+    "verifier_pins": {
+     "code_commit": "7be0d100804ba07778141eddf6481c470411e374",
+     "code_dirty": "false",
+     "generator": "inspect",
+     "ifevalg_instructions_py": "dfc4629afac5d308fd170e117a0005a02188f65fbb15635e8f78ede7828ec205",
+     "ifevalg_instructions_registry_py": "5436911d616a7c38afcbbc18312551d8a9ed3f06bca44d74920071c1690c7fc3",
+     "ifevalg_instructions_util_py": "b0b21dd189474071c027cc377e7132dcbf7a6c921def4440b3d1df8eccffdcd9",
+     "inspect_ai": "0.3.287",
+     "inspect_log_seed0": "2026-11-04T12-58-01-00-00_glimmer-generate_XJBy6pAqQGVDuuVDBGQXnv.eval",
+     "inspect_log_sha256_seed0": "10a416df75ac6bfadcd1c4f9f07b983bb5b1ede512f93fa52b097b6750aa3e22",
+     "inspect_task": "glimmer_generate@1",
+     "open_instruct_commit": "b781e782a8fc530577f235aefe282dd046cb8ad2"
+    },
+    "per_prompt_sha256": "eede490fc26390ffcd0d3cfe8d0940641c03ef041b046392c7abb3f589623e39"
+   }
+  },
+  {
+   "seq": 27,
+   "kind": "lab.contamination_scanned",
+   "actor": "coordinator",
+   "ts": 1793797559.0734148,
+   "hash": "4675d1b54e5a6e3f3ef2713c9340a4a6889b05b9f1cd893466597da7274afc6c",
+   "prev_hash": "6a8b8a1af2cc826bf14e1bab57028f09fd471d683f22a51a80b1b9b3b8907e93",
+   "data": {
+    "trial_id": "t-0004",
+    "job_id": "t-0004-j1",
+    "passed": true,
+    "n_rows": 80,
+    "n_exact_hits": 0,
+    "n_ngram_hits": 0,
+    "ngram_n": 13
+   }
+  },
+  {
+   "seq": 28,
+   "kind": "lab.score_recorded",
+   "actor": "scorer",
+   "ts": 1793800396.810285,
+   "hash": "fce3576e2c9bec7b28b9b6b4f349b5fa2b280b8928fb524f90d15162eb5dd2ae",
+   "prev_hash": "4675d1b54e5a6e3f3ef2713c9340a4a6889b05b9f1cd893466597da7274afc6c",
+   "data": {
+    "score_id": "t-0004-sel",
+    "assignment_id": "E1",
+    "split": "selection",
+    "trial_id": "t-0004",
+    "arm": null,
+    "phase": "search",
+    "n_prompts": 300,
+    "scorer_version": "sv1-7880d387c32e86d0",
+    "adapter_sha256": "7d84e1aa2e8348b879447df779fdf1627d94247b44af435fb211cf0191341242",
+    "base": {
+     "repo_id": "meta-models/Muse-Glimmer-30B",
+     "revision": "a4e59da52a7bc87ae7251dd5545c0dd437c44b68"
+    },
+    "headline_metric": "prompt_all",
+    "per_seed": [
+     {
+      "seed": 0,
+      "n": 300,
+      "n_errors": 0,
+      "n_truncated": 0,
+      "metrics": {
+       "prompt_all": 0.47,
+       "prompt_fraction": 0.7007777777777777
+      }
+     }
+    ],
+    "verifier_pins": {
+     "code_commit": "f28753269bbf9f24acb22dcc96b9985ffe1f60a6",
+     "code_dirty": "false",
+     "generator": "inspect",
+     "ifevalg_instructions_py": "dfc4629afac5d308fd170e117a0005a02188f65fbb15635e8f78ede7828ec205",
+     "ifevalg_instructions_registry_py": "5436911d616a7c38afcbbc18312551d8a9ed3f06bca44d74920071c1690c7fc3",
+     "ifevalg_instructions_util_py": "b0b21dd189474071c027cc377e7132dcbf7a6c921def4440b3d1df8eccffdcd9",
+     "inspect_ai": "0.3.287",
+     "inspect_log_seed0": "2026-11-04T13-47-40-00-00_glimmer-generate_fFWNtZBCB2gvvxY444Zzu6.eval",
+     "inspect_log_sha256_seed0": "d3da8e08ad974d17b73d4604bf1beb511cf8c562db5e63c8c3c950e900284780",
+     "inspect_task": "glimmer_generate@1",
+     "open_instruct_commit": "b781e782a8fc530577f235aefe282dd046cb8ad2"
+    },
+    "per_prompt_sha256": "7ddeef3fb25d4a27fa22b294ac422a9ef98b750728e018980993f53265079cb5"
+   }
+  },
+  {
+   "seq": 29,
+   "kind": "lab.score_cost",
+   "actor": "scorer",
+   "ts": 1793800396.81073,
+   "hash": "6002b6553126bb20d4b5ef1a9d6b954e94b4dbafa2de21dd93eeda04b100236a",
+   "prev_hash": "fce3576e2c9bec7b28b9b6b4f349b5fa2b280b8928fb524f90d15162eb5dd2ae",
+   "data": {
+    "score_id": "t-0004-sel",
+    "gpu": {
+     "minutes": 16.0,
+     "rental_ids": [
+      "t-0004-srv-7c523df2"
+     ],
+     "usd": 0.298667
+    }
+   }
+  },
+  {
+   "seq": 30,
+   "kind": "lab.trial_finished",
+   "actor": "coordinator",
+   "ts": 1793800396.8116639,
+   "hash": "6988126289cd5d02e844a26ceb4014a0267a35154e7756225fdf774be5f716c7",
+   "prev_hash": "6002b6553126bb20d4b5ef1a9d6b954e94b4dbafa2de21dd93eeda04b100236a",
+   "data": {
+    "trial_id": "t-0004",
+    "status": "budget_exhausted",
+    "failure": null,
+    "selection_score_id": "t-0004-sel",
+    "adapter_files": [
+     {
+      "name": "adapter_config.json",
+      "sha256": "ddb09e220723f711c7400c0251b8b88c59c39360cb19d47080bff11319c77574"
+     },
+     {
+      "name": "adapter_model.safetensors",
+      "sha256": "e453d65302fa94967a82f749bdfc30da3bf9a45f514b7b78f848a4679340faf0"
+     }
+    ],
+    "budget_used": {
+     "gpu_minutes": 53.0,
+     "gpu_usd": 0.9893333333333347,
+     "researcher_tokens": 0,
+     "researcher_usd": 0.0,
+     "wall_seconds": 5276.587840080261
+    },
+    "researcher_runtime": {
+     "runtime": "coral+muse_code+docker",
+     "model": "muse-spark-1.3",
+     "researcher_model_configured": "muse-spark-1.3",
+     "muse_version": "1.4.14-R7309.1",
+     "coral_commit": "0123dfb939b35228cf2c1fde224cd0561e727408",
+     "container_image": "glimmer-researcher:cli-1"
+    }
+   }
+  },
+  {
+   "seq": 31,
+   "kind": "lab.trial_started",
+   "actor": "coordinator",
+   "ts": 1793800396.8178391,
+   "hash": "7e93a75ab330c9e9526ac54a3efb07653438178cef1a3ff69ff5d1b2530c75ae",
+   "prev_hash": "6988126289cd5d02e844a26ceb4014a0267a35154e7756225fdf774be5f716c7",
+   "data": {
+    "trial_id": "t-0005",
+    "phase": "search",
+    "arm": null,
+    "assignment_id": "E1",
+    "pack_version": "v0",
+    "pack": {
+     "commit": "9a153aebc6a584960e1b1f84b4574add5cfcd962",
+     "repo_path": "packs/pack.git"
+    },
+    "seed": 2,
+    "base": {
+     "repo_id": "meta-models/Muse-Glimmer-30B",
+     "revision": "a4e59da52a7bc87ae7251dd5545c0dd437c44b68"
+    },
+    "budget": {
+     "dollars": 1.5,
+     "gpu_minutes": 72.0,
+     "researcher_tokens": 50000000,
+     "schema_version": 1,
+     "wall_seconds": 4800.0
+    },
+    "data_revisions": {
+     "dev_sha256": "03e6aacb5c660091e19a08cfe2e9e5d55d897c471d22ddb888af5321754c8ab2",
+     "selection_sha256": "afa477215bdcdedc5af0d977344066b04ed6d7b0499ccb5410c4e4771cfb4d51",
+     "train_sha256": "3656f99dc1b3dd27c699268708b0eb2250bbcb257fd8df4244b2377228fbc9bd"
+    }
+   }
+  },
+  {
+   "seq": 32,
+   "kind": "lab.trial_finished",
+   "actor": "coordinator",
+   "ts": 1793802752.489471,
+   "hash": "631003e6207e4c9b0fa528ac82197c44362143e6738033241087f33cf14d750d",
+   "prev_hash": "7e93a75ab330c9e9526ac54a3efb07653438178cef1a3ff69ff5d1b2530c75ae",
+   "data": {
+    "trial_id": "t-0005",
+    "status": "failed",
+    "failure": "the researcher runtime crashed and nothing was submitted",
+    "selection_score_id": null,
+    "adapter_files": [],
+    "budget_used": {
+     "gpu_minutes": 35.0,
+     "gpu_usd": 0.6533333333333338,
+     "researcher_tokens": 0,
+     "researcher_usd": 0.0,
+     "wall_seconds": 2355.6669578552246
+    },
+    "researcher_runtime": {
+     "runtime": "coral+muse_code+docker",
+     "model": "muse-spark-1.3",
+     "researcher_model_configured": "muse-spark-1.3",
+     "muse_version": "1.4.14-R7309.1",
+     "coral_commit": "0123dfb939b35228cf2c1fde224cd0561e727408",
+     "container_image": "glimmer-researcher:cli-1"
+    }
+   }
+  },
+  {
+   "seq": 33,
+   "kind": "lab.trial_started",
+   "actor": "coordinator",
+   "ts": 1793802752.5075881,
+   "hash": "17439aa5a2cd4a6b817d8bc3bb7c0cdbad715fef7c72a98499207305dc728c29",
+   "prev_hash": "631003e6207e4c9b0fa528ac82197c44362143e6738033241087f33cf14d750d",
+   "data": {
+    "trial_id": "t-0006",
+    "phase": "search",
+    "arm": null,
+    "assignment_id": "E1",
+    "pack_version": "v0",
+    "pack": {
+     "commit": "9a153aebc6a584960e1b1f84b4574add5cfcd962",
+     "repo_path": "packs/pack.git"
+    },
+    "seed": 3,
+    "base": {
+     "repo_id": "meta-models/Muse-Glimmer-30B",
+     "revision": "a4e59da52a7bc87ae7251dd5545c0dd437c44b68"
+    },
+    "budget": {
+     "dollars": 1.5,
+     "gpu_minutes": 72.0,
+     "researcher_tokens": 50000000,
+     "schema_version": 1,
+     "wall_seconds": 4800.0
+    },
+    "data_revisions": {
+     "dev_sha256": "03e6aacb5c660091e19a08cfe2e9e5d55d897c471d22ddb888af5321754c8ab2",
+     "selection_sha256": "afa477215bdcdedc5af0d977344066b04ed6d7b0499ccb5410c4e4771cfb4d51",
+     "train_sha256": "3656f99dc1b3dd27c699268708b0eb2250bbcb257fd8df4244b2377228fbc9bd"
+    }
+   }
+  },
+  {
+   "seq": 34,
+   "kind": "lab.score_recorded",
+   "actor": "scorer",
+   "ts": 1793805229.289644,
+   "hash": "0218037a3012e4d3772abab93c66b40e400c48f45fa9d2b62ebe91e217dcc7bf",
+   "prev_hash": "17439aa5a2cd4a6b817d8bc3bb7c0cdbad715fef7c72a98499207305dc728c29",
+   "data": {
+    "score_id": "t-0006-dev1",
+    "assignment_id": "E1",
+    "split": "dev",
+    "trial_id": "t-0006",
+    "arm": null,
+    "phase": "search",
+    "n_prompts": 150,
+    "scorer_version": "sv1-7880d387c32e86d0",
+    "adapter_sha256": "9cabb48ef08f89ef5b4bfd2ee3e80386966942d8da42cc4de66db3f49667b425",
+    "base": {
+     "repo_id": "meta-models/Muse-Glimmer-30B",
+     "revision": "a4e59da52a7bc87ae7251dd5545c0dd437c44b68"
+    },
+    "headline_metric": "prompt_all",
+    "per_seed": [
+     {
+      "seed": 0,
+      "n": 150,
+      "n_errors": 0,
+      "n_truncated": 0,
+      "metrics": {
+       "prompt_all": 0.5133333333333333,
+       "prompt_fraction": 0.7368888888888889
+      }
+     }
+    ],
+    "verifier_pins": {
+     "code_commit": "842a57173439d691988030b326491d1a0d53399b",
+     "code_dirty": "false",
+     "generator": "inspect",
+     "ifevalg_instructions_py": "dfc4629afac5d308fd170e117a0005a02188f65fbb15635e8f78ede7828ec205",
+     "ifevalg_instructions_registry_py": "5436911d616a7c38afcbbc18312551d8a9ed3f06bca44d74920071c1690c7fc3",
+     "ifevalg_instructions_util_py": "b0b21dd189474071c027cc377e7132dcbf7a6c921def4440b3d1df8eccffdcd9",
+     "inspect_ai": "0.3.287",
+     "inspect_log_seed0": "2026-11-04T15-07-20-00-00_glimmer-generate_9RqzJKU9gWeuGLqN5EyaCj.eval",
+     "inspect_log_sha256_seed0": "977d4869420f84f31e9c6ab5dbc541309c9715eb3b3ec9797cffc8365e7e01ad",
+     "inspect_task": "glimmer_generate@1",
+     "open_instruct_commit": "b781e782a8fc530577f235aefe282dd046cb8ad2"
+    },
+    "per_prompt_sha256": "4e3a6dddef5da84d0e9a45c3fc14880962499776eb8dbd76763bc48e5032fbf4"
+   }
+  },
+  {
+   "seq": 35,
+   "kind": "lab.contamination_scanned",
+   "actor": "coordinator",
+   "ts": 1793805229.373605,
+   "hash": "2655730d1104ff8a550b8d737991f9f8ed952fcff4564e15c55ce4f4385ac9cd",
+   "prev_hash": "0218037a3012e4d3772abab93c66b40e400c48f45fa9d2b62ebe91e217dcc7bf",
+   "data": {
+    "trial_id": "t-0006",
+    "job_id": "t-0006-j1",
+    "passed": true,
+    "n_rows": 97,
+    "n_exact_hits": 0,
+    "n_ngram_hits": 0,
+    "ngram_n": 13
+   }
+  },
+  {
+   "seq": 36,
+   "kind": "lab.score_recorded",
+   "actor": "scorer",
+   "ts": 1793807851.592305,
+   "hash": "2b675d2af6cb3e1e551f33a0dd2c61cfc407adf5da636c9559c51cdd56610f38",
+   "prev_hash": "2655730d1104ff8a550b8d737991f9f8ed952fcff4564e15c55ce4f4385ac9cd",
+   "data": {
+    "score_id": "t-0006-sel",
+    "assignment_id": "E1",
+    "split": "selection",
+    "trial_id": "t-0006",
+    "arm": null,
+    "phase": "search",
+    "n_prompts": 300,
+    "scorer_version": "sv1-7880d387c32e86d0",
+    "adapter_sha256": "9cabb48ef08f89ef5b4bfd2ee3e80386966942d8da42cc4de66db3f49667b425",
+    "base": {
+     "repo_id": "meta-models/Muse-Glimmer-30B",
+     "revision": "a4e59da52a7bc87ae7251dd5545c0dd437c44b68"
+    },
+    "headline_metric": "prompt_all",
+    "per_seed": [
+     {
+      "seed": 0,
+      "n": 300,
+      "n_errors": 0,
+      "n_truncated": 0,
+      "metrics": {
+       "prompt_all": 0.55,
+       "prompt_fraction": 0.7636111111111111
+      }
+     }
+    ],
+    "verifier_pins": {
+     "code_commit": "a0a2ded96b1ea786bc78addb92a3833eef85cf0a",
+     "code_dirty": "false",
+     "generator": "inspect",
+     "ifevalg_instructions_py": "dfc4629afac5d308fd170e117a0005a02188f65fbb15635e8f78ede7828ec205",
+     "ifevalg_instructions_registry_py": "5436911d616a7c38afcbbc18312551d8a9ed3f06bca44d74920071c1690c7fc3",
+     "ifevalg_instructions_util_py": "b0b21dd189474071c027cc377e7132dcbf7a6c921def4440b3d1df8eccffdcd9",
+     "inspect_ai": "0.3.287",
+     "inspect_log_seed0": "2026-11-04T15-52-57-00-00_glimmer-generate_c45AG6HkqF43SMuQ3KxoL3.eval",
+     "inspect_log_sha256_seed0": "2273cfd57ff9288ec40b1ca968a2a9dae58cea5397a9f832110739d9f5500a2d",
+     "inspect_task": "glimmer_generate@1",
+     "open_instruct_commit": "b781e782a8fc530577f235aefe282dd046cb8ad2"
+    },
+    "per_prompt_sha256": "5be7de35f13a134536ba4a32cd10e9575075edfaa6370ea09f368534865ad1e3"
+   }
+  },
+  {
+   "seq": 37,
+   "kind": "lab.score_cost",
+   "actor": "scorer",
+   "ts": 1793807851.59319,
+   "hash": "37c1d528d00dc66ac6905527b21fddaa1070ad26d764020125ccbebc898bfea0",
+   "prev_hash": "2b675d2af6cb3e1e551f33a0dd2c61cfc407adf5da636c9559c51cdd56610f38",
+   "data": {
+    "score_id": "t-0006-sel",
+    "gpu": {
+     "minutes": 13.0,
+     "rental_ids": [
+      "t-0006-srv-0947f61d"
+     ],
+     "usd": 0.242667
+    }
+   }
+  },
+  {
+   "seq": 38,
+   "kind": "lab.trial_finished",
+   "actor": "coordinator",
+   "ts": 1793807851.595968,
+   "hash": "14d7ca6ac9aa6fd8c08f93318b52fbb15923814a85918b8b000e2b6373977c1d",
+   "prev_hash": "37c1d528d00dc66ac6905527b21fddaa1070ad26d764020125ccbebc898bfea0",
+   "data": {
+    "trial_id": "t-0006",
+    "status": "budget_exhausted",
+    "failure": null,
+    "selection_score_id": "t-0006-sel",
+    "adapter_files": [
+     {
+      "name": "adapter_config.json",
+      "sha256": "ddb09e220723f711c7400c0251b8b88c59c39360cb19d47080bff11319c77574"
+     },
+     {
+      "name": "adapter_model.safetensors",
+      "sha256": "1f59166b4a3958772cf84931cbaeb91d412fc03c4c7bd58218afef63e6f146ca"
+     }
+    ],
+    "budget_used": {
+     "gpu_minutes": 53.0,
+     "gpu_usd": 0.9893333333333347,
+     "researcher_tokens": 0,
+     "researcher_usd": 0.0,
+     "wall_seconds": 5099.08501291275
+    },
+    "researcher_runtime": {
+     "runtime": "coral+muse_code+docker",
+     "model": "muse-spark-1.3",
+     "researcher_model_configured": "muse-spark-1.3",
+     "muse_version": "1.4.14-R7309.1",
+     "coral_commit": "0123dfb939b35228cf2c1fde224cd0561e727408",
+     "container_image": "glimmer-researcher:cli-1"
+    }
+   }
+  },
+  {
+   "seq": 39,
+   "kind": "lab.trial_started",
+   "actor": "coordinator",
+   "ts": 1793807851.609385,
+   "hash": "adb0637b0b604a023f3d29ad7d03d46bb8d7a4b3b9f5ed18713835ee705fefee",
+   "prev_hash": "14d7ca6ac9aa6fd8c08f93318b52fbb15923814a85918b8b000e2b6373977c1d",
+   "data": {
+    "trial_id": "t-0007",
+    "phase": "search",
+    "arm": null,
+    "assignment_id": "E1",
+    "pack_version": "cand-001",
+    "pack": {
+     "commit": "3694c668f85ea5f03f9c6255fa761b14dc9e1bdb",
+     "repo_path": "packs/pack.git"
+    },
+    "seed": 2,
+    "base": {
+     "repo_id": "meta-models/Muse-Glimmer-30B",
+     "revision": "a4e59da52a7bc87ae7251dd5545c0dd437c44b68"
+    },
+    "budget": {
+     "dollars": 1.5,
+     "gpu_minutes": 72.0,
+     "researcher_tokens": 50000000,
+     "schema_version": 1,
+     "wall_seconds": 4800.0
+    },
+    "data_revisions": {
+     "dev_sha256": "03e6aacb5c660091e19a08cfe2e9e5d55d897c471d22ddb888af5321754c8ab2",
+     "selection_sha256": "afa477215bdcdedc5af0d977344066b04ed6d7b0499ccb5410c4e4771cfb4d51",
+     "train_sha256": "3656f99dc1b3dd27c699268708b0eb2250bbcb257fd8df4244b2377228fbc9bd"
+    }
+   }
+  },
+  {
+   "seq": 40,
+   "kind": "lab.trial_finished",
+   "actor": "trial:t-0007",
+   "ts": 1793807875.66299,
+   "hash": "c4f77286e657fedca014da7ff7bc660549705e8a68d3b093352c76dd4c00873b",
+   "prev_hash": "adb0637b0b604a023f3d29ad7d03d46bb8d7a4b3b9f5ed18713835ee705fefee",
+   "data": {
+    "trial_id": "t-0007",
+    "status": "aborted",
+    "failure": "aborted by the operator: the coordinator died or the trial was abandoned",
+    "selection_score_id": null,
+    "adapter_files": [],
+    "budget_used": {
+     "gpu_minutes": 0.0,
+     "gpu_usd": 0.0,
+     "researcher_tokens": 0,
+     "researcher_usd": 0.0,
+     "wall_seconds": 0.0
+    },
+    "researcher_runtime": {
+     "aborted_by": "cli abort-trial"
+    }
+   }
+  },
+  {
+   "seq": 41,
+   "kind": "lab.score_recorded",
+   "actor": "scorer",
+   "ts": 1793810013.741777,
+   "hash": "2bc3bd2f05d8397c7b7121f16dfae3609b468afa723d0e15a1deb5c0ec8c1a1e",
+   "prev_hash": "c4f77286e657fedca014da7ff7bc660549705e8a68d3b093352c76dd4c00873b",
+   "data": {
+    "score_id": "sc-0001",
+    "assignment_id": "E1",
+    "split": "selection",
+    "trial_id": null,
+    "arm": null,
+    "phase": "search",
+    "n_prompts": 300,
+    "scorer_version": "sv1-7880d387c32e86d0",
+    "adapter_sha256": null,
+    "base": {
+     "repo_id": "meta-models/Muse-Glimmer-30B",
+     "revision": "a4e59da52a7bc87ae7251dd5545c0dd437c44b68"
+    },
+    "headline_metric": "prompt_all",
+    "per_seed": [
+     {
+      "seed": 0,
+      "n": 300,
+      "n_errors": 0,
+      "n_truncated": 29,
+      "metrics": {
+       "prompt_all": 0.63,
+       "prompt_fraction": 0.7540555555555556
+      }
+     }
+    ],
+    "verifier_pins": {
+     "code_commit": "bf6020f8a52902b8304e6e8c792befc168207656",
+     "code_dirty": "false",
+     "generator": "inspect",
+     "ifevalg_instructions_py": "dfc4629afac5d308fd170e117a0005a02188f65fbb15635e8f78ede7828ec205",
+     "ifevalg_instructions_registry_py": "5436911d616a7c38afcbbc18312551d8a9ed3f06bca44d74920071c1690c7fc3",
+     "ifevalg_instructions_util_py": "b0b21dd189474071c027cc377e7132dcbf7a6c921def4440b3d1df8eccffdcd9",
+     "inspect_ai": "0.3.287",
+     "inspect_log_seed0": "2026-11-04T16-03-47-00-00_glimmer-generate_ViSmxQSU5Sf9F6FULxyisD.eval",
+     "inspect_log_sha256_seed0": "1af787702a28fb2216c9f024dc3c3829149f46769140525ac3e036018e19b65a",
+     "inspect_task": "glimmer_generate@1",
+     "open_instruct_commit": "b781e782a8fc530577f235aefe282dd046cb8ad2"
+    },
+    "per_prompt_sha256": "9f10f9d0bc66dfd8eb352507a740a1b76149450375f66fab02fc3937c1fae791"
+   }
+  },
+  {
+   "seq": 42,
+   "kind": "lab.score_cost",
+   "actor": "scorer",
+   "ts": 1793810013.7422678,
+   "hash": "7b84bd19398ea565721d5355d682b08bc13c61f8b8fd5ab5053f634a2642b1f1",
+   "prev_hash": "2bc3bd2f05d8397c7b7121f16dfae3609b468afa723d0e15a1deb5c0ec8c1a1e",
+   "data": {
+    "score_id": "sc-0001",
+    "gpu": {
+     "minutes": 36.0,
+     "rental_ids": [
+      "scorer-srv-e4b5abdb"
+     ],
+     "usd": 0.672
+    }
+   }
+  },
+  {
+   "seq": 43,
+   "kind": "lab.operator_change",
+   "actor": "coordinator",
+   "ts": 1793810409.6237,
+   "hash": "d195a47d9ae8a8bdb74a6bf72709b4c07936dc97c0218884fa27caf4da0c1bfd",
+   "prev_hash": "7b84bd19398ea565721d5355d682b08bc13c61f8b8fd5ab5053f634a2642b1f1",
+   "data": {
+    "target": "final_pack"
+   }
+  },
+  {
+   "seq": 44,
+   "kind": "lab.search_closed",
+   "actor": "coordinator",
+   "ts": 1793810409.72596,
+   "hash": "65c3909d7a874bbd1354db13e0f34b435039607eb8a36ad320dd9aece97136d6",
+   "prev_hash": "d195a47d9ae8a8bdb74a6bf72709b4c07936dc97c0218884fa27caf4da0c1bfd",
+   "data": {}
+  },
+  {
+   "seq": 45,
+   "kind": "lab.operator_change",
+   "actor": "coordinator",
+   "ts": 1793810416.721322,
+   "hash": "d1106620037e03f0615b59c2e2451e41c2f2c21f4a03276baf6c2ff00cd1e026",
+   "prev_hash": "65c3909d7a874bbd1354db13e0f34b435039607eb8a36ad320dd9aece97136d6",
+   "data": {
+    "target": "final_analysis_exploratory"
+   }
+  },
+  {
+   "seq": 46,
+   "kind": "lab.final_analysis_frozen",
+   "actor": "coordinator",
+   "ts": 1793810416.822825,
+   "hash": "91d51d0925f326cffbcb7c5242bc34adba54065153bf2660374c0cf36ec64869",
+   "prev_hash": "d1106620037e03f0615b59c2e2451e41c2f2c21f4a03276baf6c2ff00cd1e026",
+   "data": {
+    "file": {
+     "path": "frozen/final_analysis.json",
+     "sha256": "67cd7804c00c2e4f036ee5e00a18c9ce362ef5f8bf23238a782b9c0daca8044b",
+     "size_bytes": 1247
+    }
+   }
+  },
+  {
+   "seq": 47,
+   "kind": "lab.final_requested",
+   "actor": "coordinator",
+   "ts": 1793810426.722733,
+   "hash": "c429ec0dafb84ad358312ebb91dffe0bdf67dacff2bf3b4d238ffae7a1d94d0c",
+   "prev_hash": "91d51d0925f326cffbcb7c5242bc34adba54065153bf2660374c0cf36ec64869",
+   "data": {
+    "arm": "v0",
+    "pack_version": "v0",
+    "request_id": "f-0001"
+   }
+  },
+  {
+   "seq": 48,
+   "kind": "lab.trial_started",
+   "actor": "coordinator",
+   "ts": 1793810426.746639,
+   "hash": "ee4bd48a9090f819e01eb740b9ab4a502dfc9a3c094deeb111d0c030de20efce",
+   "prev_hash": "c429ec0dafb84ad358312ebb91dffe0bdf67dacff2bf3b4d238ffae7a1d94d0c",
+   "data": {
+    "trial_id": "t-0008",
+    "phase": "final",
+    "arm": "v0",
+    "assignment_id": "H1",
+    "pack_version": "v0",
+    "pack": {
+     "commit": "9a153aebc6a584960e1b1f84b4574add5cfcd962",
+     "repo_path": "packs/pack.git"
+    },
+    "seed": 1000,
+    "base": {
+     "repo_id": "meta-models/Muse-Glimmer-30B",
+     "revision": "a4e59da52a7bc87ae7251dd5545c0dd437c44b68"
+    },
+    "budget": {
+     "dollars": 1.5,
+     "gpu_minutes": 72.0,
+     "researcher_tokens": 50000000,
+     "schema_version": 1,
+     "wall_seconds": 4800.0
+    },
+    "data_revisions": {
+     "dev_sha256": "1401e78694dcb4c9b7ab598ac6efe9ab2d69fec49d045babe46ff04ade3a8e15",
+     "selection_sha256": "160a4a9c0b2a229c7f23c7bf8864a923b36da0796ff5a1c34e5c4959bd74fb88",
+     "train_sha256": "a0f951dbb336bde4dbefd199a8920c78effd820056b074a7b182ede875974647"
+    }
+   }
+  },
+  {
+   "seq": 49,
+   "kind": "lab.trial_finished",
+   "actor": "trial:t-0008",
+   "ts": 1793814297.192597,
+   "hash": "a10a3e7c53e18f393a2f519aa4bb06f2ca58cec13a9f7d4244a18a637be89cf9",
+   "prev_hash": "ee4bd48a9090f819e01eb740b9ab4a502dfc9a3c094deeb111d0c030de20efce",
+   "data": {
+    "trial_id": "t-0008",
+    "status": "aborted",
+    "failure": "aborted by the operator: the coordinator died or the trial was abandoned",
+    "selection_score_id": null,
+    "adapter_files": [],
+    "budget_used": {
+     "gpu_minutes": 51.0,
+     "gpu_usd": 0.9520000000000013,
+     "researcher_tokens": 0,
+     "researcher_usd": 0.0,
+     "wall_seconds": 3336.4104058742523
+    },
+    "researcher_runtime": {
+     "aborted_by": "cli abort-trial"
+    }
+   }
+  },
+  {
+   "seq": 50,
+   "kind": "lab.trial_started",
+   "actor": "coordinator",
+   "ts": 1793814297.366296,
+   "hash": "8412b8fa1d2a4a6662928c58ff0774e705eea016cfcfa70f1f8d02873fd11290",
+   "prev_hash": "a10a3e7c53e18f393a2f519aa4bb06f2ca58cec13a9f7d4244a18a637be89cf9",
+   "data": {
+    "trial_id": "t-0009",
+    "phase": "final",
+    "arm": "v0",
+    "assignment_id": "H1",
+    "pack_version": "v0",
+    "pack": {
+     "commit": "9a153aebc6a584960e1b1f84b4574add5cfcd962",
+     "repo_path": "packs/pack.git"
+    },
+    "seed": 1001,
+    "base": {
+     "repo_id": "meta-models/Muse-Glimmer-30B",
+     "revision": "a4e59da52a7bc87ae7251dd5545c0dd437c44b68"
+    },
+    "budget": {
+     "dollars": 1.5,
+     "gpu_minutes": 72.0,
+     "researcher_tokens": 50000000,
+     "schema_version": 1,
+     "wall_seconds": 4800.0
+    },
+    "data_revisions": {
+     "dev_sha256": "1401e78694dcb4c9b7ab598ac6efe9ab2d69fec49d045babe46ff04ade3a8e15",
+     "selection_sha256": "160a4a9c0b2a229c7f23c7bf8864a923b36da0796ff5a1c34e5c4959bd74fb88",
+     "train_sha256": "a0f951dbb336bde4dbefd199a8920c78effd820056b074a7b182ede875974647"
+    }
+   }
+  },
+  {
+   "seq": 51,
+   "kind": "lab.score_recorded",
+   "actor": "scorer",
+   "ts": 1793816637.3583932,
+   "hash": "fedea44bfb7d31e55c0316903c7bcfc7c58c071079624846e56800f812b4ceff",
+   "prev_hash": "8412b8fa1d2a4a6662928c58ff0774e705eea016cfcfa70f1f8d02873fd11290",
+   "data": {
+    "score_id": "t-0009-dev1",
+    "assignment_id": "H1",
+    "split": "dev",
+    "trial_id": "t-0009",
+    "arm": null,
+    "phase": "final",
+    "n_prompts": 100,
+    "scorer_version": "sv1-7880d387c32e86d0",
+    "adapter_sha256": "3d5bb451816f2e34016d0e92f70401fc3dd21c52443ac2a237eb2a3eb9ae94be",
+    "base": {
+     "repo_id": "meta-models/Muse-Glimmer-30B",
+     "revision": "a4e59da52a7bc87ae7251dd5545c0dd437c44b68"
+    },
+    "headline_metric": "prompt_all",
+    "per_seed": [
+     {
+      "seed": 0,
+      "n": 100,
+      "n_errors": 0,
+      "n_truncated": 0,
+      "metrics": {
+       "prompt_all": 0.62,
+       "prompt_fraction": 0.645
+      }
+     }
+    ],
+    "verifier_pins": {
+     "code_commit": "82a974b6eea21994df601abc1dc131bdeb7c25b3",
+     "code_dirty": "false",
+     "generator": "inspect",
+     "ifevalg_instructions_py": "dfc4629afac5d308fd170e117a0005a02188f65fbb15635e8f78ede7828ec205",
+     "ifevalg_instructions_registry_py": "5436911d616a7c38afcbbc18312551d8a9ed3f06bca44d74920071c1690c7fc3",
+     "ifevalg_instructions_util_py": "b0b21dd189474071c027cc377e7132dcbf7a6c921def4440b3d1df8eccffdcd9",
+     "inspect_ai": "0.3.287",
+     "inspect_log_seed0": "2026-11-04T18-19-49-00-00_glimmer-generate_YfySjKWmWaPnAYBjZ8iftv.eval",
+     "inspect_log_sha256_seed0": "72d239c5832a4f66f2000db866b49db15b8c3381cf5a1a01ada82e51da4855e8",
+     "inspect_task": "glimmer_generate@1",
+     "open_instruct_commit": "b781e782a8fc530577f235aefe282dd046cb8ad2"
+    },
+    "per_prompt_sha256": "826397fbf332a552bc26515ca0a1df5e0305332f3225604c76fc573a1fdb806f"
+   }
+  },
+  {
+   "seq": 52,
+   "kind": "lab.contamination_scanned",
+   "actor": "coordinator",
+   "ts": 1793816637.7016802,
+   "hash": "5ee8d60b302e9689fc439662d558d6e4bb919031713411f43beda77e16bca3c2",
+   "prev_hash": "fedea44bfb7d31e55c0316903c7bcfc7c58c071079624846e56800f812b4ceff",
+   "data": {
+    "trial_id": "t-0009",
+    "job_id": "t-0009-j1",
+    "passed": false,
+    "n_rows": 147,
+    "n_exact_hits": 0,
+    "n_ngram_hits": 22,
+    "ngram_n": 13
+   }
+  },
+  {
+   "seq": 53,
+   "kind": "lab.trial_finished",
+   "actor": "coordinator",
+   "ts": 1793816661.052414,
+   "hash": "9716f46cdf76c1165934ea6c05c4d27df462e7645e3d3c22331079bd0045738a",
+   "prev_hash": "5ee8d60b302e9689fc439662d558d6e4bb919031713411f43beda77e16bca3c2",
+   "data": {
+    "trial_id": "t-0009",
+    "status": "contaminated",
+    "failure": "the contamination scan found selection, held-out or test text in a job's training data or recipe",
+    "selection_score_id": null,
+    "adapter_files": [],
+    "budget_used": {
+     "gpu_minutes": 36.0,
+     "gpu_usd": 0.6720000000000005,
+     "researcher_tokens": 0,
+     "researcher_usd": 0.0,
+     "wall_seconds": 2363.683115005493
+    },
+    "researcher_runtime": {
+     "runtime": "coral+muse_code+docker",
+     "model": "muse-spark-1.3",
+     "researcher_model_configured": "muse-spark-1.3",
+     "muse_version": "1.4.14-R7309.1",
+     "coral_commit": "0123dfb939b35228cf2c1fde224cd0561e727408",
+     "container_image": "glimmer-researcher:cli-1"
+    }
+   }
+  },
+  {
+   "seq": 54,
+   "kind": "lab.final_requested",
+   "actor": "coordinator",
+   "ts": 1793816661.7473018,
+   "hash": "96630bd4778b50764be5b0c2b4d66f9dfcfb216af1bfd24c64f7b95b434dc874",
+   "prev_hash": "9716f46cdf76c1165934ea6c05c4d27df462e7645e3d3c22331079bd0045738a",
+   "data": {
+    "arm": "evolved",
+    "pack_version": "cand-001",
+    "request_id": "f-0002"
+   }
+  },
+  {
+   "seq": 55,
+   "kind": "lab.trial_started",
+   "actor": "coordinator",
+   "ts": 1793816661.771075,
+   "hash": "c7fa6be29e22feb370b1db9c10506964ac1591984c04e65a89ce6a712957be64",
+   "prev_hash": "96630bd4778b50764be5b0c2b4d66f9dfcfb216af1bfd24c64f7b95b434dc874",
+   "data": {
+    "trial_id": "t-0010",
+    "phase": "final",
+    "arm": "evolved",
+    "assignment_id": "H1",
+    "pack_version": "cand-001",
+    "pack": {
+     "commit": "3694c668f85ea5f03f9c6255fa761b14dc9e1bdb",
+     "repo_path": "packs/pack.git"
+    },
+    "seed": 1000,
+    "base": {
+     "repo_id": "meta-models/Muse-Glimmer-30B",
+     "revision": "a4e59da52a7bc87ae7251dd5545c0dd437c44b68"
+    },
+    "budget": {
+     "dollars": 1.5,
+     "gpu_minutes": 72.0,
+     "researcher_tokens": 50000000,
+     "schema_version": 1,
+     "wall_seconds": 4800.0
+    },
+    "data_revisions": {
+     "dev_sha256": "1401e78694dcb4c9b7ab598ac6efe9ab2d69fec49d045babe46ff04ade3a8e15",
+     "selection_sha256": "160a4a9c0b2a229c7f23c7bf8864a923b36da0796ff5a1c34e5c4959bd74fb88",
+     "train_sha256": "a0f951dbb336bde4dbefd199a8920c78effd820056b074a7b182ede875974647"
+    }
+   }
+  },
+  {
+   "seq": 56,
+   "kind": "lab.trial_finished",
+   "actor": "trial:t-0010",
+   "ts": 1793817016.182323,
+   "hash": "8ca7f3708315000f7ba1a759f4b998406cba6876f5106b0d293cf7a64fe71fe1",
+   "prev_hash": "c7fa6be29e22feb370b1db9c10506964ac1591984c04e65a89ce6a712957be64",
+   "data": {
+    "trial_id": "t-0010",
+    "status": "aborted",
+    "failure": "aborted by the operator: the coordinator died or the trial was abandoned",
+    "selection_score_id": null,
+    "adapter_files": [],
+    "budget_used": {
+     "gpu_minutes": 4.0,
+     "gpu_usd": 0.07466666666666667,
+     "researcher_tokens": 0,
+     "researcher_usd": 0.0,
+     "wall_seconds": 185.0254819393158
+    },
+    "researcher_runtime": {
+     "aborted_by": "cli abort-trial"
+    }
+   }
+  }
+ ],
+ "trials": {
+  "t-0001": {
+   "jobs": [
+    {
+     "job_id": "t-0001-j1",
+     "event": "started",
+     "max_gpu_minutes": 44.0
+    },
+    {
+     "job_id": "t-0001-j1",
+     "event": "finished",
+     "status": "timeout",
+     "adapter_id": null,
+     "dev_score_id": null,
+     "failure": "the recipe was stopped at its deadline (24 minutes after the rental was created; the last 20 minutes of the cap are kept for the adapter pull and the dev score). Log tail: pl': '1.355', 'memory/max_active (GiB)': '20.83', 'memory/max_allocated (GiB)': '20.83', 'memory/device_reserved (GiB)': '23.38'"
+    },
+    {
+     "job_id": "t-0001-j2",
+     "event": "started",
+     "max_gpu_minutes": 45.0
+    },
+    {
+     "job_id": "t-0001-j2",
+     "event": "finished",
+     "status": "timeout",
+     "adapter_id": null,
+     "dev_score_id": null,
+     "failure": "the recipe was stopped at its deadline (25 minutes after the rental was created; the last 20 minutes of the cap are kept for the adapter pull and the dev score). Log tail: 1.944', 'memory/max_active (GiB)': '20.84', 'memory/max_allocated (GiB)': '20.84', 'memory/device_reserved (GiB)': '23.19', 'tok"
+    }
+   ],
+   "gpu_minutes_charged": 51.0,
+   "trial_ledger_head": {
+    "seq": 106,
+    "hash": "494ba9f2c99c1a45b7d8f88fdfdb2b31b64e11cb295f195080d3ff527cb1885b"
+   },
+   "trial_ledger_events": 106
+  },
+  "t-0002": {
+   "jobs": [
+    {
+     "job_id": "t-0002-j1",
+     "event": "started",
+     "max_gpu_minutes": 40.0
+    },
+    {
+     "job_id": "t-0002-j1",
+     "event": "finished",
+     "status": "timeout",
+     "adapter_id": null,
+     "dev_score_id": null,
+     "failure": "the recipe was stopped at its deadline (20 minutes after the rental was created; the last 20 minutes of the cap are kept for the adapter pull and the dev score). Log tail:  File \"/home/ubuntu/lab/opt/venv-axolotl/lib/python3.12/site-packages/torch/distributed/elastic/metrics/api.py\", line 134, in wr"
+    },
+    {
+     "job_id": "t-0002-j2",
+     "event": "started",
+     "max_gpu_minutes": 40.0
+    },
+    {
+     "job_id": "t-0002-j2",
+     "event": "finished",
+     "status": "ok",
+     "adapter_id": "ad-t-0002-j2",
+     "dev_score_id": "t-0002-dev2",
+     "failure": ""
+    }
+   ],
+   "gpu_minutes_charged": 49.0,
+   "trial_ledger_head": {
+    "seq": 102,
+    "hash": "482e5ab310973e5124020dd12b08e99a310b25d48a191204d7d6ce514d41a825"
+   },
+   "trial_ledger_events": 102
+  },
+  "t-0003": {
+   "jobs": [
+    {
+     "job_id": "t-0003-j1",
+     "event": "started",
+     "max_gpu_minutes": 65.0
+    },
+    {
+     "job_id": "t-0003-j1",
+     "event": "finished",
+     "status": "ok",
+     "adapter_id": "ad-t-0003-j1",
+     "dev_score_id": "t-0003-dev1",
+     "failure": ""
+    },
+    {
+     "job_id": "t-0003-j2",
+     "event": "started",
+     "max_gpu_minutes": 30.0
+    },
+    {
+     "job_id": "t-0003-j2",
+     "event": "finished",
+     "status": "timeout",
+     "adapter_id": null,
+     "dev_score_id": null,
+     "failure": "the recipe was stopped at its deadline (10 minutes after the rental was created; the last 20 minutes of the cap are kept for the adapter pull and the dev score). Log tail: recipe ok: 8 files, 78395 bytes\n[run_job] starting the entrypoint from job.json\n\n=== [2026-11-04T11:33:41Z] Stage 0: preflight ("
+    }
+   ],
+   "gpu_minutes_charged": 53.0,
+   "trial_ledger_head": {
+    "seq": 110,
+    "hash": "1e9ec41567f4b619594a92b36261140743d69b728ee2f005458510e2b2dcf08a"
+   },
+   "trial_ledger_events": 110
+  },
+  "t-0004": {
+   "jobs": [
+    {
+     "job_id": "t-0004-j1",
+     "event": "started",
+     "max_gpu_minutes": 50.0
+    },
+    {
+     "job_id": "t-0004-j1",
+     "event": "finished",
+     "status": "ok",
+     "adapter_id": "ad-t-0004-j1",
+     "dev_score_id": "t-0004-dev1",
+     "failure": ""
+    },
+    {
+     "job_id": "t-0004-j2",
+     "event": "started",
+     "max_gpu_minutes": 34.0
+    },
+    {
+     "job_id": "t-0004-j2",
+     "event": "finished",
+     "status": "timeout",
+     "adapter_id": null,
+     "dev_score_id": null,
+     "failure": "the recipe was stopped at its deadline (14 minutes after the rental was created; the last 20 minutes of the cap are kept for the adapter pull and the dev score). Log tail: recipe ok: 8 files, 78401 bytes\n[run_job] starting the entrypoint from job.json\n\n=== [2026-11-04T13:09:42Z] Stage 0: preflight ("
+    }
+   ],
+   "gpu_minutes_charged": 53.0,
+   "trial_ledger_head": {
+    "seq": 110,
+    "hash": "de79cd2f7b1ddb59f6dfa442406d45426514bab0b2463f2e74ada213c70e15a6"
+   },
+   "trial_ledger_events": 110
+  },
+  "t-0005": {
+   "jobs": [
+    {
+     "job_id": "t-0005-j1",
+     "event": "started",
+     "max_gpu_minutes": 38.0
+    },
+    {
+     "job_id": "t-0005-j1",
+     "event": "finished",
+     "status": "timeout",
+     "adapter_id": null,
+     "dev_score_id": null,
+     "failure": "the recipe was stopped at its deadline (18 minutes after the rental was created; the last 20 minutes of the cap are kept for the adapter pull and the dev score). Log tail:  line 362, in launch_agent\n    result = agent.run()\n             ^^^^^^^^^^^\n  File \"/home/ubuntu/lab/opt/venv-axolotl/lib/pytho"
+    },
+    {
+     "job_id": "t-0005-j2",
+     "event": "started",
+     "max_gpu_minutes": 50.0
+    },
+    {
+     "job_id": "t-0005-j2",
+     "event": "finished",
+     "status": "failed",
+     "adapter_id": null,
+     "dev_score_id": null,
+     "failure": "trainer error: TrainerError: job t-0005-j2: ssh command timed out after 60 s"
+    }
+   ],
+   "gpu_minutes_charged": 35.0,
+   "trial_ledger_head": {
+    "seq": 74,
+    "hash": "a002fe733d4bdd5984c272bdcf09a873e004d3f7f98f06cb6103a5a530b188b6"
+   },
+   "trial_ledger_events": 74
+  },
+  "t-0006": {
+   "jobs": [
+    {
+     "job_id": "t-0006-j1",
+     "event": "started",
+     "max_gpu_minutes": 55.0
+    },
+    {
+     "job_id": "t-0006-j1",
+     "event": "finished",
+     "status": "ok",
+     "adapter_id": "ad-t-0006-j1",
+     "dev_score_id": "t-0006-dev1",
+     "failure": ""
+    },
+    {
+     "job_id": "t-0006-j2",
+     "event": "started",
+     "max_gpu_minutes": 34.0
+    },
+    {
+     "job_id": "t-0006-j2",
+     "event": "finished",
+     "status": "timeout",
+     "adapter_id": null,
+     "dev_score_id": null,
+     "failure": "the recipe was stopped at its deadline (14 minutes after the rental was created; the last 20 minutes of the cap are kept for the adapter pull and the dev score). Log tail: recipe ok: 8 files, 79781 bytes\n[run_job] starting the entrypoint from job.json\n\n=== [2026-11-04T15:16:30Z] Stage 0: preflight ("
+    }
+   ],
+   "gpu_minutes_charged": 53.0,
+   "trial_ledger_head": {
+    "seq": 110,
+    "hash": "ef0013d93738ad0444cd94a96742b952f2bd1f6ee9380f4ce7a1146891a7f0a2"
+   },
+   "trial_ledger_events": 110
+  },
+  "t-0007": {
+   "jobs": [],
+   "gpu_minutes_charged": 0.0,
+   "trial_ledger_head": null,
+   "trial_ledger_events": 0
+  },
+  "t-0008": {
+   "jobs": [
+    {
+     "job_id": "t-0008-j1",
+     "event": "started",
+     "max_gpu_minutes": 42.0
+    },
+    {
+     "job_id": "t-0008-j1",
+     "event": "finished",
+     "status": "failed",
+     "adapter_id": null,
+     "dev_score_id": null,
+     "failure": "trainer error: AccessDenied: the adapter is not the output of trial 't-0008'"
+    },
+    {
+     "job_id": "t-0008-j2",
+     "event": "started",
+     "max_gpu_minutes": 40.0
+    },
+    {
+     "job_id": "t-0008-j2",
+     "event": "finished",
+     "status": "failed",
+     "adapter_id": null,
+     "dev_score_id": null,
+     "failure": "trainer error: AccessDenied: the adapter is not the output of trial 't-0008'"
+    },
+    {
+     "job_id": "t-0008-j3",
+     "event": "started",
+     "max_gpu_minutes": 25.05915278593699
+    }
+   ],
+   "gpu_minutes_charged": 51.0,
+   "trial_ledger_head": {
+    "seq": 107,
+    "hash": "bc5357d2ff47b07d6edc305e22b59f4a450e7dd2279e2d7bce87881c2bd5fca6"
+   },
+   "trial_ledger_events": 107
+  },
+  "t-0009": {
+   "jobs": [
+    {
+     "job_id": "t-0009-j1",
+     "event": "started",
+     "max_gpu_minutes": 50.0
+    },
+    {
+     "job_id": "t-0009-j1",
+     "event": "finished",
+     "status": "ok",
+     "adapter_id": "ad-t-0009-j1",
+     "dev_score_id": "t-0009-dev1",
+     "failure": ""
+    }
+   ],
+   "gpu_minutes_charged": 36.0,
+   "trial_ledger_head": {
+    "seq": 74,
+    "hash": "cf8235ebe62224885c8b2ac1e018e74b38800e7c64c8c0ee0d7bebdedb7439d7"
+   },
+   "trial_ledger_events": 74
+  },
+  "t-0010": {
+   "jobs": [
+    {
+     "job_id": "t-0010-j1",
+     "event": "started",
+     "max_gpu_minutes": 65.0
+    }
+   ],
+   "gpu_minutes_charged": 4.0,
+   "trial_ledger_head": {
+    "seq": 9,
+    "hash": "d1e0fd5407371ca513e69dbcf91952c3560e22539b54b20f20191b964ec25545"
+   },
+   "trial_ledger_events": 9
+  }
+ },
+ "rentals": [
+  {
+   "rental": "t-0001-t-0001-j1",
+   "trial_id": "t-0001",
+   "state": "deleted",
+   "usd_per_hour": 1.12,
+   "minutes": 24.1
+  },
+  {
+   "rental": "t-0001-t-0001-j2",
+   "trial_id": "t-0001",
+   "state": "deleted",
+   "usd_per_hour": 1.12,
+   "minutes": 25.2
+  },
+  {
+   "rental": "t-0002-t-0002-j1",
+   "trial_id": "t-0002",
+   "state": "deleted",
+   "usd_per_hour": 1.12,
+   "minutes": 20.1
+  },
+  {
+   "rental": "t-0002-t-0002-j2",
+   "trial_id": "t-0002",
+   "state": "deleted",
+   "usd_per_hour": 1.12,
+   "minutes": 27.5
+  },
+  {
+   "rental": "t-0002-srv-6b94ef08",
+   "trial_id": "t-0002",
+   "state": "deleted",
+   "usd_per_hour": 1.12,
+   "minutes": 12.0
+  },
+  {
+   "rental": "t-0002-srv-6d07483c",
+   "trial_id": "t-0002",
+   "state": "deleted",
+   "usd_per_hour": 1.12,
+   "minutes": 13.8
+  },
+  {
+   "rental": "t-0003-t-0003-j1",
+   "trial_id": "t-0003",
+   "state": "deleted",
+   "usd_per_hour": 1.12,
+   "minutes": 41.8
+  },
+  {
+   "rental": "t-0003-t-0003-j2",
+   "trial_id": "t-0003",
+   "state": "deleted",
+   "usd_per_hour": 1.12,
+   "minutes": 10.2
+  },
+  {
+   "rental": "t-0003-srv-d76f3796",
+   "trial_id": "t-0003",
+   "state": "deleted",
+   "usd_per_hour": 1.12,
+   "minutes": 26.4
+  },
+  {
+   "rental": "t-0004-t-0004-j1",
+   "trial_id": "t-0004",
+   "state": "deleted",
+   "usd_per_hour": 1.12,
+   "minutes": 37.9
+  },
+  {
+   "rental": "t-0004-t-0004-j2",
+   "trial_id": "t-0004",
+   "state": "deleted",
+   "usd_per_hour": 1.12,
+   "minutes": 14.2
+  },
+  {
+   "rental": "t-0004-srv-7c523df2",
+   "trial_id": "t-0004",
+   "state": "deleted",
+   "usd_per_hour": 1.12,
+   "minutes": 15.3
+  },
+  {
+   "rental": "t-0005-t-0005-j1",
+   "trial_id": "t-0005",
+   "state": "deleted",
+   "usd_per_hour": 1.12,
+   "minutes": 18.1
+  },
+  {
+   "rental": "t-0005-t-0005-j2",
+   "trial_id": "t-0005",
+   "state": "deleted",
+   "usd_per_hour": 1.12,
+   "minutes": 15.8
+  },
+  {
+   "rental": "t-0006-t-0006-j1",
+   "trial_id": "t-0006",
+   "state": "deleted",
+   "usd_per_hour": 1.12,
+   "minutes": 37.8
+  },
+  {
+   "rental": "t-0006-t-0006-j2",
+   "trial_id": "t-0006",
+   "state": "deleted",
+   "usd_per_hour": 1.12,
+   "minutes": 14.2
+  },
+  {
+   "rental": "t-0006-srv-0947f61d",
+   "trial_id": "t-0006",
+   "state": "deleted",
+   "usd_per_hour": 1.12,
+   "minutes": 12.2
+  },
+  {
+   "rental": "scorer-srv-e4b5abdb",
+   "trial_id": "scorer",
+   "state": "deleted",
+   "usd_per_hour": 1.12,
+   "minutes": 35.4
+  },
+  {
+   "rental": "t-0008-t-0008-j1",
+   "trial_id": "t-0008",
+   "state": "deleted",
+   "usd_per_hour": 1.12,
+   "minutes": 21.7
+  },
+  {
+   "rental": "t-0008-t-0008-j2",
+   "trial_id": "t-0008",
+   "state": "deleted",
+   "usd_per_hour": 1.12,
+   "minutes": 22.8
+  },
+  {
+   "rental": "t-0008-t-0008-j3",
+   "trial_id": "t-0008",
+   "state": "deleted",
+   "usd_per_hour": 1.12,
+   "minutes": 5.5
+  },
+  {
+   "rental": "t-0009-t-0009-j1",
+   "trial_id": "t-0009",
+   "state": "deleted",
+   "usd_per_hour": 1.12,
+   "minutes": 35.8
+  },
+  {
+   "rental": "t-0010-t-0010-j1",
+   "trial_id": "t-0010",
+   "state": "deleted",
+   "usd_per_hour": 1.12,
+   "minutes": 3.2
+  }
+ ],
+ "frozen_final_analysis": {
+  "exploratory": true,
+  "method": "welch",
+  "heldout_metric": "prompt_all",
+  "failed_trial_policy": "scored_zero",
+  "retry_policy": "Retry only after an infrastructure failure that revealed no score (lab.score_failed with result_revealed false).",
+  "planned_trials": [
+   {
+    "arm": "v0",
+    "assignment_id": "H1",
+    "seed": 1000,
+    "trial_id": "t-0008"
+   },
+   {
+    "arm": "v0",
+    "assignment_id": "H1",
+    "seed": 1001,
+    "trial_id": "t-0009"
+   },
+   {
+    "arm": "evolved",
+    "assignment_id": "H1",
+    "seed": 1000,
+    "trial_id": "t-0010"
+   },
+   {
+    "arm": "evolved",
+    "assignment_id": "H1",
+    "seed": 1001,
+    "trial_id": "t-0011"
+   }
+  ],
+  "score_seeds": [
+   0
+  ],
+  "score_params": {
+   "max_tokens": 6000,
+   "reasoning_strength": "high",
+   "system_prompt": "You are a helpful AI assistant.",
+   "temperature": 1.0,
+   "top_k": 64,
+   "top_p": 0.95
+  },
+  "frozen_utc": "2026-11-04T16:40:16+00:00"
+ }
+}

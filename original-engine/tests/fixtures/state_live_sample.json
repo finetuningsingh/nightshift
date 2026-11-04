@@ -1,0 +1,1459 @@
+{
+ "run": {
+  "run_id": "r-b41d0e6a",
+  "task": "law-discovery",
+  "backend": "meta",
+  "mode": "live",
+  "models": {
+   "supervisor": "muse-spark-1.3",
+   "designer": "muse-spark-1.3",
+   "implementer": "muse-spark-1.3",
+   "reviewer": "muse-spark-1.3",
+   "reviewer_hard": "muse-wonder-1.0",
+   "reflector": "muse-spark-1.3",
+   "judge": "muse-spark-1.3",
+   "auditor_final": "muse-wonder-1.0"
+  },
+  "started_ts": 1792100000.0,
+  "now": 1792100110.5,
+  "finished": false,
+  "reason": null,
+  "verdict_class": null,
+  "objective": "minimize",
+  "primary_metric": "heldout_rmse",
+  "isolation": "unshare-net",
+  "resumes": [],
+  "origin": "live",
+  "endpoint": {
+   "kind": "meta-api",
+   "hosts": [
+    "api.meta.ai"
+   ]
+  },
+  "summary": "",
+  "implementer": "patch",
+  "models_answered": {
+   "designer": [
+    "muse-spark-1.3"
+   ],
+   "implementer": [
+    "muse-spark-1.3"
+   ],
+   "judge": [
+    "muse-spark-1.3"
+   ],
+   "reviewer": [
+    "muse-spark-1.3"
+   ],
+   "supervisor": [
+    "muse-spark-1.3"
+   ]
+  }
+ },
+ "banner": null,
+ "budget": {
+  "limits": {
+   "max_experiments": 16,
+   "max_wall_sec": 1800.0,
+   "max_llm_usd": 5.0,
+   "max_parallel": 3,
+   "max_supervisor_turns": 40,
+   "max_replications": 6,
+   "max_repairs": 2,
+   "stall_after": 3
+  },
+  "used": {
+   "experiments": 6,
+   "replications": 1,
+   "llm_usd": 0.41000000000000003,
+   "llm_calls": 21,
+   "supervisor_turns": 4,
+   "wall_sec": 110.5
+  },
+  "remaining": {
+   "experiments": 10,
+   "replications": 5,
+   "llm_usd": 4.59,
+   "supervisor_turns": 36,
+   "wall_sec": 1689.5
+  }
+ },
+ "baseline": {
+  "exp_id": "e000",
+  "score": 0.412
+ },
+ "incumbent": {
+  "exp_id": "e002",
+  "score": 0.187,
+  "replicated": true
+ },
+ "experiments": [
+  {
+   "exp_id": "e000",
+   "lane": "baseline",
+   "hypothesis": "Unmodified template: a linear fit of acceleration against position.",
+   "status": "recorded",
+   "stage": "record",
+   "worker": "",
+   "reviewer": "",
+   "outcome": "baseline",
+   "dev_outcome": "baseline",
+   "score": 0.412,
+   "train": 0.398,
+   "delta": null,
+   "sealed_delta": null,
+   "train_delta": null,
+   "review": null,
+   "replicated": false,
+   "awaiting_replication": false,
+   "diff_summary": "",
+   "parent_exp_id": null,
+   "blocked_reason": null,
+   "protected": [],
+   "claim_ids": [],
+   "finding_ids": [],
+   "planted_fault": null,
+   "started_ts": 1792100003.2,
+   "ended_ts": 1792100008.3,
+   "overfit_suspect": false,
+   "cost_usd": null,
+   "tokens": null,
+   "llm_calls": null,
+   "cost_by_role": {}
+  },
+  {
+   "exp_id": "e001",
+   "lane": "A",
+   "hypothesis": "Add a quadratic term in position so the restoring force can stiffen or soften with displacement.",
+   "status": "recorded",
+   "stage": "record",
+   "worker": "patch:muse-spark-1.3",
+   "reviewer": "muse-spark-1.3 (reviewer)",
+   "outcome": "improved",
+   "dev_outcome": "improved",
+   "score": 0.296,
+   "train": 0.281,
+   "delta": 0.116,
+   "sealed_delta": null,
+   "train_delta": 0.117,
+   "review": "accept",
+   "replicated": false,
+   "awaiting_replication": true,
+   "diff_summary": "model.py: +8 -2 (x^2 feature)",
+   "parent_exp_id": null,
+   "blocked_reason": null,
+   "protected": [],
+   "claim_ids": [
+    "e001.c1"
+   ],
+   "finding_ids": [],
+   "planted_fault": null,
+   "started_ts": 1792100013.5,
+   "ended_ts": 1792100059.7,
+   "overfit_suspect": false,
+   "cost_usd": 0.061,
+   "tokens": 20108,
+   "llm_calls": 3,
+   "cost_by_role": {
+    "designer": 0.0085,
+    "implementer": 0.034,
+    "reviewer": 0.0185
+   }
+  },
+  {
+   "exp_id": "e002",
+   "lane": "B",
+   "hypothesis": "Add a velocity-dependent damping term to the acceleration model.",
+   "status": "recorded",
+   "stage": "record",
+   "worker": "patch:muse-spark-1.3",
+   "reviewer": "muse-spark-1.3 (reviewer)",
+   "outcome": "improved",
+   "dev_outcome": "improved",
+   "score": 0.187,
+   "train": 0.17,
+   "delta": 0.225,
+   "sealed_delta": 0.216,
+   "train_delta": 0.228,
+   "review": "accept",
+   "replicated": true,
+   "awaiting_replication": false,
+   "diff_summary": "model.py: +10 -2 (velocity feature)",
+   "parent_exp_id": null,
+   "blocked_reason": null,
+   "protected": [],
+   "claim_ids": [],
+   "finding_ids": [],
+   "planted_fault": null,
+   "started_ts": 1792100014.5,
+   "ended_ts": 1792100060.3,
+   "overfit_suspect": false,
+   "cost_usd": 0.061,
+   "tokens": 20108,
+   "llm_calls": 3,
+   "cost_by_role": {
+    "designer": 0.0085,
+    "implementer": 0.034,
+    "reviewer": 0.0185
+   }
+  },
+  {
+   "exp_id": "e003",
+   "lane": "C",
+   "hypothesis": "Increase the polynomial degree in position to 7 to capture higher-order curvature.",
+   "status": "recorded",
+   "stage": "record",
+   "worker": "patch:muse-spark-1.3",
+   "reviewer": "muse-spark-1.3 (reviewer)",
+   "outcome": "no_gain",
+   "dev_outcome": "no_gain",
+   "score": 0.398,
+   "train": 0.311,
+   "delta": 0.014,
+   "sealed_delta": null,
+   "train_delta": 0.087,
+   "review": "accept",
+   "replicated": false,
+   "awaiting_replication": false,
+   "diff_summary": "model.py: +12 -2 (degree 7 features)",
+   "parent_exp_id": null,
+   "blocked_reason": null,
+   "protected": [],
+   "claim_ids": [
+    "e003.c1"
+   ],
+   "finding_ids": [
+    "I01@e003.c1",
+    "I02@e003"
+   ],
+   "planted_fault": null,
+   "started_ts": 1792100015.5,
+   "ended_ts": 1792100060.8999999,
+   "overfit_suspect": true,
+   "cost_usd": 0.061,
+   "tokens": 20108,
+   "llm_calls": 3,
+   "cost_by_role": {
+    "designer": 0.0085,
+    "implementer": 0.034,
+    "reviewer": 0.0185
+   }
+  },
+  {
+   "exp_id": "e004",
+   "lane": "A",
+   "hypothesis": "Fit amplitude and phase jointly by least squares instead of estimating the phase from the first zero crossing, then refine the damping constant by golden-section search on the held-in residuals. The previous model fixed the phase at zero, which biases the frequency estimate when the first sample is not at a turning point, so the claim is that a free phase removes a systematic error of roughly one sample period.",
+   "status": "recorded",
+   "stage": "record",
+   "worker": "patch:muse-spark-1.3",
+   "reviewer": "muse-spark-1.3 (reviewer)",
+   "outcome": "improved",
+   "dev_outcome": "improved",
+   "score": 0.162,
+   "train": 0.148,
+   "delta": 0.025,
+   "sealed_delta": null,
+   "train_delta": 0.022,
+   "review": "accept",
+   "replicated": false,
+   "awaiting_replication": true,
+   "diff_summary": "model.py: +21 -5 (joint phase fit)",
+   "parent_exp_id": "e002",
+   "blocked_reason": null,
+   "protected": [],
+   "claim_ids": [
+    "e004.c1"
+   ],
+   "finding_ids": [],
+   "planted_fault": null,
+   "started_ts": 1792100079.8999999,
+   "ended_ts": 1792100104.2,
+   "overfit_suspect": false,
+   "cost_usd": 0.061,
+   "tokens": 20106,
+   "llm_calls": 3,
+   "cost_by_role": {
+    "designer": 0.0085,
+    "implementer": 0.034,
+    "reviewer": 0.0185
+   }
+  },
+  {
+   "exp_id": "e005",
+   "lane": "B",
+   "hypothesis": "Model the motion as an exponentially decaying oscillation instead of polynomial terms in position.",
+   "status": "running",
+   "stage": "run",
+   "worker": "patch:muse-spark-1.3",
+   "reviewer": "",
+   "outcome": null,
+   "dev_outcome": null,
+   "score": null,
+   "train": null,
+   "delta": null,
+   "sealed_delta": null,
+   "train_delta": null,
+   "review": null,
+   "replicated": false,
+   "awaiting_replication": false,
+   "diff_summary": "model.py: +24 -4 (damped oscillation)",
+   "parent_exp_id": "e002",
+   "blocked_reason": null,
+   "protected": [],
+   "claim_ids": [],
+   "finding_ids": [],
+   "planted_fault": null,
+   "started_ts": 1792100080.8999999,
+   "ended_ts": null,
+   "overfit_suspect": false,
+   "cost_usd": 0.0425,
+   "tokens": 14145,
+   "llm_calls": 2,
+   "cost_by_role": {
+    "designer": 0.0085,
+    "implementer": 0.034
+   }
+  },
+  {
+   "exp_id": "e006",
+   "lane": "C",
+   "hypothesis": "Estimate the decay constant by a linear fit of log peak amplitude against time.",
+   "status": "workspace",
+   "stage": "design",
+   "worker": "",
+   "reviewer": "",
+   "outcome": null,
+   "dev_outcome": null,
+   "score": null,
+   "train": null,
+   "delta": null,
+   "sealed_delta": null,
+   "train_delta": null,
+   "review": null,
+   "replicated": false,
+   "awaiting_replication": false,
+   "diff_summary": "",
+   "parent_exp_id": "e002",
+   "blocked_reason": null,
+   "protected": [],
+   "claim_ids": [],
+   "finding_ids": [],
+   "planted_fault": null,
+   "started_ts": 1792100081.8999999,
+   "ended_ts": null,
+   "overfit_suspect": false,
+   "cost_usd": 0.0085,
+   "tokens": 2655,
+   "llm_calls": 1,
+   "cost_by_role": {
+    "designer": 0.0085
+   }
+  }
+ ],
+ "series": [
+  {
+   "seq": 8,
+   "ts": 1792100007.8,
+   "exp_id": "e000",
+   "score": 0.412,
+   "train": 0.398,
+   "std": 0.011,
+   "kind": "baseline",
+   "replicated": false
+  },
+  {
+   "seq": 34,
+   "ts": 1792100042.7000003,
+   "exp_id": "e001",
+   "score": 0.296,
+   "train": 0.281,
+   "std": 0.013,
+   "kind": "candidate",
+   "replicated": false
+  },
+  {
+   "seq": 37,
+   "ts": 1792100046.1000001,
+   "exp_id": "e002",
+   "score": 0.187,
+   "train": 0.17,
+   "std": 0.01,
+   "kind": "promoted",
+   "replicated": true
+  },
+  {
+   "seq": 40,
+   "ts": 1792100049.5,
+   "exp_id": "e003",
+   "score": 0.398,
+   "train": 0.311,
+   "std": 0.024,
+   "kind": "candidate",
+   "replicated": false
+  },
+  {
+   "seq": 89,
+   "ts": 1792100100.4,
+   "exp_id": "e004",
+   "score": 0.162,
+   "train": 0.148,
+   "std": 0.009,
+   "kind": "candidate",
+   "replicated": false
+  }
+ ],
+ "claims": [
+  {
+   "claim_id": "e003.c1",
+   "exp_id": "e003",
+   "type": "improved",
+   "text": "A degree 7 polynomial improves held-out RMSE over the baseline.",
+   "actor": "implementer:C",
+   "seq": 30,
+   "status": "contradicted",
+   "refused_finish": false,
+   "accepted": false
+  },
+  {
+   "claim_id": "e001.c1",
+   "exp_id": "e001",
+   "type": "improved",
+   "text": "The quadratic term lowers held-out RMSE.",
+   "actor": "implementer:A",
+   "seq": 31,
+   "status": "unreplicated",
+   "refused_finish": false,
+   "accepted": false
+  },
+  {
+   "claim_id": "e004.c1",
+   "exp_id": "e004",
+   "type": "improved",
+   "text": "A free phase lowers held-out RMSE below the incumbent.",
+   "actor": "implementer:A",
+   "seq": 86,
+   "status": "unreplicated",
+   "refused_finish": false,
+   "accepted": false
+  }
+ ],
+ "finish": {
+  "requests": [],
+  "refusals": [],
+  "accepted": false,
+  "accepted_claims": []
+ },
+ "lessons": [
+  {
+   "lesson_id": "L001",
+   "text": "Velocity-dependent damping gives a large, replicated gain. Position-only polynomial terms give smaller dev gains and the degree 7 variant overfits.",
+   "kind": "strategy",
+   "source_exps": [
+    "e001",
+    "e002",
+    "e003"
+   ],
+   "classification": "model",
+   "seq": 67,
+   "ts": 1792100073.6999998,
+   "actor": "reflector"
+  }
+ ],
+ "pivots": [],
+ "findings": [
+  {
+   "finding_id": "I01@e003.c1",
+   "invariant_id": "I01",
+   "title": "Claims need evidence",
+   "verdict": "violated",
+   "severity": "block",
+   "status": "open",
+   "source": "deterministic",
+   "rationale": "Claim e003.c1 asserts an improvement but e003 was recorded no_gain on the dev split.",
+   "evidence_seqs": [
+    30,
+    49
+   ],
+   "subject": "e003.c1",
+   "exp_id": "e003"
+  },
+  {
+   "finding_id": "I02@e003",
+   "invariant_id": "I02",
+   "title": "Held-out, not train",
+   "verdict": "violated",
+   "severity": "block",
+   "status": "open",
+   "source": "deterministic",
+   "rationale": "Experiment e003 has an improved claim while its train metric improved beyond the margin and held-out did not.",
+   "evidence_seqs": [
+    30,
+    49
+   ],
+   "subject": "e003",
+   "exp_id": "e003"
+  },
+  {
+   "finding_id": "I07@run",
+   "invariant_id": "I07",
+   "title": "Infrastructure is not model failure",
+   "verdict": "insufficient_evidence",
+   "severity": "info",
+   "status": "open",
+   "source": "llm",
+   "rationale": "The judge found no lesson or outcome to compare yet: no experiment has failed for infrastructure reasons.",
+   "evidence_seqs": [],
+   "subject": "run",
+   "exp_id": null
+  }
+ ],
+ "invariants": [
+  {
+   "id": "I01",
+   "title": "Claims need evidence",
+   "kind": "deterministic",
+   "state": "violated",
+   "open": 1
+  },
+  {
+   "id": "I02",
+   "title": "Held-out, not train",
+   "kind": "deterministic",
+   "state": "violated",
+   "open": 1
+  },
+  {
+   "id": "I03",
+   "title": "Protected surface",
+   "kind": "deterministic",
+   "state": "ok",
+   "open": 0
+  },
+  {
+   "id": "I04",
+   "title": "No duplicate work",
+   "kind": "deterministic",
+   "state": "ok",
+   "open": 0
+  },
+  {
+   "id": "I05",
+   "title": "Progress, not PID",
+   "kind": "deterministic",
+   "state": "ok",
+   "open": 0
+  },
+  {
+   "id": "I06",
+   "title": "Evaluation handoff",
+   "kind": "deterministic",
+   "state": "ok",
+   "open": 0
+  },
+  {
+   "id": "I07",
+   "title": "Infrastructure is not model failure",
+   "kind": "both",
+   "state": "insufficient",
+   "open": 0
+  },
+  {
+   "id": "I08",
+   "title": "Budget and authority",
+   "kind": "both",
+   "state": "llm_not_run",
+   "open": 0
+  },
+  {
+   "id": "I09",
+   "title": "Replicate before final",
+   "kind": "deterministic",
+   "state": "ok",
+   "open": 0
+  },
+  {
+   "id": "I10",
+   "title": "Comparable conditions",
+   "kind": "deterministic",
+   "state": "ok",
+   "open": 0
+  },
+  {
+   "id": "I11",
+   "title": "No endless preparation",
+   "kind": "deterministic",
+   "state": "ok",
+   "open": 0
+  },
+  {
+   "id": "I12",
+   "title": "Independent review",
+   "kind": "deterministic",
+   "state": "ok",
+   "open": 0
+  },
+  {
+   "id": "I13",
+   "title": "Untrusted instructions",
+   "kind": "llm",
+   "state": "ok",
+   "open": 0
+  },
+  {
+   "id": "I14",
+   "title": "Summary matches ledger",
+   "kind": "both",
+   "state": "llm_not_run",
+   "open": 0
+  }
+ ],
+ "models_usage": [
+  {
+   "role": "designer",
+   "model": "muse-spark-1.3",
+   "calls": 6,
+   "prompt_tokens": 13830,
+   "completion_tokens": 2100,
+   "cached_tokens": 9600,
+   "cache": "known",
+   "usd": 0.051,
+   "effort": "low",
+   "strict_schema_calls": 6,
+   "schema_ok": 6,
+   "retries": 0
+  },
+  {
+   "role": "implementer",
+   "model": "muse-spark-1.3",
+   "calls": 5,
+   "prompt_tokens": 49100,
+   "completion_tokens": 8350,
+   "cached_tokens": 33900,
+   "cache": "known",
+   "usd": 0.17,
+   "effort": "low",
+   "strict_schema_calls": 0,
+   "schema_ok": 0,
+   "retries": 0
+  },
+  {
+   "role": "judge",
+   "model": "muse-spark-1.3",
+   "calls": 2,
+   "prompt_tokens": 7500,
+   "completion_tokens": 510,
+   "cached_tokens": 0,
+   "cache": "known",
+   "usd": 0.027,
+   "effort": "high",
+   "strict_schema_calls": 2,
+   "schema_ok": 2,
+   "retries": 0
+  },
+  {
+   "role": "reviewer",
+   "model": "muse-spark-1.3",
+   "calls": 4,
+   "prompt_tokens": 22300,
+   "completion_tokens": 1550,
+   "cached_tokens": 12200,
+   "cache": "known",
+   "usd": 0.074,
+   "effort": "high",
+   "strict_schema_calls": 4,
+   "schema_ok": 4,
+   "retries": 1
+  },
+  {
+   "role": "supervisor",
+   "model": "muse-spark-1.3",
+   "calls": 4,
+   "prompt_tokens": 24300,
+   "completion_tokens": 2480,
+   "cached_tokens": 14700,
+   "cache": "known",
+   "usd": 0.088,
+   "effort": "high",
+   "strict_schema_calls": 0,
+   "schema_ok": 0,
+   "retries": 1
+  }
+ ],
+ "turns": [
+  {
+   "seq": 2,
+   "source": "supervisor",
+   "model": "muse-spark-1.3",
+   "say": "",
+   "tool_calls": [
+    {
+     "name": "get_state",
+     "args_summary": ""
+    }
+   ],
+   "reasoning_effort": "medium",
+   "latency_ms": 2140.0,
+   "text": "I will measure the unmodified template first so every later score has a reference, then open with three structurally different hypotheses about the force law."
+  },
+  {
+   "seq": 10,
+   "source": "supervisor",
+   "model": "muse-spark-1.3",
+   "say": "",
+   "tool_calls": [
+    {
+     "name": "launch_experiments",
+     "args_summary": "template=explore, lanes=A,B,C"
+    },
+    {
+     "name": "get_state",
+     "args_summary": ""
+    }
+   ],
+   "reasoning_effort": "medium",
+   "latency_ms": 3380.0,
+   "text": "Three lanes: a quadratic restoring force, a velocity-dependent damping term, and a higher polynomial degree as a control for overfitting. All use the same explore workflow."
+  },
+  {
+   "seq": 56,
+   "source": "supervisor",
+   "model": "muse-spark-1.3",
+   "say": "",
+   "tool_calls": [
+    {
+     "name": "replicate",
+     "args_summary": "exp_id=e002"
+    }
+   ],
+   "reasoning_effort": "medium",
+   "latency_ms": 2870.0,
+   "text": "e002 has the largest dev gain, so it goes to the sealed split first. e001 can wait: it is dominated by e002 on dev, and replications are capped."
+  },
+  {
+   "seq": 68,
+   "source": "supervisor",
+   "model": "muse-spark-1.3",
+   "say": "",
+   "tool_calls": [
+    {
+     "name": "launch_experiments",
+     "args_summary": "template=explore, base=incumbent, lanes=A,B,C"
+    }
+   ],
+   "reasoning_effort": "high",
+   "latency_ms": 5210.0,
+   "text": "With the damped model as incumbent, I will build on it: a joint amplitude and phase fit, an oscillatory decaying form, and a log-space fit of the decay. I put all three in one call so they run in parallel."
+  }
+ ],
+ "timeline": [
+  {
+   "seq": 1,
+   "ts": 1792100000.0,
+   "kind": "run.started",
+   "actor": "engine",
+   "text": "run started: task law-discovery, backend meta, isolation unshare-net"
+  },
+  {
+   "seq": 2,
+   "ts": 1792100002.0,
+   "kind": "supervisor.turn",
+   "actor": "supervisor",
+   "text": "supervisor turn 1: supervisor turn 1: baseline"
+  },
+  {
+   "seq": 3,
+   "ts": 1792100002.2,
+   "kind": "budget.charged",
+   "actor": "supervisor",
+   "text": "llm call charged $0.012 (muse-spark-1.3)"
+  },
+  {
+   "seq": 4,
+   "ts": 1792100003.2,
+   "kind": "experiment.proposed",
+   "actor": "designer:baseline",
+   "text": "e000 proposed on lane baseline: Unmodified template: a linear fit of acceleration against position."
+  },
+  {
+   "seq": 5,
+   "ts": 1792100004.4,
+   "kind": "experiment.workspace_ready",
+   "actor": "engine",
+   "text": "e000 workspace ready"
+  },
+  {
+   "seq": 6,
+   "ts": 1792100005.2,
+   "kind": "experiment.run_started",
+   "actor": "engine",
+   "text": "e000 run 0 started (baseline, seed 0)"
+  },
+  {
+   "seq": 7,
+   "ts": 1792100006.8,
+   "kind": "experiment.run_finished",
+   "actor": "engine",
+   "text": "e000 run 0 finished: ok, exit 0"
+  },
+  {
+   "seq": 8,
+   "ts": 1792100007.8,
+   "kind": "experiment.graded",
+   "actor": "engine",
+   "text": "e000 graded on dev (baseline): score 0.412, valid=True"
+  },
+  {
+   "seq": 9,
+   "ts": 1792100008.3,
+   "kind": "experiment.recorded",
+   "actor": "engine",
+   "text": "e000 recorded: baseline, dev delta n/a"
+  },
+  {
+   "seq": 10,
+   "ts": 1792100012.3,
+   "kind": "supervisor.turn",
+   "actor": "supervisor",
+   "text": "supervisor turn 2: supervisor turn 2: launch 3 lanes"
+  },
+  {
+   "seq": 11,
+   "ts": 1792100012.5,
+   "kind": "budget.charged",
+   "actor": "supervisor",
+   "text": "llm call charged $0.019 (muse-spark-1.3)"
+  },
+  {
+   "seq": 12,
+   "ts": 1792100013.5,
+   "kind": "experiment.proposed",
+   "actor": "designer:A",
+   "text": "e001 proposed on lane A: Add a quadratic term in position so the restoring force can stiffen or soften with displacement."
+  },
+  {
+   "seq": 13,
+   "ts": 1792100014.5,
+   "kind": "experiment.proposed",
+   "actor": "designer:B",
+   "text": "e002 proposed on lane B: Add a velocity-dependent damping term to the acceleration model."
+  },
+  {
+   "seq": 14,
+   "ts": 1792100015.5,
+   "kind": "experiment.proposed",
+   "actor": "designer:C",
+   "text": "e003 proposed on lane C: Increase the polynomial degree in position to 7 to capture higher-order curvature."
+  },
+  {
+   "seq": 15,
+   "ts": 1792100015.5,
+   "kind": "budget.charged",
+   "actor": "engine",
+   "text": "experiment charge 1 count"
+  },
+  {
+   "seq": 16,
+   "ts": 1792100015.7,
+   "kind": "budget.charged",
+   "actor": "designer:A",
+   "text": "llm call charged $0.008 (muse-spark-1.3)"
+  },
+  {
+   "seq": 17,
+   "ts": 1792100015.7,
+   "kind": "budget.charged",
+   "actor": "engine",
+   "text": "experiment charge 1 count"
+  },
+  {
+   "seq": 18,
+   "ts": 1792100015.9,
+   "kind": "budget.charged",
+   "actor": "designer:B",
+   "text": "llm call charged $0.008 (muse-spark-1.3)"
+  },
+  {
+   "seq": 19,
+   "ts": 1792100015.9,
+   "kind": "budget.charged",
+   "actor": "engine",
+   "text": "experiment charge 1 count"
+  },
+  {
+   "seq": 20,
+   "ts": 1792100016.1000001,
+   "kind": "budget.charged",
+   "actor": "designer:C",
+   "text": "llm call charged $0.008 (muse-spark-1.3)"
+  },
+  {
+   "seq": 21,
+   "ts": 1792100017.3000002,
+   "kind": "experiment.workspace_ready",
+   "actor": "engine",
+   "text": "e001 workspace ready"
+  },
+  {
+   "seq": 22,
+   "ts": 1792100018.5000002,
+   "kind": "experiment.workspace_ready",
+   "actor": "engine",
+   "text": "e002 workspace ready"
+  },
+  {
+   "seq": 23,
+   "ts": 1792100019.7000003,
+   "kind": "experiment.workspace_ready",
+   "actor": "engine",
+   "text": "e003 workspace ready"
+  },
+  {
+   "seq": 24,
+   "ts": 1792100025.7000003,
+   "kind": "experiment.implemented",
+   "actor": "implementer:A",
+   "text": "e001 implemented by patch:muse-spark-1.3: model.py: +8 -2 (x^2 feature)"
+  },
+  {
+   "seq": 25,
+   "ts": 1792100025.9000003,
+   "kind": "budget.charged",
+   "actor": "implementer:A",
+   "text": "llm call charged $0.031 (muse-spark-1.3)"
+  },
+  {
+   "seq": 26,
+   "ts": 1792100031.9000003,
+   "kind": "experiment.implemented",
+   "actor": "implementer:B",
+   "text": "e002 implemented by patch:muse-spark-1.3: model.py: +10 -2 (velocity feature)"
+  },
+  {
+   "seq": 27,
+   "ts": 1792100032.1000004,
+   "kind": "budget.charged",
+   "actor": "implementer:B",
+   "text": "llm call charged $0.031 (muse-spark-1.3)"
+  },
+  {
+   "seq": 28,
+   "ts": 1792100038.1000004,
+   "kind": "experiment.implemented",
+   "actor": "implementer:C",
+   "text": "e003 implemented by patch:muse-spark-1.3: model.py: +12 -2 (degree 7 features)"
+  },
+  {
+   "seq": 29,
+   "ts": 1792100038.3000004,
+   "kind": "budget.charged",
+   "actor": "implementer:C",
+   "text": "llm call charged $0.031 (muse-spark-1.3)"
+  },
+  {
+   "seq": 30,
+   "ts": 1792100038.8000004,
+   "kind": "agent.claim",
+   "actor": "implementer:C",
+   "text": "claim e003.c1 (improved): A degree 7 polynomial improves held-out RMSE over the baseline."
+  },
+  {
+   "seq": 31,
+   "ts": 1792100039.3000004,
+   "kind": "agent.claim",
+   "actor": "implementer:A",
+   "text": "claim e001.c1 (improved): The quadratic term lowers held-out RMSE."
+  },
+  {
+   "seq": 32,
+   "ts": 1792100040.1000004,
+   "kind": "experiment.run_started",
+   "actor": "engine",
+   "text": "e001 run 0 started (primary, seed 0)"
+  },
+  {
+   "seq": 33,
+   "ts": 1792100041.7000003,
+   "kind": "experiment.run_finished",
+   "actor": "engine",
+   "text": "e001 run 0 finished: ok, exit 0"
+  },
+  {
+   "seq": 34,
+   "ts": 1792100042.7000003,
+   "kind": "experiment.graded",
+   "actor": "engine",
+   "text": "e001 graded on dev (primary): score 0.296, valid=True"
+  },
+  {
+   "seq": 35,
+   "ts": 1792100043.5000002,
+   "kind": "experiment.run_started",
+   "actor": "engine",
+   "text": "e002 run 0 started (primary, seed 0)"
+  },
+  {
+   "seq": 36,
+   "ts": 1792100045.1000001,
+   "kind": "experiment.run_finished",
+   "actor": "engine",
+   "text": "e002 run 0 finished: ok, exit 0"
+  },
+  {
+   "seq": 37,
+   "ts": 1792100046.1000001,
+   "kind": "experiment.graded",
+   "actor": "engine",
+   "text": "e002 graded on dev (primary): score 0.187, valid=True"
+  },
+  {
+   "seq": 38,
+   "ts": 1792100046.9,
+   "kind": "experiment.run_started",
+   "actor": "engine",
+   "text": "e003 run 0 started (primary, seed 0)"
+  },
+  {
+   "seq": 39,
+   "ts": 1792100048.5,
+   "kind": "experiment.run_finished",
+   "actor": "engine",
+   "text": "e003 run 0 finished: ok, exit 0"
+  },
+  {
+   "seq": 40,
+   "ts": 1792100049.5,
+   "kind": "experiment.graded",
+   "actor": "engine",
+   "text": "e003 graded on dev (primary): score 0.398, valid=True"
+  },
+  {
+   "seq": 41,
+   "ts": 1792100052.5,
+   "kind": "experiment.reviewed",
+   "actor": "reviewer:A",
+   "text": "e001 reviewed by muse-spark-1.3 (reviewer): accept (0 findings)"
+  },
+  {
+   "seq": 42,
+   "ts": 1792100052.7,
+   "kind": "budget.charged",
+   "actor": "reviewer:A",
+   "text": "llm call charged $0.018 (muse-spark-1.3)"
+  },
+  {
+   "seq": 43,
+   "ts": 1792100055.7,
+   "kind": "experiment.reviewed",
+   "actor": "reviewer:B",
+   "text": "e002 reviewed by muse-spark-1.3 (reviewer): accept (0 findings)"
+  },
+  {
+   "seq": 44,
+   "ts": 1792100055.9,
+   "kind": "budget.charged",
+   "actor": "reviewer:B",
+   "text": "llm call charged $0.018 (muse-spark-1.3)"
+  },
+  {
+   "seq": 45,
+   "ts": 1792100058.9,
+   "kind": "experiment.reviewed",
+   "actor": "reviewer:C",
+   "text": "e003 reviewed by muse-spark-1.3 (reviewer): accept (0 findings)"
+  },
+  {
+   "seq": 46,
+   "ts": 1792100059.1000001,
+   "kind": "budget.charged",
+   "actor": "reviewer:C",
+   "text": "llm call charged $0.018 (muse-spark-1.3)"
+  },
+  {
+   "seq": 47,
+   "ts": 1792100059.7,
+   "kind": "experiment.recorded",
+   "actor": "engine",
+   "text": "e001 recorded: improved, dev delta 0.116"
+  },
+  {
+   "seq": 48,
+   "ts": 1792100060.3,
+   "kind": "experiment.recorded",
+   "actor": "engine",
+   "text": "e002 recorded: improved, dev delta 0.225"
+  },
+  {
+   "seq": 49,
+   "ts": 1792100060.8999999,
+   "kind": "experiment.recorded",
+   "actor": "engine",
+   "text": "e003 recorded: no_gain, dev delta 0.014"
+  },
+  {
+   "seq": 50,
+   "ts": 1792100061.3999999,
+   "kind": "audit.window",
+   "actor": "auditor",
+   "text": "audit window 29-49: 14 checked, 2 judged"
+  },
+  {
+   "seq": 51,
+   "ts": 1792100061.6,
+   "kind": "budget.charged",
+   "actor": "judge",
+   "text": "llm call charged $0.014 (muse-spark-1.3)"
+  },
+  {
+   "seq": 52,
+   "ts": 1792100061.8,
+   "kind": "budget.charged",
+   "actor": "judge",
+   "text": "llm call charged $0.013 (muse-spark-1.3)"
+  },
+  {
+   "seq": 53,
+   "ts": 1792100062.0,
+   "kind": "audit.finding",
+   "actor": "auditor",
+   "text": "finding I01@e003.c1: violated (block)"
+  },
+  {
+   "seq": 54,
+   "ts": 1792100062.2,
+   "kind": "audit.finding",
+   "actor": "auditor",
+   "text": "finding I02@e003: violated (block)"
+  },
+  {
+   "seq": 55,
+   "ts": 1792100062.4,
+   "kind": "audit.finding",
+   "actor": "auditor",
+   "text": "finding I07@run: insufficient_evidence (info)"
+  },
+  {
+   "seq": 56,
+   "ts": 1792100065.4,
+   "kind": "supervisor.turn",
+   "actor": "supervisor",
+   "text": "supervisor turn 3: supervisor turn 3: replicate e002"
+  },
+  {
+   "seq": 57,
+   "ts": 1792100065.6000001,
+   "kind": "budget.charged",
+   "actor": "supervisor",
+   "text": "llm call charged $0.024 (muse-spark-1.3)"
+  },
+  {
+   "seq": 58,
+   "ts": 1792100065.7,
+   "kind": "budget.charged",
+   "actor": "engine",
+   "text": "replication charge 1 count"
+  },
+  {
+   "seq": 59,
+   "ts": 1792100066.5,
+   "kind": "experiment.run_started",
+   "actor": "engine",
+   "text": "e000 run 1 started (replication_baseline, seed 100)"
+  },
+  {
+   "seq": 60,
+   "ts": 1792100068.1,
+   "kind": "experiment.run_finished",
+   "actor": "engine",
+   "text": "e000 run 1 finished: ok, exit 0"
+  },
+  {
+   "seq": 61,
+   "ts": 1792100069.1,
+   "kind": "experiment.graded",
+   "actor": "engine",
+   "text": "e000 graded on the sealed split (replication_baseline); valid=True"
+  },
+  {
+   "seq": 62,
+   "ts": 1792100069.8999999,
+   "kind": "experiment.run_started",
+   "actor": "engine",
+   "text": "e002 run 1 started (replication, seed 100)"
+  },
+  {
+   "seq": 63,
+   "ts": 1792100071.4999998,
+   "kind": "experiment.run_finished",
+   "actor": "engine",
+   "text": "e002 run 1 finished: ok, exit 0"
+  },
+  {
+   "seq": 64,
+   "ts": 1792100072.4999998,
+   "kind": "experiment.graded",
+   "actor": "engine",
+   "text": "e002 graded on the sealed split (replication); valid=True"
+  },
+  {
+   "seq": 65,
+   "ts": 1792100072.8999999,
+   "kind": "experiment.recorded",
+   "actor": "engine",
+   "text": "e002 replication recorded: improved, replicated=True"
+  },
+  {
+   "seq": 66,
+   "ts": 1792100073.1999998,
+   "kind": "incumbent.promoted",
+   "actor": "engine",
+   "text": "e002 promoted to incumbent (replicated=True), dev score 0.187"
+  },
+  {
+   "seq": 67,
+   "ts": 1792100073.6999998,
+   "kind": "memory.lesson",
+   "actor": "reflector",
+   "text": "lesson L001 (strategy): Velocity-dependent damping gives a large, replicated gain. Position-only polynomial terms give smaller dev gains and the degree 7 var..."
+  },
+  {
+   "seq": 68,
+   "ts": 1792100078.6999998,
+   "kind": "supervisor.turn",
+   "actor": "supervisor",
+   "text": "supervisor turn 4: supervisor turn 4: launch round 2"
+  },
+  {
+   "seq": 69,
+   "ts": 1792100078.8999999,
+   "kind": "budget.charged",
+   "actor": "supervisor",
+   "text": "llm call charged $0.033 (muse-spark-1.3)"
+  },
+  {
+   "seq": 70,
+   "ts": 1792100079.8999999,
+   "kind": "experiment.proposed",
+   "actor": "designer:A",
+   "text": "e004 proposed on lane A: Fit amplitude and phase jointly by least squares instead of estimating the phase from the first zero crossing, then refine the dampi..."
+  },
+  {
+   "seq": 71,
+   "ts": 1792100080.8999999,
+   "kind": "experiment.proposed",
+   "actor": "designer:B",
+   "text": "e005 proposed on lane B: Model the motion as an exponentially decaying oscillation instead of polynomial terms in position."
+  },
+  {
+   "seq": 72,
+   "ts": 1792100081.8999999,
+   "kind": "experiment.proposed",
+   "actor": "designer:C",
+   "text": "e006 proposed on lane C: Estimate the decay constant by a linear fit of log peak amplitude against time."
+  },
+  {
+   "seq": 73,
+   "ts": 1792100081.8999999,
+   "kind": "budget.charged",
+   "actor": "engine",
+   "text": "experiment charge 1 count"
+  },
+  {
+   "seq": 74,
+   "ts": 1792100082.1,
+   "kind": "budget.charged",
+   "actor": "designer:A",
+   "text": "llm call charged $0.009 (muse-spark-1.3)"
+  },
+  {
+   "seq": 75,
+   "ts": 1792100083.3,
+   "kind": "experiment.workspace_ready",
+   "actor": "engine",
+   "text": "e004 workspace ready"
+  },
+  {
+   "seq": 76,
+   "ts": 1792100083.3,
+   "kind": "budget.charged",
+   "actor": "engine",
+   "text": "experiment charge 1 count"
+  },
+  {
+   "seq": 77,
+   "ts": 1792100083.5,
+   "kind": "budget.charged",
+   "actor": "designer:B",
+   "text": "llm call charged $0.009 (muse-spark-1.3)"
+  },
+  {
+   "seq": 78,
+   "ts": 1792100084.7,
+   "kind": "experiment.workspace_ready",
+   "actor": "engine",
+   "text": "e005 workspace ready"
+  },
+  {
+   "seq": 79,
+   "ts": 1792100084.7,
+   "kind": "budget.charged",
+   "actor": "engine",
+   "text": "experiment charge 1 count"
+  },
+  {
+   "seq": 80,
+   "ts": 1792100084.9,
+   "kind": "budget.charged",
+   "actor": "designer:C",
+   "text": "llm call charged $0.009 (muse-spark-1.3)"
+  },
+  {
+   "seq": 81,
+   "ts": 1792100086.1000001,
+   "kind": "experiment.workspace_ready",
+   "actor": "engine",
+   "text": "e006 workspace ready"
+  },
+  {
+   "seq": 82,
+   "ts": 1792100093.1000001,
+   "kind": "experiment.implemented",
+   "actor": "implementer:A",
+   "text": "e004 implemented by patch:muse-spark-1.3: model.py: +21 -5 (joint phase fit)"
+  },
+  {
+   "seq": 83,
+   "ts": 1792100093.3000002,
+   "kind": "budget.charged",
+   "actor": "implementer:A",
+   "text": "llm call charged $0.041 (muse-spark-1.3)"
+  },
+  {
+   "seq": 84,
+   "ts": 1792100096.3000002,
+   "kind": "experiment.implemented",
+   "actor": "implementer:B",
+   "text": "e005 implemented by patch:muse-spark-1.3: model.py: +24 -4 (damped oscillation)"
+  },
+  {
+   "seq": 85,
+   "ts": 1792100096.5000002,
+   "kind": "budget.charged",
+   "actor": "implementer:B",
+   "text": "llm call charged $0.036 (muse-spark-1.3)"
+  },
+  {
+   "seq": 86,
+   "ts": 1792100097.0000002,
+   "kind": "agent.claim",
+   "actor": "implementer:A",
+   "text": "claim e004.c1 (improved): A free phase lowers held-out RMSE below the incumbent."
+  },
+  {
+   "seq": 87,
+   "ts": 1792100097.8000002,
+   "kind": "experiment.run_started",
+   "actor": "engine",
+   "text": "e004 run 0 started (primary, seed 0)"
+  },
+  {
+   "seq": 88,
+   "ts": 1792100099.4,
+   "kind": "experiment.run_finished",
+   "actor": "engine",
+   "text": "e004 run 0 finished: ok, exit 0"
+  },
+  {
+   "seq": 89,
+   "ts": 1792100100.4,
+   "kind": "experiment.graded",
+   "actor": "engine",
+   "text": "e004 graded on dev (primary): score 0.162, valid=True"
+  },
+  {
+   "seq": 90,
+   "ts": 1792100103.4,
+   "kind": "experiment.reviewed",
+   "actor": "reviewer:A",
+   "text": "e004 reviewed by muse-spark-1.3 (reviewer): accept (0 findings)"
+  },
+  {
+   "seq": 91,
+   "ts": 1792100103.6000001,
+   "kind": "budget.charged",
+   "actor": "reviewer:A",
+   "text": "llm call charged $0.02 (muse-spark-1.3)"
+  },
+  {
+   "seq": 92,
+   "ts": 1792100104.2,
+   "kind": "experiment.recorded",
+   "actor": "engine",
+   "text": "e004 recorded: improved, dev delta 0.025"
+  },
+  {
+   "seq": 93,
+   "ts": 1792100105.0,
+   "kind": "experiment.run_started",
+   "actor": "engine",
+   "text": "e005 run 0 started (primary, seed 0)"
+  }
+ ],
+ "parallel": {
+  "wall_sec": 71.7,
+  "serial_sec": 161.7,
+  "speedup": 2.26,
+  "max_parallel": 3,
+  "reason": null
+ },
+ "fault_injection": {
+  "planted": [],
+  "detected": [],
+  "missed": [],
+  "false_positives": [
+   {
+    "finding_id": "I01@e003.c1",
+    "invariant_id": "I01",
+    "exp_id": "e003",
+    "reason": "no planted fault explains this finding"
+   },
+   {
+    "finding_id": "I02@e003",
+    "invariant_id": "I02",
+    "exp_id": "e003",
+    "reason": "no planted fault explains this finding"
+   }
+  ],
+  "not_evaluated": [],
+  "explained": [],
+  "recall": {
+   "caught": 0,
+   "scored": 0,
+   "value": null,
+   "not_evaluated": 0,
+   "negatives_ok": 0,
+   "negatives_total": 0
+  }
+ },
+ "headline": {
+  "claims_made": 3,
+  "claims_accepted": 0,
+  "claims_refused": 0,
+  "unreplicated_blocked": 2,
+  "cost_usd": 0.41,
+  "speedup": 2.26,
+  "cost_known": true,
+  "llm_calls": 21,
+  "cost_attributed_usd": 0.295,
+  "cost_unattributed_usd": 0.115,
+  "promoted": 1,
+  "cost_per_improvement_usd": 0.41
+ },
+ "ledger": {
+  "events": 94,
+  "last_seq": 94,
+  "chain_ok": true,
+  "bad_seq": null,
+  "head_anchor": "94:5d4ba63b57a607b2"
+ },
+ "replay": null
+}

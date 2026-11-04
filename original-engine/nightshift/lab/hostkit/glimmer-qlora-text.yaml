@@ -1,0 +1,51 @@
+# Harness QLoRA config for Muse Glimmer: text-only SFT / rejection-sampling SFT on ONE 80 GB GPU. DERIVED from Axolotl's published example and
+# Meta's cookbook config (docs notes: glimmer-training.md 2.6); NOT run by anyone yet. lib/axolotl_train.py overrides base_model, the dataset
+# path, output_dir, W&B and validation; everything else here is the researcher's to change.
+# If the text-only path misbehaves, the fallback is Meta's measured path: restore `processor_type: AutoProcessor`, `skip_prepare_dataset: true`
+# and `remove_unused_columns: false`.
+base_model: /models/glimmer
+plugins:
+  - axolotl.integrations.cut_cross_entropy.CutCrossEntropyPlugin
+cut_cross_entropy: true
+adapter: qlora
+load_in_4bit: true
+lora_r: 32
+lora_alpha: 16
+lora_dropout: 0.05
+lora_target_modules: 'model\.language_model\.layers\.\d+\.(self_attn\.(q|k|v|o)_proj|mlp\.(gate|up|down)_proj)'
+lora_mlp_kernel: false
+lora_qkv_kernel: false
+lora_o_kernel: false
+lora_embedding_kernel: false
+sample_packing: false
+eval_sample_packing: false
+train_on_inputs: false
+eot_tokens: ["<|eot|>", "<|eom|>"]
+datasets:
+  - path: /work/data/train.jsonl
+    type: chat_template
+    field_messages: messages
+    roles_to_train: [assistant]
+    train_on_eos: turn
+dataset_prepared_path: /work/cache/prepared
+val_set_size: 0.0
+output_dir: /work/out/adapter
+sequence_len: 4096
+pad_to_sequence_len: false
+micro_batch_size: 1
+gradient_accumulation_steps: 4
+num_epochs: 1
+optimizer: adamw_bnb_8bit
+lr_scheduler: cosine
+learning_rate: 0.0002
+bf16: true
+fp16: false
+tf32: true
+gradient_checkpointing: true
+logging_steps: 1
+attn_implementation: sdpa  # LIVE 2026-11-02: flash-attn cannot be built on a Thunder A100 (no nvcc); sdpa trained 10 steps at 19 GiB
+warmup_ratio: 0.1
+evals_per_epoch: 0
+saves_per_epoch: 1
+weight_decay: 0.0
+seed: 42

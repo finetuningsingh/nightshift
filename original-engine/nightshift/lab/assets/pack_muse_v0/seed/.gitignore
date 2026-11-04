@@ -1,0 +1,12 @@
+# Trained adapters, datasets and caches stay out of git: CORAL commits the whole worktree on every `coral eval`.
+*.safetensors
+*.bin
+*.pt
+*.pth
+*.gguf
+out/
+work/
+cache/
+__pycache__/
+*.pyc
+.venv/

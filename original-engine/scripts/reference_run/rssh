@@ -1,0 +1,3 @@
+#!/bin/bash
+# ssh into the reference rental (config written by RentalManager)
+exec ssh -F /Users/ankitsingh/glimmer-lab-live/ref-rentals/sessions/ref-1/ssh_config lab-ref-1 "$@"

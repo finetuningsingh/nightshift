@@ -1,0 +1,1652 @@
+{
+  "schema": null,
+  "schema_version": null,
+  "generated_at": null,
+  "generated_by": null,
+  "project": "Glimmer Lab",
+  "package": "nightshift",
+  "repository": null,
+  "code_commit": null,
+  "code_dirty": null,
+  "facts_basis": {
+    "verified_update": "2026-11-04 07:35 ET",
+    "final_results_update": "2026-11-04 13:48 ET",
+    "run_record": "facts/run_record_2026-11-04.md (updated form through the failed H1 attempt)",
+    "headline": "both loops ran for real; on this small evidence the Nightshift-revised researchers made SFT more reliable but not better; the held-out comparison did not produce a valid pair",
+    "exploratory": true,
+    "improvement_claim": false,
+    "owner_scope": "ORIGINAL SFT vs NIGHTSHIFT-IMPROVED SFT from the same Glimmer checkpoint (meta-models/Muse-Glimmer-30B@a4e59da5), frozen private evaluation, equal per-trial compute (72 GPU-minutes); stock Glimmer optional context only, not a success gate, never an SFT model",
+    "selection_score_values": "final aggregate scores as given in the 2026-11-04 13:48 ET update are entered per scored trial; private per-item results stay out entirely",
+    "note": "Identifiers copied exactly as in the facts, truncation preserved, lab root always named where an id repeats (t-0006, sc-0001). Failed trials carry no score (never 0%). Fields not in the final facts stay null; rows that never ran are marked not run."
+  },
+  "student": {
+    "checkpoint": "meta-models/Muse-Glimmer-30B",
+    "revision": "a4e59da52a7bc87ae7251dd5545c0dd437c44b68",
+    "weights_license_status": null
+  },
+  "runtime": {
+    "muse_code_version": "1.4.14",
+    "researcher_model": "muse-spark-1.3",
+    "reviser_model": "muse-wonder-full-1.0",
+    "route": "Muse Code subscription; MUSE_API_KEY and BASETEN_API_KEY unset for CLI work",
+    "researcher_host": "ax42 (container, CORAL)",
+    "inspect_ai_version": "0.3.287",
+    "inspect_generation_task": "glimmer_generate@1",
+    "axolotl_version": "0.19.0",
+    "vllm_version": "0.32.0"
+  },
+  "run": {
+    "lab_roots": [
+      {
+        "id": "lab2l",
+        "pack_v0_git_commit": "b3ebdcf...",
+        "status": "run",
+        "note": "Abandoned after one 45-second launch, no rental, no model call"
+      },
+      {
+        "id": "lab2m",
+        "pack_v0_git_commit": "d080f75...",
+        "status": "run",
+        "hard_stop_after_close_usd": 1.71
+      },
+      {
+        "id": "lab2n",
+        "pack_v0_git_commit": "61bfe9e...",
+        "status": "run",
+        "closed_at_spend_usd": 0.57
+      },
+      {
+        "id": "lab2o",
+        "pack_v0_git_commit": "09f4494...",
+        "status": "run",
+        "closed_at_spend_usd": 1.74,
+        "hard_stop_usd": 35.19,
+        "affordable_trials": 14
+      },
+      {
+        "id": "lab2p",
+        "pack_v0_git_commit": "9a153ae...",
+        "status": "run",
+        "hard_stop_usd": 33.44,
+        "affordable_trials": 24
+      }
+    ],
+    "ceiling_total_usd": 40.0,
+    "additional_allowance_usd": 37.46,
+    "spend_estimate_2026_11_04_0735_et": {
+      "additional_approx_usd": 5.5,
+      "cumulative_approx_usd": 8
+    },
+    "spread_lab2p": {
+      "sigma": 0,
+      "df": 1,
+      "incumbent_counted": 0.0,
+      "option": "--failed-as-zero"
+    },
+    "frozen_rule_lab2p": {
+      "anchor": "16:e136f6bd",
+      "max_candidates": 1,
+      "screen_batch_size": 1,
+      "min_gain": 0.02,
+      "failed_trial_policy": "scored_zero",
+      "alpha": 0.05,
+      "minimum_detectable_gain": 0.02,
+      "assumed_gain": 0.05,
+      "confirmation_candidate_trials": 5,
+      "confirmation_incumbent_trials": 4
+    },
+    "confirmation_status": "incomplete, stopped after lab2p t-0006 for the deadline; t-0007 aborted zero use (not run); remainder not run; no keep/reject decision exists",
+    "h1_comparison_status": "attempted and FAILED to produce a valid pair (t-0008 guard bug; t-0009 contaminated by scan design gap; t-0010 stopped; t-0011 not run)",
+    "final_test_scoring_status": "not run (no IFBench test-set scoring was run at all; the test set stays unused)",
+    "spend_final_2026_11_04": {
+      "basis": "ledger estimates",
+      "cumulative_approx_usd": 15.7,
+      "total_ceiling_usd": 40.0,
+      "includes_before_these_runs_usd": 2.54,
+      "lab_roots_original_study": 5,
+      "nothing_live": true
+    },
+    "separate_api_lane": {
+      "lab_root": "lab2api",
+      "cap_usd": 13.3,
+      "spend_usd": 0,
+      "status": "owner HOLD",
+      "note": "different producer; not part of these results; receives no data, split, scorer or result of the original study"
+    },
+    "physical_caps_2026_11_04_1200_et": {
+      "prior": 2.54,
+      "lab2l": 0.01,
+      "lab2m": 1.71,
+      "lab2n": 0.57,
+      "lab2o": 1.74,
+      "lab2p": 16.4,
+      "lab2api": 13.3,
+      "sum": 36.27,
+      "lab2p_note": "7.51 spend + 8.82 reserve for the original H1 comparison"
+    },
+    "confirmation_trials": {
+      "planned_candidate_fresh": 5,
+      "planned_v0_fresh": 4,
+      "pooled_df_floor": 8,
+      "finished": [
+        "t-0003 (screen, scored)",
+        "t-0004 (candidate fresh, scored)",
+        "t-0005 (v0, failed, no score)",
+        "t-0006 (v0 fresh, scored)"
+      ],
+      "not_run": [
+        "t-0007 as a trial (aborted, zero use)",
+        "remaining planned confirmation trials"
+      ]
+    },
+    "h1_comparison": {
+      "status": "attempted and FAILED to produce a valid pair",
+      "frozen_plan_id": "f-0001",
+      "design": "frozen v0 vs frozen cand-001, 2 trials each, exploratory (freeze-final-analysis --trials-per-pack 2 --exploratory; H1, Welch; held-out selection only)",
+      "exceptions": [
+        "operator-change --target final_pack (cand-001, not accepted, chosen on E1 evidence only)",
+        "close-search --final-pack cand-001",
+        "operator-change --target final_analysis_exploratory"
+      ],
+      "trials": [
+        {
+          "id": "t-0008",
+          "lab_root": "lab2p",
+          "pack_version": "v0",
+          "seed": 1000,
+          "status": "run (failed/aborted)",
+          "cause": "harness final-phase guard bug refused every final-phase job's dev score (AccessDenied: adapter is not the output of trial t-0008); fixed afterwards in commit 5f57b3b",
+          "rental": "bydcu14j (deleted)",
+          "evidence": "lab2p/trials/t-0008/coral-public-manual-harvest.tar",
+          "score": null
+        },
+        {
+          "id": "t-0009",
+          "lab_root": "lab2p",
+          "pack_version": "v0",
+          "seed": 1001,
+          "status": "run (contaminated; not selection-scored)",
+          "cause": "contamination scan flagged 22 of 139 training prompts (13-word span with H1 selection split and IFBench test file); held-out copy-family instruction templates are not recognised as boilerplate; prompts were approved H1 training prompts; design gap, not researcher fault",
+          "score": null
+        },
+        {
+          "id": "t-0010",
+          "lab_root": "lab2p",
+          "pack_version": "cand-001",
+          "status": "run (stopped/aborted)",
+          "cause": "stopped because it would fail the same scan",
+          "rental": "g99v0sfq (deleted)",
+          "score": null
+        },
+        {
+          "id": "t-0011",
+          "lab_root": "lab2p",
+          "pack_version": "cand-001",
+          "status": "not run",
+          "cause": "never ran",
+          "score": null
+        }
+      ],
+      "stock_h1_status": "not run",
+      "retry": "none possible: frozen plan uses each trial id once"
+    },
+    "final_e1_result": {
+      "split": "frozen private E1 selection split",
+      "prompts": 300,
+      "inspect_task": "glimmer_generate@1",
+      "scorer": "one scorer version throughout",
+      "checkpoint": "meta-models/Muse-Glimmer-30B@a4e59da5",
+      "per_trial_budget_gpu_minutes": 72,
+      "metrics": [
+        "pass-all (share of prompts passing every constraint)",
+        "mean constraint fraction"
+      ],
+      "original_sft": {
+        "trial": "lab2p t-0006 (fresh)",
+        "pack_version": "v0",
+        "pass_all_pct": 55.0,
+        "mean_constraint_fraction_pct": 76.4,
+        "truncated": 0
+      },
+      "nightshift_improved_sft": [
+        {
+          "trial": "lab2p t-0003 (screening trial that selected the candidate)",
+          "selection_record_id": "t-0003-sel",
+          "adapter": "ad-t-0003-j1",
+          "pass_all_pct": 52.0,
+          "mean_constraint_fraction_pct": 75.4,
+          "truncated": 0
+        },
+        {
+          "trial": "lab2p t-0004 (fresh)",
+          "selection_record_id": null,
+          "adapter": null,
+          "pass_all_pct": 47.0,
+          "mean_constraint_fraction_pct": 70.1,
+          "truncated": 0
+        }
+      ],
+      "stock_context_only": {
+        "score_id": "sc-0001 (lab2p stock score; not SFT)",
+        "pass_all_pct": 63.0,
+        "mean_constraint_fraction_pct": 75.4,
+        "truncated": "29 of 300 answers truncated at 6000 tokens (SFT adapters truncated none)"
+      },
+      "reading": "Wonder Full revision (2700 s -> 720 s) improved reliability (both candidate trials produced a scored adapter; 1 of 4 v0 trials in the same lab did) but not adapter quality on this evidence; 1 vs 2 trials far too small either way; exploratory; no improvement claim; failed trials not counted as 0%"
+    }
+  },
+  "data": {
+    "training_prompts_dataset": "allenai/IF_multi_constraints_upto5",
+    "training_prompts_revision": null,
+    "pinned_dataset_hash": null,
+    "split_manifest_path": null,
+    "split_manifest_sha256": null,
+    "split_status": "authored (partitioned by constraint family from metadata only, before any scoring)",
+    "e1_families": [
+      "firstlast",
+      "keywords_new",
+      "format_new",
+      "ifeval25"
+    ],
+    "h1_families": [
+      "copy",
+      "counting"
+    ],
+    "excluded_rows": 348,
+    "excluded_rows_record_path": null,
+    "excluded_rows_record_sha256": null,
+    "selection_set_size": 300,
+    "h1_set_size": null,
+    "test_set_size": null
+  },
+  "data_origin": {
+    "training_command": "glimmer-axolotl-train",
+    "enforcement_commit": "3823ab6",
+    "enforcement_author": "Claude Code",
+    "enforced_by": "hostkit/lib/data_origin.py",
+    "hash_record": "origin_report.json on the rental, and into the job log",
+    "rule_status": "run (every training target passed the data-origin check)",
+    "required_target_origin": "unmodified, verifier-passing, non-truncated sample of the local Glimmer model recorded for an approved public training prompt",
+    "local_glimmer_model_id": "muse-glimmer",
+    "approved_public_training_prompts_record_path": null,
+    "approved_public_training_prompts_record_sha256": null,
+    "hash_record_fields": [
+      "train file",
+      "samples file",
+      "data file",
+      "verifier module"
+    ],
+    "limit_forged_samples_file_not_detectable": true,
+    "checked_via_starter_smoke_path_status": "checked"
+  },
+  "authoring_provenance": {
+    "starter_author_session": "starter-author",
+    "starter_author_provenance_dir": "submission-pack/provenance/starter-author/",
+    "starter_author_muse_authored_files_sha256_path": "submission-pack/provenance/starter-author/muse_authored_files.sha256",
+    "starter_author_directory": "nightshift/lab/assets/pack_muse_v0/",
+    "starter_author_files": [
+      "recipe",
+      "README",
+      "tests",
+      "notes/seed.md"
+    ],
+    "starter_author_non_muse_files_in_directory": [
+      "task.yaml",
+      "seed/.gitignore"
+    ],
+    "pack_writer_session": "submission-pack-writer",
+    "pack_writer_provenance_dir": "submission-pack/provenance/pack-writer/",
+    "pack_writer_muse_authored_files_sha256_path": "submission-pack/provenance/pack-writer/muse_authored_files.sha256",
+    "steps": [
+      {
+        "session": null,
+        "step": null,
+        "prompt_file": null,
+        "prompt_sha256": null,
+        "model": null,
+        "muse_version": null,
+        "events_file": null,
+        "events_sha256": null,
+        "host": null,
+        "started_utc": null,
+        "finished_utc": null,
+        "exit_code": null,
+        "usage": null,
+        "note": "Fill from PROVENANCE.md rows only; present revision row is PENDING there.",
+        "output_files": null,
+        "reviewed_by": null,
+        "status": null
+      }
+    ]
+  },
+  "verifiers": {
+    "ifevalg_checkers_commit": "b781e782a8fc530577f235aefe282dd046cb8ad2",
+    "ifbench_commit": "1c40f0c10d9b5c5c2f10a175a28007ebb64f7f4d",
+    "ifevalg_license_status": null,
+    "ifbench_license_status": null
+  },
+  "items": [
+    {
+      "id": "pilot-lab2m-t-0006",
+      "kind": "trial",
+      "description": "Stage 0 pilot; unfinished trial, no number enters the comparison; 450 prompts x 2 samples, 750 s box, 195 finished, 134 verifier-passing, QLoRA 67 steps",
+      "path": "lab2m/trials/t-0006/coral-public-manual-harvest.tar",
+      "sha256": null,
+      "status": "run",
+      "may_be_public": null,
+      "public_form": "sanitized export (pending)",
+      "stage": "0-pilot",
+      "trial_row": "lab2m t-0006",
+      "assignment": "E1",
+      "pack_version": "v0",
+      "arm": "v0-researcher-trained (pilot, uncounted)",
+      "hand_run": false,
+      "seed": null,
+      "inspect": {
+        "task_name": "glimmer_generate",
+        "task_version": "1",
+        "inspect_ai_version": "0.3.287",
+        "log_file_name": null,
+        "log_sha256": null,
+        "code_commit": null,
+        "code_dirty": null,
+        "dev_record_id": "t-0006-dev1",
+        "selection_record_id": "sc-0001 (lab2m; pilot only, not the lab2p stock score)",
+        "selection_score_value": null
+      },
+      "ledger": {
+        "record_id": "t-0006",
+        "export_path": null,
+        "export_sha256": null,
+        "chain_head": null
+      },
+      "hashes": {
+        "pack_sha256": null,
+        "adapter_sha256": "69277ea8...",
+        "dataset_revision": null,
+        "split_manifest_sha256": null
+      },
+      "data_origin_record": {
+        "record_path": "origin_report.json (on rental; mirrored in job log)",
+        "record_sha256": null,
+        "train_file_sha256": null,
+        "samples_file_sha256": null,
+        "data_file_sha256": null,
+        "verifier_module_sha256": null,
+        "refused": null,
+        "refusal_record_path": null,
+        "refusal_record_sha256": null,
+        "note": "Data-origin check passed on the rental."
+      },
+      "rental": {
+        "provider": "Thunder",
+        "instance_record_path": null,
+        "instance_record_sha256": null,
+        "gpu_minutes_used": null,
+        "wall_minutes": 36.6,
+        "cost_usd": 0.68,
+        "selection_rental_handle": "nq9d77ul",
+        "selection_rental_minutes": 19.7,
+        "selection_rental_cost_usd": 0.37,
+        "deleted": true,
+        "reaper_confirmation_path": null,
+        "reaper_confirmation_sha256": null
+      },
+      "trace": {
+        "trace_path": null,
+        "trace_sha256": null,
+        "session_or_events_file": null,
+        "sanitized": null,
+        "contains_private_rows": null
+      },
+      "notes": "Adapter ad-t-0006-j1. Lab2m pilot: id t-0006 and sc-0001 in this root only; distinct from lab2p t-0006 (fresh E1) and lab2p sc-0001 (stock). Value not in final facts; enters no comparison."
+    },
+    {
+      "id": "v0-lab2n-t-0001",
+      "kind": "trial",
+      "description": "Failed scheduled v0 trial; no adapter; 41 of 72 GPU minutes left under the former 30-minute dev reserve",
+      "path": "lab2n/trials/t-0001/coral-public-manual-harvest.tar",
+      "sha256": null,
+      "status": "run",
+      "may_be_public": null,
+      "public_form": "sanitized export (pending)",
+      "stage": "spread-attempt",
+      "trial_row": "lab2n t-0001",
+      "assignment": "E1",
+      "pack_version": "v0",
+      "arm": "v0-researcher-trained",
+      "hand_run": false,
+      "seed": 0,
+      "inspect": {
+        "task_name": null,
+        "task_version": null,
+        "inspect_ai_version": null,
+        "log_file_name": null,
+        "log_sha256": null,
+        "code_commit": null,
+        "code_dirty": null
+      },
+      "ledger": {
+        "record_id": "t-0001 (lab2n)",
+        "export_path": null,
+        "export_sha256": null,
+        "chain_head": null
+      },
+      "hashes": {
+        "pack_sha256": null,
+        "adapter_sha256": null,
+        "dataset_revision": null,
+        "split_manifest_sha256": null
+      },
+      "data_origin_record": null,
+      "rental": {
+        "provider": "Thunder",
+        "instance_record_path": null,
+        "instance_record_sha256": null,
+        "gpu_minutes_used": null,
+        "wall_minutes": null,
+        "cost_usd": null,
+        "deleted": null,
+        "reaper_confirmation_path": null,
+        "reaper_confirmation_sha256": null
+      },
+      "trace": {
+        "trace_path": null,
+        "trace_sha256": null,
+        "session_or_events_file": null,
+        "sanitized": null,
+        "contains_private_rows": null
+      },
+      "notes": "No adapter. Root lab2n closed at $0.57. After this trial the dev-score reserve became 15 minutes."
+    },
+    {
+      "id": "v0-lab2o-t-0001",
+      "kind": "trial",
+      "description": "Researcher job succeeded (409 samples, 248 verifier-passing, QLoRA 124 steps); selection failed twice, result_revealed false",
+      "path": null,
+      "sha256": null,
+      "status": "run",
+      "may_be_public": null,
+      "public_form": "sanitized export (pending)",
+      "stage": "spread-attempt",
+      "trial_row": "lab2o t-0001",
+      "assignment": "E1",
+      "pack_version": "v0",
+      "arm": "v0-researcher-trained",
+      "hand_run": false,
+      "seed": null,
+      "inspect": {
+        "task_name": "glimmer_generate",
+        "task_version": "1",
+        "inspect_ai_version": "0.3.287",
+        "log_file_name": null,
+        "log_sha256": null,
+        "code_commit": null,
+        "code_dirty": null,
+        "dev_record_id": "t-0001-dev1",
+        "selection_record_id": null,
+        "selection_score_value": null
+      },
+      "ledger": {
+        "record_id": "t-0001 (lab2o)",
+        "export_path": null,
+        "export_sha256": null,
+        "chain_head": null
+      },
+      "hashes": {
+        "pack_sha256": null,
+        "adapter_sha256": null,
+        "dataset_revision": null,
+        "split_manifest_sha256": null
+      },
+      "data_origin_record": {
+        "record_path": "origin_report.json (on rental; mirrored in job log)",
+        "record_sha256": null,
+        "train_file_sha256": null,
+        "samples_file_sha256": null,
+        "data_file_sha256": null,
+        "verifier_module_sha256": null,
+        "refused": null,
+        "refusal_record_path": null,
+        "refusal_record_sha256": null,
+        "note": "Origin check and contamination scan passed."
+      },
+      "rental": {
+        "provider": "Thunder",
+        "instance_record_path": null,
+        "instance_record_sha256": null,
+        "gpu_minutes_used": null,
+        "wall_minutes": null,
+        "cost_usd": null,
+        "deleted": null,
+        "reaper_confirmation_path": null,
+        "reaper_confirmation_sha256": null
+      },
+      "trace": {
+        "trace_path": null,
+        "trace_sha256": null,
+        "session_or_events_file": null,
+        "sanitized": null,
+        "contains_private_rows": null
+      },
+      "notes": "Adapter ad-t-0001-j1. Reload 82 s + dev 798 s. Root closed at $1.74."
+    },
+    {
+      "id": "v0-lab2p-t-0001",
+      "kind": "trial",
+      "description": "Counted v0 trial; both jobs timed out, no adapter, 51 of 72 GPU minutes used; counted 0.0",
+      "path": null,
+      "sha256": null,
+      "status": "run",
+      "may_be_public": null,
+      "public_form": "sanitized export (pending)",
+      "stage": "spread (counted)",
+      "trial_row": "lab2p t-0001",
+      "assignment": "E1",
+      "pack_version": "v0",
+      "arm": "v0-researcher-trained",
+      "hand_run": false,
+      "seed": 0,
+      "inspect": {
+        "task_name": null,
+        "task_version": null,
+        "inspect_ai_version": null,
+        "log_file_name": null,
+        "log_sha256": null,
+        "code_commit": null,
+        "code_dirty": null,
+        "selection_score_value": null
+      },
+      "ledger": {
+        "record_id": "t-0001 (lab2p)",
+        "export_path": null,
+        "export_sha256": null,
+        "chain_head": null
+      },
+      "hashes": {
+        "pack_sha256": null,
+        "adapter_sha256": null,
+        "dataset_revision": null,
+        "split_manifest_sha256": null
+      },
+      "data_origin_record": null,
+      "rental": {
+        "provider": "Thunder",
+        "instance_record_path": null,
+        "instance_record_sha256": null,
+        "gpu_minutes_used": 51,
+        "wall_minutes": null,
+        "cost_usd": null,
+        "deleted": null,
+        "reaper_confirmation_path": null,
+        "reaper_confirmation_sha256": null
+      },
+      "trace": {
+        "trace_path": null,
+        "trace_sha256": null,
+        "session_or_events_file": null,
+        "sanitized": null,
+        "contains_private_rows": null
+      },
+      "notes": "Counted 0.0 is the scored_zero count, not a selection score. Ledger 0.0 only; in final E1 numbers this trial has no score (never 0%)."
+    },
+    {
+      "id": "v0-lab2p-t-0002",
+      "kind": "trial",
+      "description": "Counted v0 trial; adapter produced and committed; selection failed twice on ssh, third refused; counted 0.0",
+      "path": null,
+      "sha256": null,
+      "status": "run",
+      "may_be_public": null,
+      "public_form": "sanitized export (pending)",
+      "stage": "spread (counted)",
+      "trial_row": "lab2p t-0002",
+      "assignment": "E1",
+      "pack_version": "v0",
+      "arm": "v0-researcher-trained",
+      "hand_run": false,
+      "seed": 1,
+      "inspect": {
+        "task_name": "glimmer_generate",
+        "task_version": "1",
+        "inspect_ai_version": "0.3.287",
+        "log_file_name": null,
+        "log_sha256": null,
+        "code_commit": null,
+        "code_dirty": null,
+        "dev_record_id": null,
+        "selection_record_id": null,
+        "selection_score_value": null
+      },
+      "ledger": {
+        "record_id": "t-0002 (lab2p)",
+        "export_path": null,
+        "export_sha256": null,
+        "chain_head": null
+      },
+      "hashes": {
+        "pack_sha256": null,
+        "adapter_sha256": null,
+        "dataset_revision": null,
+        "split_manifest_sha256": null
+      },
+      "data_origin_record": null,
+      "rental": {
+        "provider": "Thunder",
+        "instance_record_path": null,
+        "instance_record_sha256": null,
+        "gpu_minutes_used": null,
+        "wall_minutes": null,
+        "cost_usd": null,
+        "deleted": null,
+        "reaper_confirmation_path": null,
+        "reaper_confirmation_sha256": null
+      },
+      "trace": {
+        "trace_path": null,
+        "trace_sha256": null,
+        "session_or_events_file": null,
+        "sanitized": null,
+        "contains_private_rows": null
+      },
+      "notes": "Adapter ad-t-0002-j2. Dev record id not in the facts (null). Counted 0.0 is the scored_zero count. Ledger 0.0 only; in final E1 numbers this trial has no score (never 0%)."
+    },
+    {
+      "id": "screen-lab2p-t-0003-cand-001",
+      "kind": "trial",
+      "description": "Candidate screening trial that selected cand-001; final aggregate 52.0% / 75.4%; job 1 adapter + dev, job 2 timed out; trial status budget_exhausted",
+      "path": "lab2p/candidates/cand-001/",
+      "sha256": null,
+      "status": "run",
+      "may_be_public": null,
+      "public_form": "sanitized export (pending); selection value excluded",
+      "stage": "screen",
+      "trial_row": "lab2p t-0003",
+      "assignment": "E1",
+      "pack_version": "cand-001",
+      "arm": "evolved-researcher-trained (screen)",
+      "hand_run": false,
+      "seed": 0,
+      "inspect": {
+        "task_name": "glimmer_generate",
+        "task_version": "1",
+        "inspect_ai_version": "0.3.287",
+        "log_file_name": null,
+        "log_sha256": null,
+        "code_commit": null,
+        "code_dirty": null,
+        "dev_record_id": "t-0003-dev1",
+        "selection_record_id": "t-0003-sel",
+        "selection_score_value": null,
+        "aggregate_pass_all_pct": 52.0,
+        "aggregate_mean_constraint_fraction_pct": 75.4,
+        "prompts": 300,
+        "truncated": 0
+      },
+      "ledger": {
+        "record_id": "t-0003 (lab2p)",
+        "export_path": null,
+        "export_sha256": null,
+        "chain_head": null
+      },
+      "hashes": {
+        "pack_sha256": null,
+        "adapter_sha256": "457b33e9...",
+        "dataset_revision": null,
+        "split_manifest_sha256": null
+      },
+      "data_origin_record": null,
+      "rental": {
+        "provider": "Thunder",
+        "instance_record_path": null,
+        "instance_record_sha256": null,
+        "gpu_minutes_used": null,
+        "wall_minutes": null,
+        "cost_usd": null,
+        "deleted": null,
+        "reaper_confirmation_path": null,
+        "reaper_confirmation_sha256": null
+      },
+      "trace": {
+        "trace_path": "lab2p/candidates/cand-001/",
+        "trace_sha256": null,
+        "session_or_events_file": null,
+        "sanitized": null,
+        "contains_private_rows": null
+      },
+      "notes": "Adapter ad-t-0003-j1. Screening (not fresh); screen favours candidate (ssh fix in use). Aggregates only; per-item results excluded."
+    },
+    {
+      "id": "fresh-lab2p-t-0004-cand-001",
+      "kind": "trial",
+      "description": "Fresh confirmation candidate trial, scored; final aggregate 47.0% / 70.1%",
+      "path": null,
+      "sha256": null,
+      "status": "run",
+      "may_be_public": null,
+      "public_form": "sanitized export (pending); per-item results excluded",
+      "stage": "confirmation (incomplete)",
+      "trial_row": "lab2p t-0004",
+      "assignment": "E1",
+      "pack_version": "cand-001",
+      "arm": "nightshift-improved SFT",
+      "hand_run": false,
+      "seed": 1,
+      "inspect": {
+        "task_name": "glimmer_generate",
+        "task_version": "1",
+        "inspect_ai_version": "0.3.287",
+        "log_file_name": null,
+        "log_sha256": null,
+        "code_commit": null,
+        "code_dirty": null,
+        "dev_record_id": null,
+        "selection_record_id": null,
+        "selection_score_value": null,
+        "aggregate_pass_all_pct": 47.0,
+        "aggregate_mean_constraint_fraction_pct": 70.1,
+        "prompts": 300,
+        "truncated": 0
+      },
+      "ledger": {
+        "record_id": "lab2p t-0004",
+        "export_path": null,
+        "export_sha256": null,
+        "chain_head": null
+      },
+      "hashes": {
+        "pack_sha256": null,
+        "adapter_sha256": null,
+        "dataset_revision": null,
+        "split_manifest_sha256": null
+      },
+      "data_origin_record": null,
+      "rental": {
+        "provider": "Thunder",
+        "instance_record_path": null,
+        "instance_record_sha256": null,
+        "gpu_minutes_used": null,
+        "wall_minutes": null,
+        "cost_usd": null,
+        "deleted": null,
+        "reaper_confirmation_path": null,
+        "reaper_confirmation_sha256": null
+      },
+      "trace": {
+        "trace_path": null,
+        "trace_sha256": null,
+        "session_or_events_file": null,
+        "sanitized": null,
+        "contains_private_rows": null
+      },
+      "notes": "Scored adapter; adapter id and selection record id not in final facts supplied (null, never invented)."
+    },
+    {
+      "id": "confirmation-lab2p-t-0005-v0",
+      "kind": "trial",
+      "description": "Confirmation incumbent trial, failed (job timeout, then ssh timeout, runtime crash); no scored adapter, no score (never 0%)",
+      "path": null,
+      "sha256": null,
+      "status": "run",
+      "may_be_public": null,
+      "public_form": "sanitized export (pending); per-item results excluded",
+      "stage": "confirmation (incomplete)",
+      "trial_row": "lab2p t-0005",
+      "assignment": "E1",
+      "pack_version": "v0",
+      "arm": "original SFT (incumbent)",
+      "hand_run": false,
+      "seed": null,
+      "inspect": {
+        "task_name": "glimmer_generate",
+        "task_version": "1",
+        "inspect_ai_version": "0.3.287",
+        "log_file_name": null,
+        "log_sha256": null,
+        "code_commit": null,
+        "code_dirty": null,
+        "dev_record_id": null,
+        "selection_record_id": null,
+        "selection_score_value": null
+      },
+      "ledger": {
+        "record_id": "lab2p t-0005",
+        "export_path": null,
+        "export_sha256": null,
+        "chain_head": null
+      },
+      "hashes": {
+        "pack_sha256": null,
+        "adapter_sha256": null,
+        "dataset_revision": null,
+        "split_manifest_sha256": null
+      },
+      "data_origin_record": null,
+      "rental": {
+        "provider": "Thunder",
+        "instance_record_path": null,
+        "instance_record_sha256": null,
+        "gpu_minutes_used": null,
+        "wall_minutes": null,
+        "cost_usd": null,
+        "deleted": null,
+        "reaper_confirmation_path": null,
+        "reaper_confirmation_sha256": null
+      },
+      "trace": {
+        "trace_path": null,
+        "trace_sha256": null,
+        "session_or_events_file": null,
+        "sanitized": null,
+        "contains_private_rows": null
+      },
+      "notes": "Reliability outcome only; excluded from final E1 quality numbers, not counted as 0%."
+    },
+    {
+      "id": "fresh-lab2p-t-0006-v0",
+      "kind": "trial",
+      "description": "Fresh original-SFT trial, scored; final aggregate 55.0% / 76.4%; distinct from lab2m pilot t-0006",
+      "path": null,
+      "sha256": null,
+      "status": "run",
+      "may_be_public": null,
+      "public_form": "sanitized export (pending); per-item results excluded",
+      "stage": "confirmation (incomplete)",
+      "trial_row": "lab2p t-0006",
+      "assignment": "E1",
+      "pack_version": "v0",
+      "arm": "original SFT",
+      "hand_run": false,
+      "seed": null,
+      "inspect": {
+        "task_name": "glimmer_generate",
+        "task_version": "1",
+        "inspect_ai_version": "0.3.287",
+        "log_file_name": null,
+        "log_sha256": null,
+        "code_commit": null,
+        "code_dirty": null,
+        "dev_record_id": null,
+        "selection_record_id": null,
+        "selection_score_value": null,
+        "aggregate_pass_all_pct": 55.0,
+        "aggregate_mean_constraint_fraction_pct": 76.4,
+        "prompts": 300,
+        "truncated": 0
+      },
+      "ledger": {
+        "record_id": "lab2p t-0006",
+        "export_path": null,
+        "export_sha256": null,
+        "chain_head": null
+      },
+      "hashes": {
+        "pack_sha256": null,
+        "adapter_sha256": null,
+        "dataset_revision": null,
+        "split_manifest_sha256": null
+      },
+      "data_origin_record": null,
+      "rental": {
+        "provider": "Thunder",
+        "instance_record_path": null,
+        "instance_record_sha256": null,
+        "gpu_minutes_used": null,
+        "wall_minutes": null,
+        "cost_usd": null,
+        "deleted": null,
+        "reaper_confirmation_path": null,
+        "reaper_confirmation_sha256": null
+      },
+      "trace": {
+        "trace_path": null,
+        "trace_sha256": null,
+        "session_or_events_file": null,
+        "sanitized": null,
+        "contains_private_rows": null
+      },
+      "notes": "Scored adapter; adapter id and selection record id not in final facts supplied (null, never invented). Confirmation stopped after this trial (recorded 15:57:32Z)."
+    },
+    {
+      "id": "lab2p-t-0007-aborted",
+      "kind": "trial",
+      "description": "Opened locally only after t-0006 (no container, no rental); aborted with zero use; not run as a trial",
+      "path": null,
+      "sha256": null,
+      "status": "not run",
+      "may_be_public": null,
+      "public_form": "sanitized export (pending); per-item results excluded",
+      "stage": "confirmation (incomplete)",
+      "trial_row": "lab2p t-0007",
+      "assignment": "E1",
+      "pack_version": null,
+      "arm": null,
+      "hand_run": false,
+      "seed": null,
+      "inspect": {
+        "task_name": "glimmer_generate",
+        "task_version": "1",
+        "inspect_ai_version": "0.3.287",
+        "log_file_name": null,
+        "log_sha256": null,
+        "code_commit": null,
+        "code_dirty": null,
+        "dev_record_id": null,
+        "selection_record_id": null,
+        "selection_score_value": null
+      },
+      "ledger": {
+        "record_id": "lab2p t-0007",
+        "export_path": null,
+        "export_sha256": null,
+        "chain_head": null
+      },
+      "hashes": {
+        "pack_sha256": null,
+        "adapter_sha256": null,
+        "dataset_revision": null,
+        "split_manifest_sha256": null
+      },
+      "data_origin_record": null,
+      "rental": {
+        "provider": "Thunder",
+        "instance_record_path": null,
+        "instance_record_sha256": null,
+        "gpu_minutes_used": 0,
+        "wall_minutes": null,
+        "cost_usd": null,
+        "deleted": null,
+        "reaper_confirmation_path": null,
+        "reaper_confirmation_sha256": null
+      },
+      "trace": {
+        "trace_path": null,
+        "trace_sha256": null,
+        "session_or_events_file": null,
+        "sanitized": null,
+        "contains_private_rows": null
+      },
+      "notes": "Zero use. Not a failed-quality trial and not 0%."
+    },
+    {
+      "id": "confirmation-lab2p-remainder",
+      "kind": "trial-group",
+      "description": "Remaining planned trials of the 5 candidate + 4 incumbent keep rule; never taken up after the stop",
+      "path": null,
+      "sha256": null,
+      "status": "not run",
+      "may_be_public": null,
+      "public_form": "sanitized export (pending); per-item results excluded",
+      "stage": "confirmation (incomplete)",
+      "trial_row": "lab2p confirmation remainder",
+      "assignment": "E1",
+      "pack_version": "cand-001 / v0",
+      "arm": null,
+      "hand_run": false,
+      "seed": null,
+      "inspect": {
+        "task_name": "glimmer_generate",
+        "task_version": "1",
+        "inspect_ai_version": "0.3.287",
+        "log_file_name": null,
+        "log_sha256": null,
+        "code_commit": null,
+        "code_dirty": null,
+        "dev_record_id": null,
+        "selection_record_id": null,
+        "selection_score_value": null
+      },
+      "ledger": {
+        "record_id": "lab2p confirmation remainder",
+        "export_path": null,
+        "export_sha256": null,
+        "chain_head": null
+      },
+      "hashes": {
+        "pack_sha256": null,
+        "adapter_sha256": null,
+        "dataset_revision": null,
+        "split_manifest_sha256": null
+      },
+      "data_origin_record": null,
+      "rental": {
+        "provider": "Thunder",
+        "instance_record_path": null,
+        "instance_record_sha256": null,
+        "gpu_minutes_used": null,
+        "wall_minutes": null,
+        "cost_usd": null,
+        "deleted": null,
+        "reaper_confirmation_path": null,
+        "reaper_confirmation_sha256": null
+      },
+      "trace": {
+        "trace_path": null,
+        "trace_sha256": null,
+        "session_or_events_file": null,
+        "sanitized": null,
+        "contains_private_rows": null
+      },
+      "notes": "Not run. No keep/reject decision exists."
+    },
+    {
+      "id": "stock-e1-lab2p-sc-0001",
+      "kind": "score",
+      "description": "Stock Glimmer E1 selection score, context only (not SFT, not a success gate); final aggregate 63.0% / 75.4%",
+      "path": null,
+      "sha256": null,
+      "status": "run",
+      "may_be_public": null,
+      "public_form": "sanitized export (pending); per-item results excluded",
+      "stage": "stock-context",
+      "trial_row": "lab2p sc-0001",
+      "assignment": "E1",
+      "pack_version": null,
+      "arm": "stock (context only)",
+      "hand_run": false,
+      "seed": null,
+      "inspect": {
+        "task_name": "glimmer_generate",
+        "task_version": "1",
+        "inspect_ai_version": "0.3.287",
+        "log_file_name": null,
+        "log_sha256": null,
+        "code_commit": null,
+        "code_dirty": null,
+        "dev_record_id": null,
+        "selection_record_id": "sc-0001 (lab2p stock score)",
+        "selection_score_value": null,
+        "aggregate_pass_all_pct": 63.0,
+        "aggregate_mean_constraint_fraction_pct": 75.4,
+        "prompts": 300,
+        "truncated": "29 of 300 truncated at 6000 tokens"
+      },
+      "ledger": {
+        "record_id": "lab2p sc-0001",
+        "export_path": null,
+        "export_sha256": null,
+        "chain_head": null
+      },
+      "hashes": {
+        "pack_sha256": null,
+        "adapter_sha256": null,
+        "dataset_revision": null,
+        "split_manifest_sha256": null
+      },
+      "data_origin_record": null,
+      "rental": {
+        "provider": "Thunder",
+        "instance_record_path": null,
+        "instance_record_sha256": null,
+        "gpu_minutes_used": null,
+        "wall_minutes": null,
+        "cost_usd": null,
+        "deleted": null,
+        "reaper_confirmation_path": null,
+        "reaper_confirmation_sha256": null
+      },
+      "trace": {
+        "trace_path": null,
+        "trace_sha256": null,
+        "session_or_events_file": null,
+        "sanitized": null,
+        "contains_private_rows": null
+      },
+      "notes": "Base model, no adapter. Distinct from lab2m pilot sc-0001. SFT adapters truncated none."
+    },
+    {
+      "id": "h1-lab2p-t-0008",
+      "kind": "trial",
+      "description": "Held-out H1 trial t-0008: guard bug refused every final-phase dev score; fixed in 5f57b3b; no valid score (never 0%)",
+      "path": "lab2p/trials/t-0008/coral-public-manual-harvest.tar",
+      "sha256": null,
+      "status": "run",
+      "may_be_public": null,
+      "public_form": "sanitized export (pending); per-item results excluded",
+      "stage": "held-out H1 (attempted, failed)",
+      "trial_row": "lab2p t-0008 (plan f-0001)",
+      "assignment": "H1",
+      "pack_version": "v0",
+      "arm": "original SFT",
+      "hand_run": false,
+      "seed": 1000,
+      "inspect": {
+        "task_name": "glimmer_generate",
+        "task_version": "1",
+        "inspect_ai_version": "0.3.287",
+        "log_file_name": null,
+        "log_sha256": null,
+        "code_commit": null,
+        "code_dirty": null,
+        "dev_record_id": null,
+        "selection_record_id": null,
+        "selection_score_value": null
+      },
+      "ledger": {
+        "record_id": "lab2p t-0008 (plan f-0001)",
+        "export_path": null,
+        "export_sha256": null,
+        "chain_head": null
+      },
+      "hashes": {
+        "pack_sha256": null,
+        "adapter_sha256": null,
+        "dataset_revision": null,
+        "split_manifest_sha256": null
+      },
+      "data_origin_record": null,
+      "rental": {
+        "provider": "Thunder",
+        "instance_record_path": null,
+        "instance_record_sha256": null,
+        "gpu_minutes_used": null,
+        "wall_minutes": null,
+        "cost_usd": null,
+        "deleted": true,
+        "reaper_confirmation_path": null,
+        "reaper_confirmation_sha256": null,
+        "handle": "bydcu14j"
+      },
+      "trace": {
+        "trace_path": null,
+        "trace_sha256": null,
+        "session_or_events_file": null,
+        "sanitized": null,
+        "contains_private_rows": null
+      },
+      "notes": "guard bug refused every final-phase dev score; fixed in 5f57b3b. Adapter/selection ids not in final facts stay null."
+    },
+    {
+      "id": "h1-lab2p-t-0009",
+      "kind": "trial",
+      "description": "Held-out H1 trial t-0009: contaminated by scan design gap (22 of 139); not selection-scored; no valid score (never 0%)",
+      "path": null,
+      "sha256": null,
+      "status": "run",
+      "may_be_public": null,
+      "public_form": "sanitized export (pending); per-item results excluded",
+      "stage": "held-out H1 (attempted, failed)",
+      "trial_row": "lab2p t-0009 (plan f-0001)",
+      "assignment": "H1",
+      "pack_version": "v0",
+      "arm": "original SFT",
+      "hand_run": false,
+      "seed": 1001,
+      "inspect": {
+        "task_name": "glimmer_generate",
+        "task_version": "1",
+        "inspect_ai_version": "0.3.287",
+        "log_file_name": null,
+        "log_sha256": null,
+        "code_commit": null,
+        "code_dirty": null,
+        "dev_record_id": null,
+        "selection_record_id": null,
+        "selection_score_value": null
+      },
+      "ledger": {
+        "record_id": "lab2p t-0009 (plan f-0001)",
+        "export_path": null,
+        "export_sha256": null,
+        "chain_head": null
+      },
+      "hashes": {
+        "pack_sha256": null,
+        "adapter_sha256": null,
+        "dataset_revision": null,
+        "split_manifest_sha256": null
+      },
+      "data_origin_record": null,
+      "rental": {
+        "provider": "Thunder",
+        "instance_record_path": null,
+        "instance_record_sha256": null,
+        "gpu_minutes_used": null,
+        "wall_minutes": null,
+        "cost_usd": null,
+        "deleted": null,
+        "reaper_confirmation_path": null,
+        "reaper_confirmation_sha256": null
+      },
+      "trace": {
+        "trace_path": null,
+        "trace_sha256": null,
+        "session_or_events_file": null,
+        "sanitized": null,
+        "contains_private_rows": null
+      },
+      "notes": "contaminated by scan design gap (22 of 139); not selection-scored. Adapter/selection ids not in final facts stay null."
+    },
+    {
+      "id": "h1-lab2p-t-0010",
+      "kind": "trial",
+      "description": "Held-out H1 trial t-0010: stopped (would fail same scan); no valid score (never 0%)",
+      "path": null,
+      "sha256": null,
+      "status": "run",
+      "may_be_public": null,
+      "public_form": "sanitized export (pending); per-item results excluded",
+      "stage": "held-out H1 (attempted, failed)",
+      "trial_row": "lab2p t-0010 (plan f-0001)",
+      "assignment": "H1",
+      "pack_version": "cand-001",
+      "arm": "nightshift-improved SFT",
+      "hand_run": false,
+      "seed": null,
+      "inspect": {
+        "task_name": "glimmer_generate",
+        "task_version": "1",
+        "inspect_ai_version": "0.3.287",
+        "log_file_name": null,
+        "log_sha256": null,
+        "code_commit": null,
+        "code_dirty": null,
+        "dev_record_id": null,
+        "selection_record_id": null,
+        "selection_score_value": null
+      },
+      "ledger": {
+        "record_id": "lab2p t-0010 (plan f-0001)",
+        "export_path": null,
+        "export_sha256": null,
+        "chain_head": null
+      },
+      "hashes": {
+        "pack_sha256": null,
+        "adapter_sha256": null,
+        "dataset_revision": null,
+        "split_manifest_sha256": null
+      },
+      "data_origin_record": null,
+      "rental": {
+        "provider": "Thunder",
+        "instance_record_path": null,
+        "instance_record_sha256": null,
+        "gpu_minutes_used": null,
+        "wall_minutes": null,
+        "cost_usd": null,
+        "deleted": true,
+        "reaper_confirmation_path": null,
+        "reaper_confirmation_sha256": null,
+        "handle": "g99v0sfq"
+      },
+      "trace": {
+        "trace_path": null,
+        "trace_sha256": null,
+        "session_or_events_file": null,
+        "sanitized": null,
+        "contains_private_rows": null
+      },
+      "notes": "stopped (would fail same scan). Adapter/selection ids not in final facts stay null."
+    },
+    {
+      "id": "h1-lab2p-t-0011",
+      "kind": "trial",
+      "description": "Held-out H1 trial t-0011: never ran; no valid score (never 0%)",
+      "path": null,
+      "sha256": null,
+      "status": "not run",
+      "may_be_public": null,
+      "public_form": "sanitized export (pending); per-item results excluded",
+      "stage": "held-out H1 (attempted, failed)",
+      "trial_row": "lab2p t-0011 (plan f-0001)",
+      "assignment": "H1",
+      "pack_version": "cand-001",
+      "arm": "nightshift-improved SFT",
+      "hand_run": false,
+      "seed": null,
+      "inspect": {
+        "task_name": "glimmer_generate",
+        "task_version": "1",
+        "inspect_ai_version": "0.3.287",
+        "log_file_name": null,
+        "log_sha256": null,
+        "code_commit": null,
+        "code_dirty": null,
+        "dev_record_id": null,
+        "selection_record_id": null,
+        "selection_score_value": null
+      },
+      "ledger": {
+        "record_id": "lab2p t-0011 (plan f-0001)",
+        "export_path": null,
+        "export_sha256": null,
+        "chain_head": null
+      },
+      "hashes": {
+        "pack_sha256": null,
+        "adapter_sha256": null,
+        "dataset_revision": null,
+        "split_manifest_sha256": null
+      },
+      "data_origin_record": null,
+      "rental": {
+        "provider": "Thunder",
+        "instance_record_path": null,
+        "instance_record_sha256": null,
+        "gpu_minutes_used": null,
+        "wall_minutes": null,
+        "cost_usd": null,
+        "deleted": null,
+        "reaper_confirmation_path": null,
+        "reaper_confirmation_sha256": null
+      },
+      "trace": {
+        "trace_path": null,
+        "trace_sha256": null,
+        "session_or_events_file": null,
+        "sanitized": null,
+        "contains_private_rows": null
+      },
+      "notes": "never ran. Adapter/selection ids not in final facts stay null."
+    },
+    {
+      "id": "stock-h1",
+      "kind": "score",
+      "description": "Stock H1 score",
+      "path": null,
+      "sha256": null,
+      "status": "not run",
+      "may_be_public": null,
+      "public_form": "sanitized export (pending); per-item results excluded",
+      "stage": "held-out H1",
+      "trial_row": "stock H1",
+      "assignment": "H1",
+      "pack_version": null,
+      "arm": "stock (context only)",
+      "hand_run": false,
+      "seed": null,
+      "inspect": {
+        "task_name": "glimmer_generate",
+        "task_version": "1",
+        "inspect_ai_version": "0.3.287",
+        "log_file_name": null,
+        "log_sha256": null,
+        "code_commit": null,
+        "code_dirty": null,
+        "dev_record_id": null,
+        "selection_record_id": null,
+        "selection_score_value": null
+      },
+      "ledger": {
+        "record_id": "stock H1",
+        "export_path": null,
+        "export_sha256": null,
+        "chain_head": null
+      },
+      "hashes": {
+        "pack_sha256": null,
+        "adapter_sha256": null,
+        "dataset_revision": null,
+        "split_manifest_sha256": null
+      },
+      "data_origin_record": null,
+      "rental": {
+        "provider": "Thunder",
+        "instance_record_path": null,
+        "instance_record_sha256": null,
+        "gpu_minutes_used": null,
+        "wall_minutes": null,
+        "cost_usd": null,
+        "deleted": null,
+        "reaper_confirmation_path": null,
+        "reaper_confirmation_sha256": null
+      },
+      "trace": {
+        "trace_path": null,
+        "trace_sha256": null,
+        "session_or_events_file": null,
+        "sanitized": null,
+        "contains_private_rows": null
+      },
+      "notes": "Not run. Stock is never an SFT arm."
+    },
+    {
+      "id": "ifbench-test-scoring",
+      "kind": "score",
+      "description": "IFBench test-set scoring (single final scoring in the original plan)",
+      "path": null,
+      "sha256": null,
+      "status": "not run",
+      "may_be_public": null,
+      "public_form": "sanitized export (pending); per-item results excluded",
+      "stage": "test",
+      "trial_row": "IFBench test file",
+      "assignment": "IFBench test file",
+      "pack_version": null,
+      "arm": null,
+      "hand_run": false,
+      "seed": null,
+      "inspect": {
+        "task_name": "glimmer_generate",
+        "task_version": "1",
+        "inspect_ai_version": "0.3.287",
+        "log_file_name": null,
+        "log_sha256": null,
+        "code_commit": null,
+        "code_dirty": null,
+        "dev_record_id": null,
+        "selection_record_id": null,
+        "selection_score_value": null
+      },
+      "ledger": {
+        "record_id": "IFBench test file",
+        "export_path": null,
+        "export_sha256": null,
+        "chain_head": null
+      },
+      "hashes": {
+        "pack_sha256": null,
+        "adapter_sha256": null,
+        "dataset_revision": null,
+        "split_manifest_sha256": null
+      },
+      "data_origin_record": null,
+      "rental": {
+        "provider": "Thunder",
+        "instance_record_path": null,
+        "instance_record_sha256": null,
+        "gpu_minutes_used": null,
+        "wall_minutes": null,
+        "cost_usd": null,
+        "deleted": null,
+        "reaper_confirmation_path": null,
+        "reaper_confirmation_sha256": null
+      },
+      "trace": {
+        "trace_path": null,
+        "trace_sha256": null,
+        "session_or_events_file": null,
+        "sanitized": null,
+        "contains_private_rows": null
+      },
+      "notes": "No IFBench test-set scoring was run at all; the test set stays unused."
+    },
+    {
+      "id": "candidate-cand-001-artefacts",
+      "kind": "candidate",
+      "description": "Outer revision (budget_use; 2700 -> 720); screening 52.0%/75.4% + fresh 47.0%/70.1%; H1 final pack by operator exception only; no keep/reject decision",
+      "path": "lab2p/candidates/cand-001/",
+      "sha256": null,
+      "status": "run",
+      "may_be_public": null,
+      "public_form": "owner to confirm per file (prompt, response, proposal, diff, lint)",
+      "stage": "outer",
+      "trial_row": "screen t-0003",
+      "assignment": "E1",
+      "pack_version": "cand-001",
+      "arm": "evolved",
+      "hand_run": false,
+      "seed": null,
+      "inspect": null,
+      "ledger": null,
+      "hashes": {
+        "pack_sha256": null,
+        "adapter_sha256": null,
+        "dataset_revision": null,
+        "split_manifest_sha256": null
+      },
+      "data_origin_record": null,
+      "rental": null,
+      "trace": {
+        "trace_path": "lab2p/candidates/cand-001/",
+        "trace_sha256": null,
+        "session_or_events_file": null,
+        "sanitized": null,
+        "contains_private_rows": null
+      },
+      "notes": "First outer launch refused (H1 inside H100) before any send; whole-token fix in outer_context.py. Pack-version commit id not in final facts (null)."
+    }
+  ],
+  "packs": [
+    {
+      "version": "v0",
+      "path": "nightshift/lab/assets/pack_muse_v0",
+      "lab_root": "lab2l/lab2m/lab2n/lab2o/lab2p (identical tree)",
+      "git_commit": "b3ebdcf... (lab2l); d080f75... (lab2m); 61bfe9e... (lab2n); 09f4494... (lab2o); 9a153ae... (lab2p)",
+      "sha256": null,
+      "status": "run",
+      "may_be_public": null,
+      "frozen_at": null,
+      "used_in_rows": [
+        "lab2l t-0001",
+        "lab2m t-0001..t-0006",
+        "lab2n t-0001",
+        "lab2o t-0001",
+        "lab2p t-0001",
+        "lab2p t-0002",
+        "lab2p t-0005",
+        "lab2p t-0006 (fresh E1)",
+        "lab2p t-0008",
+        "lab2p t-0009"
+      ],
+      "starter_directory": "nightshift/lab/assets/pack_muse_v0/",
+      "muse_authored_files_sha256_path": "submission-pack/provenance/starter-author/muse_authored_files.sha256",
+      "non_muse_authored_files_in_starter_directory": [
+        "task.yaml",
+        "seed/.gitignore"
+      ]
+    },
+    {
+      "version": "cand-001",
+      "path": "lab2p/candidates/cand-001/",
+      "lab_root": "lab2p",
+      "git_commit": null,
+      "sha256": null,
+      "status": "run",
+      "may_be_public": null,
+      "frozen_at": null,
+      "used_in_rows": [
+        "lab2p t-0003 (screen)",
+        "lab2p t-0004 (fresh E1)",
+        "lab2p t-0010 (H1, stopped)",
+        "lab2p t-0011 (H1, not run)"
+      ],
+      "starter_directory": null,
+      "muse_authored_files_sha256_path": null,
+      "non_muse_authored_files_in_starter_directory": null,
+      "change": "GEN_TIMEBOX_SECONDS 2700 -> 720 in seed/recipe/run.sh (lever budget_use)",
+      "final_pack_note": "Named H1 final pack by operator-change (final_pack) on E1 evidence only; keep rule did not accept it; confirmation incomplete, no keep/reject."
+    }
+  ],
+  "adapters": [
+    {
+      "id": "ad-t-0006-j1",
+      "path": null,
+      "sha256": "69277ea8...",
+      "status": "run",
+      "may_be_public": null,
+      "trial_row": "lab2m t-0006",
+      "hand_run": false,
+      "weights_shipped": null
+    },
+    {
+      "id": "ad-t-0001-j1",
+      "path": null,
+      "sha256": null,
+      "status": "run",
+      "may_be_public": null,
+      "trial_row": "lab2o t-0001",
+      "hand_run": false,
+      "weights_shipped": null
+    },
+    {
+      "id": "ad-t-0002-j2",
+      "path": null,
+      "sha256": null,
+      "status": "run",
+      "may_be_public": null,
+      "trial_row": "lab2p t-0002",
+      "hand_run": false,
+      "weights_shipped": null
+    },
+    {
+      "id": "ad-t-0003-j1",
+      "path": null,
+      "sha256": "457b33e9...",
+      "status": "run",
+      "may_be_public": null,
+      "trial_row": "lab2p t-0003",
+      "hand_run": false,
+      "weights_shipped": null
+    },
+    {
+      "id": "hand-run-reference-adapter",
+      "path": null,
+      "sha256": null,
+      "status": "run",
+      "may_be_public": null,
+      "trial_row": "hand-run reference (REPORT.md section 8)",
+      "hand_run": true,
+      "weights_shipped": null
+    },
+    {
+      "id": null,
+      "path": null,
+      "sha256": null,
+      "status": "run",
+      "may_be_public": null,
+      "trial_row": "lab2p t-0004 (fresh, scored 47.0% / 70.1%); adapter id not in final facts supplied",
+      "hand_run": false,
+      "weights_shipped": null
+    },
+    {
+      "id": null,
+      "path": null,
+      "sha256": null,
+      "status": "run",
+      "may_be_public": null,
+      "trial_row": "lab2p t-0006 (fresh, scored 55.0% / 76.4%); adapter id not in final facts supplied",
+      "hand_run": false,
+      "weights_shipped": null
+    }
+  ],
+  "chart": {
+    "path": null,
+    "sha256": null,
+    "status": "planned (not produced in the facts supplied)",
+    "may_be_public": null,
+    "built_from_ledger_export": null
+  },
+  "private_items_never_shipped": [
+    {
+      "kind": "private per-item selection results and selection data rows",
+      "description": "Per-item results and rows behind lab2m/lab2p sc-0001, t-0003-sel, lab2p t-0004/t-0006; lab2m pilot sc-0001 aggregate value was not supplied and is never stated",
+      "held_where": "private ledger / score records",
+      "public_statement_allowed": "final aggregate scores only, as entered here and in REPORT.md section 12.1; record/trial ids with lab root; existence/failure"
+    },
+    {
+      "kind": "selection and test data rows",
+      "description": "E1 selection rows (300 prompts); H1 rows (comparison attempted, no valid pair); IFBench test rows (never scored, test set unused)",
+      "held_where": "behind the ledger guard",
+      "public_statement_allowed": "assignment, families, split rule, E1 size 300, final statuses (H1 attempted/failed; test not run)"
+    }
+  ],
+  "publication": {
+    "standalone_repository": null,
+    "repository_frozen_at": null,
+    "pack_files": null,
+    "secrets_check_status": null,
+    "logged_out_access_check_status": null
+  }
+}

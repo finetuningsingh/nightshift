@@ -1,0 +1,92 @@
+# Axolotl 0.19.0 QLoRA config for Muse Glimmer 30B (text-only SFT).
+# Based on refs/axolotl_muse_glimmer_qlora.yaml (axolotl-ai-cloud/axolotl
+# example). Deliberate changes from that base are marked "# CHANGED:" and are
+# listed in README.md. The harness overrides, whatever is written here:
+# base_model, the single dataset entry's path, output_dir,
+# dataset_prepared_path, val_set_size: 0, and W&B off.
+
+# Overridden by the harness to $GLIMMER_BASE; kept so the file is valid standalone.
+base_model: meta-models/Muse-Glimmer-30B
+processor_type: AutoProcessor
+
+plugins:
+  - axolotl.integrations.cut_cross_entropy.CutCrossEntropyPlugin
+
+load_in_4bit: true
+
+# Kept from the reference: the harness registers/prepares the dataset itself,
+# packing stays off (packing would blur one-example-one-answer boundaries).
+skip_prepare_dataset: true
+remove_unused_columns: false
+sample_packing: false
+
+# CHANGED: reference lists only "<|eot|>". Both tokens are listed explicitly
+# (this is also the harness default when eot_tokens is unset) so end-of-turn
+# behaviour does not depend on an implicit override.
+eot_tokens:
+  - "<|eot|>"
+  - "<|eom|>"
+
+# Exactly ONE dataset entry (harness requirement); its path is overridden with
+# the --data file given to glimmer-axolotl-train.
+# CHANGED: dropped the reference's `split: train[:1%]` (it would silently keep
+# only 1% of our data) and its vision-mix dataset path.
+datasets:
+  - path: ./sft.jsonl            # placeholder, overridden by the harness
+    type: chat_template
+    field_messages: messages     # forced by the harness; stated for clarity
+    roles_to_train: ["assistant"] # CHANGED: explicit (harness default); train answers only, not prompts
+
+dataset_prepared_path: last_run_prepared   # overridden by the harness
+val_set_size: 0.0                          # overridden to 0 by the harness; dev.jsonl is measured outside training
+output_dir: ./outputs/muse-glimmer-qlora   # overridden by the harness
+
+adapter: qlora
+lora_model_dir:
+
+# Kept at the reference 4096: training targets are final answers only (the
+# reasoning trace is dropped, see README), and build_sft.py drops the rare
+# prompt+answer that does not fit. Raise this together with MAX_SFT_CHARS if
+# you experiment with training on reasoning traces.
+sequence_len: 4096
+pad_to_sequence_len: false
+
+# Kept from the reference. Note: Meta's generic TRL guidance suggests
+# lora_alpha = 2x rank (=64 here); the Glimmer-specific Axolotl reference
+# uses 16, so the starter keeps 16. Alpha/rank is an experiment knob.
+lora_r: 32
+lora_alpha: 16
+lora_dropout: 0.05
+# Language model only; the vision tower stays frozen, as it was during Meta's own training.
+lora_target_modules: 'model\.language_model\.layers\.\d+\.(self_attn\.(q|k|v|o)_proj|mlp\.(gate|up|down)_proj)'
+
+# CHANGED: all wandb_* keys removed. The harness forces W&B off and the GPU
+# box may have no network or credential; nothing here should try to log in.
+
+gradient_accumulation_steps: 4  # effective batch = 4 x micro_batch 1 (guide range 4-16)
+micro_batch_size: 1
+# CHANGED: 1 -> 2 epochs. The reference epoch is over a large vision mix; for
+# a few hundred short verified examples Meta's guide gives 2-5 epochs for
+# LoRA/QLoRA SFT. 2 is the cheap end; watch for overfitting before raising it.
+num_epochs: 2
+optimizer: adamw_bnb_8bit       # fine for single-GPU QLoRA (the FSDP2 warning in the guide does not apply)
+lr_scheduler: cosine
+learning_rate: 0.0002           # kept; inside the guide's 1e-4 - 3e-4 LoRA/QLoRA range
+
+bf16: auto
+fp16:
+tf32: true
+
+gradient_checkpointing: true
+logging_steps: 1                # small runs: one line per step is affordable and debuggable
+attn_implementation: flash_attention_2
+
+warmup_ratio: 0.1
+evals_per_epoch: 0
+saves_per_epoch: 1
+weight_decay: 0.0
+
+seed: 42                        # CHANGED: added (the guide's controlled runs use seed 42)
+
+# SMOKE_MAX_STEPS_ANCHOR: run.sh replaces this line with "max_steps: 1" in a
+# throwaway copy of this file when SMOKE=1, so a smoke run trains one step.

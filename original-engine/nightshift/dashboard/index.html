@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="referrer" content="no-referrer">
+<title>Nightshift</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23151b23'/%3E%3Cpath d='M20.5 6.5a10 10 0 1 0 5 15.6A8.2 8.2 0 0 1 20.5 6.5z' fill='%237db0ff'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="/app.css">
+<script src="/app.js" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header" id="top">
+  <div class="wrap">
+    <div class="hdr-row hdr-main">
+      <div class="brand">
+        <svg class="brand-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><path d="M20.5 6.5a10 10 0 1 0 5 15.6A8.2 8.2 0 0 1 20.5 6.5z"/></svg>
+        <span class="wordmark">Nightshift</span>
+      </div>
+      <dl class="run-meta">
+        <div><dt>Run</dt><dd id="run-id" class="mono">-</dd></div>
+        <div><dt>Task</dt><dd id="run-task">-</dd></div>
+        <div><dt>Objective</dt><dd id="run-objective">-</dd></div>
+        <div id="run-implementer-wrap" hidden><dt>Implementer</dt><dd id="run-implementer" class="mono"></dd></div>
+      </dl>
+      <div class="hdr-tools">
+        <span id="conn" class="conn" role="status" aria-live="polite"></span>
+        <button type="button" id="theme-toggle" class="btn btn-icon" aria-label="Theme: automatic. Activate to change.">
+          <span id="theme-label">Auto</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="hdr-row hdr-badges" id="badges" aria-label="Run status">
+      <span id="badge-backend" class="badge"></span>
+      <span id="badge-status" class="badge"></span>
+      <span id="badge-ledger" class="badge"></span>
+      <span id="badge-isolation" class="badge"></span>
+      <span id="badge-resumes" class="badge" hidden></span>
+    </div>
+    <p id="models-line" class="models-line"></p>
+
+    <div class="hdr-row hdr-budget" id="budget" role="group" aria-label="Budget"></div>
+
+    <nav class="section-nav" aria-label="Sections">
+      <a href="#sec-chart">Chart</a>
+      <a href="#sec-lanes">Experiments</a>
+      <a href="#sec-invariants">Invariants</a>
+      <a href="#sec-supervisor">Supervisor</a>
+      <a href="#sec-claims">Claims</a>
+      <a href="#sec-memory">Memory</a>
+      <a href="#sec-usage">Models</a>
+      <a href="#sec-timeline">Timeline</a>
+    </nav>
+  </div>
+</header>
+
+<div class="wrap">
+  <div id="banner" class="banner" role="note" hidden>
+    <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3 2 20h20L12 3z"/><path d="M12 10v5M12 17.5v.5"/></svg>
+    <p id="banner-text"></p>
+  </div>
+
+  <div id="replay-bar" class="replay-bar" hidden>
+    <span class="replay-tag">REPLAY</span>
+    <span id="replay-text" class="num"></span>
+    <div class="replay-track" role="progressbar" aria-label="Replay position" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="replay-fill"></div></div>
+  </div>
+</div>
+
+<noscript><p class="noscript wrap">The Nightshift dashboard needs JavaScript. It makes no external requests and loads only app.js and app.css from this server.</p></noscript>
+
+<main id="main" class="wrap main" tabindex="-1">
+  <div class="grid">
+
+    <section class="panel col-8" id="sec-chart" aria-labelledby="h-chart">
+      <header class="panel-h">
+        <div>
+          <h2 id="h-chart">Held-out score by experiment</h2>
+          <p class="panel-sub" id="chart-sub">Each marker is one experiment, in the order it was proposed.</p>
+        </div>
+        <p class="direction" id="chart-dir"></p>
+      </header>
+      <div class="chart-wrap" id="chart-wrap">
+        <div id="chart-empty" class="empty" hidden></div>
+        <div class="tooltip" id="chart-tip" role="tooltip" hidden></div>
+      </div>
+      <ul class="legend" id="chart-legend" aria-label="Chart legend"></ul>
+      <div class="chart-detail" id="chart-detail" aria-live="polite"></div>
+    </section>
+
+    <div class="col-4 rail">
+      <section class="panel" id="sec-headline" aria-labelledby="h-headline">
+        <header class="panel-h"><h2 id="h-headline">Headline</h2></header>
+        <div class="stat-grid" id="headline"></div>
+      </section>
+      <section class="panel" id="sec-verdict" aria-labelledby="h-verdict">
+        <header class="panel-h"><h2 id="h-verdict">Verdict</h2></header>
+        <div id="verdict"></div>
+      </section>
+    </div>
+
+    <section class="panel col-12" id="sec-lanes" aria-labelledby="h-lanes">
+      <header class="panel-h">
+        <div>
+          <h2 id="h-lanes">Experiments</h2>
+          <p class="panel-sub" id="lane-summary"></p>
+        </div>
+        <div class="panel-actions">
+          <button type="button" class="btn" id="lane-order" aria-pressed="true">Newest first</button>
+        </div>
+      </header>
+      <div class="lane-grid" id="lane-grid"></div>
+      <div class="empty" id="lane-empty" hidden></div>
+    </section>
+
+    <section class="panel col-7" id="sec-invariants" aria-labelledby="h-inv">
+      <header class="panel-h">
+        <div>
+          <h2 id="h-inv">Invariants</h2>
+          <p class="panel-sub" id="inv-summary"></p>
+        </div>
+      </header>
+      <div class="inv-grid" id="inv-grid"></div>
+      <div class="empty" id="inv-empty" hidden></div>
+      <div class="findings">
+        <h3 id="findings-title">Findings</h3>
+        <ul class="finding-list" id="findings-list"></ul>
+        <div class="empty empty-sm" id="findings-empty" hidden></div>
+      </div>
+    </section>
+
+    <section class="panel col-5" id="sec-supervisor" aria-labelledby="h-sup">
+      <header class="panel-h">
+        <div>
+          <h2 id="h-sup">Supervisor</h2>
+          <p class="panel-sub" id="turns-sub"></p>
+        </div>
+      </header>
+      <ol class="turn-list scroll" id="turns-list" tabindex="0" aria-label="Supervisor turns"></ol>
+      <div class="empty" id="turns-empty" hidden></div>
+    </section>
+
+    <section class="panel col-7" id="sec-claims" aria-labelledby="h-claims">
+      <header class="panel-h">
+        <div>
+          <h2 id="h-claims">Claims</h2>
+          <p class="panel-sub">What agents asserted, checked against the trusted grader.</p>
+        </div>
+      </header>
+      <div class="score-row" id="claims-score"></div>
+      <ul class="claim-list" id="claims-list"></ul>
+      <div class="empty" id="claims-empty" hidden></div>
+      <h3 class="sub-h">Finish requests</h3>
+      <ol class="finish-list" id="finish-list"></ol>
+      <div class="empty empty-sm" id="finish-empty" hidden></div>
+    </section>
+
+    <section class="panel col-5" id="sec-memory" aria-labelledby="h-memory">
+      <header class="panel-h">
+        <div>
+          <h2 id="h-memory">Memory</h2>
+          <p class="panel-sub">Lessons the run kept, and the pivots it chose.</p>
+        </div>
+      </header>
+      <h3 class="sub-h sub-h-first">Pivots</h3>
+      <ul class="pivot-list" id="pivots-list"></ul>
+      <div class="empty empty-sm" id="pivots-empty" hidden></div>
+      <h3 class="sub-h">Lessons</h3>
+      <ul class="lesson-list" id="lessons-list"></ul>
+      <div class="empty empty-sm" id="lessons-empty" hidden></div>
+    </section>
+
+    <section class="panel col-7" id="sec-usage" aria-labelledby="h-usage">
+      <header class="panel-h">
+        <div>
+          <h2 id="h-usage">Models usage</h2>
+          <p class="panel-sub" id="usage-sub"></p>
+        </div>
+      </header>
+      <div class="table-wrap" id="usage-wrap">
+        <table class="data-table" id="usage-table">
+          <thead>
+            <tr>
+              <th scope="col">Role</th><th scope="col">Model</th><th scope="col" class="r">Calls</th>
+              <th scope="col" class="r">Prompt tok</th><th scope="col" class="r">Completion tok</th>
+              <th scope="col" class="r">Cache</th><th scope="col" class="r" id="usage-usd-h">USD</th>
+              <th scope="col">Effort</th><th scope="col" class="r">Strict schema</th><th scope="col" class="r">Retries</th>
+            </tr>
+          </thead>
+          <tbody id="usage-body"></tbody>
+        </table>
+      </div>
+      <div class="empty" id="usage-empty" hidden></div>
+    </section>
+
+    <section class="panel col-5" id="sec-faults" aria-labelledby="h-faults" hidden>
+      <header class="panel-h">
+        <div>
+          <h2 id="h-faults">Fault-injection scoreboard</h2>
+          <p class="panel-sub">Faults planted by the scripted actors, against what the auditor, the reviewer and the gates caught.</p>
+        </div>
+      </header>
+      <div class="stat-grid stat-grid-faults" id="faults-score"></div>
+      <p class="faults-note" id="faults-note"></p>
+      <div id="faults-lists"></div>
+    </section>
+
+    <section class="panel col-12" id="sec-timeline" aria-labelledby="h-timeline">
+      <header class="panel-h">
+        <div>
+          <h2 id="h-timeline">Event timeline</h2>
+          <p class="panel-sub" id="tl-sub"></p>
+        </div>
+      </header>
+      <div class="tl-controls">
+        <div class="tl-filters" id="tl-filters" role="group" aria-label="Filter by event kind"></div>
+        <label class="search"><span class="visually-hidden">Search events</span>
+          <input type="search" id="tl-search" placeholder="Search events" autocomplete="off" spellcheck="false" maxlength="80">
+        </label>
+      </div>
+      <ol class="tl-list scroll" id="tl-list" tabindex="0" aria-label="Ledger events"></ol>
+      <div class="empty" id="tl-empty" hidden></div>
+    </section>
+
+  </div>
+</main>
+
+<footer class="wrap site-footer">
+  <p>Everything here is read from an append-only, hash-chained ledger. Agent statements are claims, not evidence; evidence is a grade from the trusted grader. The page makes no external requests.</p>
+</footer>
+</body>
+</html>

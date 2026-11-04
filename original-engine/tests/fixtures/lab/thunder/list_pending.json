@@ -1,0 +1,1 @@
+{"0": {"uuid": "ab12cd34", "status": "STARTING", "createdAt": "2026-11-01T05:00:00Z", "storage": 300, "cpuCores": "12", "memory": "96", "template": "base", "gpuType": "A100XL", "numGpus": "1", "sshPublicKeys": ["ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOURKEYOURKEYOURKEYOURKEYOURKEYOURKEYOURKEYxx lab-test"]}}

@@ -1,0 +1,76 @@
+# Researcher pack v0: the CORAL task definition for the Glimmer instruction-following post-training task.
+#
+# This file is written in the strict YAML subset documented in nightshift/lab/assets/lint_pack.py (block mappings and lists, double
+# quoted strings, literal blocks). The grader values below are the runtime's (assets/coral_grader/ENTRYPOINT.json); the provider,
+# gateway route, ports, workspace paths and the stop condition are applied by the runtime at launch and are not editable.
+task:
+  name: "Glimmer instruction following"
+  description: |
+    You are a small team of AI researchers. Your job is to post-train a language model (Muse Glimmer, a 30B model, QLoRA) so that
+    it follows verifiable formatting and content constraints in prompts better than it does today. You write the training recipe
+    (code and a shell entrypoint), run it on a rented GPU through the `glimmer` command, read the public dev score, and hand in
+    the best adapter. A separate private score on different prompts decides how good your adapter really is. You never see it.
+
+    Your tools
+    - `glimmer budget`: what is left of your tokens, GPU minutes, dollars and wall time. The budget is fixed and shared by the
+      whole team. Check it before every GPU job; a job that would not finish inside it is refused.
+    - `glimmer submit <recipe_dir> --entrypoint "bash run.sh"`: pack the directory and run it on a rented GPU. A starting recipe
+      is in `recipe/` (read `recipe/README.md`). The job sees the public training prompts in /work/data/train.jsonl and the
+      public dev prompts in /work/data/dev.jsonl, and must leave its adapter in /work/out/adapter.
+    - `glimmer status [<job_id>]` and `glimmer wait <job_id>`: follow a job. A finished job reports an adapter id and a dev score.
+    - `glimmer dev-score <adapter_id>`: the dev score of an adapter your own jobs made (fraction of dev prompts on which every
+      constraint passes).
+    - `glimmer pointer <adapter_id>`: writes `submission.json` into the current directory. Commit it. `coral eval` grades the
+      adapter named in the committed `submission.json` and returns its dev score.
+
+    Rules
+    - Only the helper commands `glimmer-axolotl-train` and `glimmer-vllm-up` on the GPU may train or serve the model. The dataset a
+      job trains on is recorded and checked; training on anything that is not derived from /work/data/train.jsonl and the base
+      model's own samples makes the whole trial void.
+    - The only model you may train is the one the GPU image provides. No downloads of data or models. Do not look for or use
+      test or private data; there is none on this machine.
+    - Time and GPU minutes are the scarce resources. Plan a job, run it, read what it did, then decide the next one.
+    - Write down what you learn in the shared notes (your instructions say where they live), briefly and with the evidence.
+  tips: |
+    - Look at a few train rows and at the constraint ids before you design a recipe. The public train.jsonl and dev.jsonl are in the
+      directory named by the environment variable GLIMMER_DATA_DIR on this machine.
+    - The dev score is on public prompts and is noisy. Prefer ideas that should help on prompts you have not seen over ideas that
+      only move the dev number.
+    - Keep one cheap smoke job (few prompts, one step) so you find broken code before you spend a full job on it.
+    - Never leave a job running that you cannot explain; a finished job without an adapter is the most expensive failure.
+grader:
+  entrypoint: "glimmer_grader.grader:Grader"
+  setup:
+    - "uv pip install -e ./grader"
+  timeout: 120
+  direction: maximize
+agents:
+  count: 2
+  runtime: opencode
+  model: "muse/muse-spark-1.3"
+  research: false
+  gateway:
+    enabled: true
+    port: 4310
+    config: "./litellm_config.yaml"
+  heartbeat:
+    - name: reflect
+      every: 50
+    - name: consolidate
+      every: 50
+      global: true
+    - name: pivot
+      every: 5
+      trigger: plateau
+    - name: lint_wiki
+      every: 50
+      global: true
+workspace:
+  results_dir: "./results"
+  repo_path: "./no-such-dir"
+run:
+  verbose: false
+  ui: false
+  session: local
+  stop:
+    max_real_attempts: 8

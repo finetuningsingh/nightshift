@@ -1,0 +1,48 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "nightshift"
+version = "0.1.0"
+description = "An auto-researcher you can leave running overnight, and believe in the morning. Built on Meta Muse Spark."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+keywords = ["auto-researcher", "llm-agents", "evaluation", "audit", "hash-chained-ledger", "muse-spark"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: POSIX :: Linux",
+    "Operating System :: MacOS",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+dependencies = []          # the core is standard library only, on purpose
+
+[project.urls]
+Repository = "https://github.com/finetuningsingh/nightshift"
+
+[project.optional-dependencies]
+demo = ["numpy>=1.26"]     # the bundled demo tasks use numpy
+lab-eval = ["inspect-ai>=0.3.287", "openai"]  # nightshift.lab.inspect_eval: the Inspect AI experiment runner (optional; imported lazily)
+
+[project.scripts]
+nightshift = "nightshift.cli:main"
+
+# The bundled tasks (tasks/) are NOT part of the wheel, on purpose: pip byte-compiles every .py file it installs, and a task
+# template that contains __pycache__ or .pyc files is rejected by `nightshift tasks` (template_has_bytecode). Run from a clone
+# of the repository, install it editable (pip install -e .), point NIGHTSHIFT_TASKS_DIR at a directory of tasks, or pass
+# --task /path/to/task.
+[tool.setuptools.packages.find]
+include = ["nightshift*"]
+
+[tool.setuptools.package-data]
+"nightshift.dashboard" = ["index.html", "app.js", "app.css"]
+"nightshift.lab" = ["hostkit/**/*", "assets/**/*"]

@@ -1,0 +1,14 @@
+{
+  "agent_id": "captain-nemo",
+  "commit_hash": "9c42162e800ed7c55bd35b33bce7cd0c579d66a4",
+  "feedback": "",
+  "metadata": {
+    "budget_class": "real"
+  },
+  "parent_hash": null,
+  "score": null,
+  "shared_state_hash": "3e858e1b3afc81f36dc23527ae6e21b47ea1be21",
+  "status": "pending",
+  "timestamp": "2026-11-01T05:36:22.781753+00:00",
+  "title": "probe edit via stub"
+}

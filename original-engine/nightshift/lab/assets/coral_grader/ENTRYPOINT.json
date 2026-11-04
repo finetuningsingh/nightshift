@@ -1,0 +1,5 @@
+{
+  "entrypoint": "glimmer_grader.grader:Grader",
+  "setup": ["uv pip install -e ./grader"],
+  "timeout": 120
+}
