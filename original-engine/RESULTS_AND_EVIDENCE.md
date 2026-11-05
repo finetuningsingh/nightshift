@@ -43,8 +43,16 @@ Run on 2026-11-04 on ax41, inside a docker container with no network and a read-
   - `test_sandbox`: 2 failures and 3 errors.
   - `test_grading`: 1 failure.
   - `test_isolation_modes`: 1 failure.
-- All 7 exercise the core engine's untrusted-run sandbox: killing detached daemons, and detecting trusted files changed during a run. These depend on host process and filesystem behaviour, which this container differs in.
-- They were not investigated further for this release. Treat that sandbox behaviour as unverified in containers.
+- Triage of the 7 failures, reproduced in the same container:
+  - **5 come from the container's user setup.** The untrusted-run sandbox (`nightshift/sandbox.py`) sets the per-user process limit to "this user's threads plus 64". It counts the threads from `/proc`, which shows only the container's own processes (about 2). The kernel counts all of host uid 1000's threads (about 600) against that limit, so every `fork` in the untrusted script fails.
+    - The 5 tests: the three daemon tests in `test_sandbox`, `test_a_detached_process_cannot_alter_the_staged_outputs` and `ModeNoneTests.test_hostile_run_prevents_and_detects_exactly_what_the_mode_promises`.
+    - Run as an unused uid (4242), all three modules pass in full: 167, 114 and 23 tests.
+  - **2 are timing flaws in the tests themselves.** On Linux 6.8, file timestamps advance once per kernel tick of about 1 ms, so a file created and deleted within one tick of the snapshot looks unchanged.
+    - The 2 tests: `test_added_removed_replaced_renamed_and_chmodded_entries_are_all_named` and `test_a_file_that_comes_and_goes_is_still_seen_after_the_grader_when_no_bytecode_is_involved`.
+    - The sandbox check itself is not weakened in real runs, because the trusted tree was last changed long before a run starts.
+    - A third test has the same flaw, `test_bytecode_next_to_a_transient_file_is_excused_only_for_the_bytecode`.
+    - The fix is a 20 ms pause in these tests, in `post-study-changes/`. This folder's copy still has the flaky tests.
+  - A possible hardening, not made: after setting the process limit, try one fork; if it fails, relax the limit and record a note.
 - Inspect AI tests are skipped here: the container has no `inspect_ai`.
 
 Separately, a later development run of the outer-loop changes (`outer_challenge.py`, served-model check), also in the ax41 container, passed 398 tests. Those changes are newer than this extract and are not part of it.

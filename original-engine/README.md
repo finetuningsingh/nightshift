@@ -65,6 +65,8 @@ Full account: [submission-pack/REPORT.md](submission-pack/REPORT.md) (Muse-autho
 | `submission-pack/` | Muse Wonder Full-authored submission documents and their provenance hashes |
 | `evidence/recorded-study/lab2p-summary.json` | Sanitized summary of the real study's hash-chained ledgers (event hashes kept), frozen final plan and rental records |
 
+Code written after the study (Muse Wonder researchers with a served-model check, the bounded adversarial outer challenge, the dose record, test fixes) is in [post-study-changes/](post-study-changes/README.md) as a tested patch. It did not run in the recorded study.
+
 Some design documents link to private planning notes that are not published here.
 
 Setup, tests and replay: [SETUP_AND_REPLAY.md](SETUP_AND_REPLAY.md). Claim audit: [CLAIM_AUDIT.md](CLAIM_AUDIT.md). Evidence manifest: [RESULTS_AND_EVIDENCE.md](RESULTS_AND_EVIDENCE.md). Authorship and tools: [AUTHORSHIP.md](AUTHORSHIP.md).
