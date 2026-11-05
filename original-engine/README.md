@@ -65,7 +65,15 @@ Full account: [submission-pack/REPORT.md](submission-pack/REPORT.md) (Muse-autho
 | `submission-pack/` | Muse Wonder Full-authored submission documents and their provenance hashes |
 | `evidence/recorded-study/lab2p-summary.json` | Sanitized summary of the real study's hash-chained ledgers (event hashes kept), frozen final plan and rental records |
 
-Code written after the study (Muse Wonder researchers with a served-model check, the bounded adversarial outer challenge, the dose record, test fixes) is in [post-study-changes/](post-study-changes/README.md) as a tested patch. It did not run in the recorded study.
+**Which code is this.** This folder is the current original engine. It includes changes made on 2026-11-04 after the recorded study:
+- Muse Wonder Full researchers, with a served-model check that fails a trial on any fallback.
+- A bounded adversarial challenge of every outer-loop revision: a deterministic rendered-config checker, one independent Wonder critic and at most one revision.
+- An exact training-dose record.
+- Test fixes.
+
+See [CHANGES.md](CHANGES.md). **The recorded study ran on the earlier code**: public commit `8bcbf05` of this repository, from private source commit `3ed70d7`, with `muse-spark-1.3` researchers and no adversarial challenge. All results below belong to that code. No experiment has run on the new code yet; the one attempt on 2026-11-04 got no GPU (see CHANGES.md).
+
+**Recommended launch:** `scripts/two_loop/run_lab.py` now sets `LAB_RESEARCHER_MODEL=muse-wonder-full-1.0` and `LAB_OUTER_CHALLENGE=on` by default, so both loops run on Muse Wonder Full and the critic is enabled.
 
 Some design documents link to private planning notes that are not published here.
 

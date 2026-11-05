@@ -26,6 +26,11 @@ Accounting
   percentages) is in ``MuseCliProposer.last_usage`` after every call, also after a failed one. A base call costs about 29k input tokens
   of CLI overhead.
 
+Critic
+* ``critique(prompt)`` is the outer challenge's one critic call (``outer_challenge``): a separate ``MuseCliProposer`` instance, so its usage
+  counters are its own, runs the given prompt once through the same ``_run_once`` (fresh temporary workspace and session, restrictive flags,
+  environment allowlist) and returns the text with the requested and served model.
+
 Stop conditions
 * ``MuseAllowanceExhausted`` is a ``BudgetExhausted`` (axis ``muse_allowance``), which the outer loop already treats as "stop": the
   subscription window or weekly allowance is used up.
@@ -340,6 +345,20 @@ class MuseCliProposer:
         for m in re.finditer(r"(?im)^\s*(window|weekly)\s*:\s*(\d+(?:\.\d+)?)\s*%\s*used", done.stdout or ""):
             if float(m.group(2)) >= 100:
                 raise MuseAllowanceExhausted(f"{m.group(1).lower()} allowance used", used_percent=float(m.group(2)))
+
+    def critique(self, prompt: str) -> Any:
+        """One critic call for the outer challenge (``outer_challenge.Critic``): ``prompt`` is the complete prompt text (built and checked by
+        ``outer_challenge``), sent once in a fresh ``muse exec`` with the same restrictive flags, environment allowlist, effort and model as a
+        proposal. No retry. Raises like ``propose`` (``MuseAllowanceExhausted``, ``MuseAuthMissing``, ``MuseCliError``)."""
+        from nightshift.lab.outer_challenge import CriticReply
+
+        if self.precheck_allowance:
+            self._precheck()
+        run = self._run_once(prompt, self.effort)
+        self._publish(run, dict(run.usage))
+        self._raise_for_failure(run)
+        served = str(run.usage.get("served_model") or "")
+        return CriticReply(run.text, self.model, served or "not reported", bool(served) and served != self.model)
 
     def _run_once(self, prompt: str, effort: Optional[str]) -> MuseRun:
         root = Path(tempfile.mkdtemp(prefix="muse-propose-", dir=self.temp_parent))

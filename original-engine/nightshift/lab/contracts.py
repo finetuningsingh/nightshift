@@ -2334,8 +2334,54 @@ class Proposal:
 
 
 @dataclass(frozen=True)
+class ChallengeSummary:
+    """The outer challenge of a candidate (``outer_challenge``), as its ``CandidateRecord`` carries it: the full report (checker findings,
+    critic and revision artefacts with hashes) is the file ``report``; here are the facts a reader needs without opening it. ``blocking``
+    lists the hard checker findings new in the final candidate; a candidate is refused exactly when it is non-empty."""
+
+    report: FileRef
+    blocking: tuple
+    critic_model: str
+    critic_served_model: str
+    critic_sha256: Optional[str]
+    revised: bool
+    refused: bool
+
+    def __post_init__(self) -> None:
+        _obj(self.report, FileRef, "ChallengeSummary.report")
+        _set(self, "blocking", _tuple_of(self.blocking, "ChallengeSummary.blocking", lambda v, w: _text(v, w, max_bytes=200)))
+        _text(self.critic_model, "ChallengeSummary.critic_model", empty=True, max_bytes=200)
+        _text(self.critic_served_model, "ChallengeSummary.critic_served_model", empty=True, max_bytes=200)
+        _opt(self.critic_sha256, _sha256, "ChallengeSummary.critic_sha256")
+        _bool(self.revised, "ChallengeSummary.revised")
+        _bool(self.refused, "ChallengeSummary.refused")
+        if self.refused != bool(self.blocking):
+            raise ContractError("ChallengeSummary: a candidate is refused exactly when blocking findings remain")
+
+    def to_dict(self) -> dict:
+        return {
+            "report": self.report.to_dict(),
+            "blocking": list(self.blocking),
+            "critic_model": self.critic_model,
+            "critic_served_model": self.critic_served_model,
+            "critic_sha256": self.critic_sha256,
+            "revised": self.revised,
+            "refused": self.refused,
+        }
+
+    @classmethod
+    def from_dict(cls, d: Any) -> "ChallengeSummary":
+        r = _Reader(d, "ChallengeSummary", versioned=False)
+        out = cls(r.obj("report", FileRef.from_dict), r.raw("blocking"), r.raw("critic_model"), r.raw("critic_served_model"), r.raw("critic_sha256"),
+                  r.raw("revised"), r.raw("refused"))
+        r.done()
+        return out
+
+
+@dataclass(frozen=True)
 class CandidateRecord:
-    """Payload of ``lab.candidate_proposed``: every candidate, accepted or not, with its diff, reason and lint result."""
+    """Payload of ``lab.candidate_proposed``: every candidate, accepted or not, with its diff, reason and lint result. ``challenge`` is
+    present only when the outer challenge ran (records written before it existed have no such key and read back as None)."""
 
     candidate_id: str
     version_label: str
@@ -2357,6 +2403,7 @@ class CandidateRecord:
     propose_usd: float
     created_utc: str
     schema_version: int = field(default=SCHEMA_VERSION, kw_only=True)
+    challenge: Optional[ChallengeSummary] = field(default=None, kw_only=True)
 
     def __post_init__(self) -> None:
         _check_version(self)
@@ -2383,6 +2430,9 @@ class CandidateRecord:
         _utc(self.created_utc, "CandidateRecord.created_utc")
         if self.lint_passed and (self.pack is None or self.diff is None):
             raise ContractError("CandidateRecord: a candidate that passed lint has a pack commit and a diff")
+        _opt(self.challenge, lambda v, w: _obj(v, ChallengeSummary, w), "CandidateRecord.challenge")
+        if self.challenge is not None and self.challenge.refused and (self.lint_passed or self.pack is not None):
+            raise ContractError("CandidateRecord: a candidate the challenge refused has no pack commit and did not pass lint")
 
     def to_dict(self) -> dict:
         return {
@@ -2406,6 +2456,7 @@ class CandidateRecord:
             "fallback_used": self.fallback_used,
             "propose_usd": self.propose_usd,
             "created_utc": self.created_utc,
+            **({"challenge": self.challenge.to_dict()} if self.challenge is not None else {}),
         }
 
     @classmethod
@@ -2431,6 +2482,7 @@ class CandidateRecord:
             r.raw("fallback_used"),
             r.raw("propose_usd"),
             r.raw("created_utc"),
+            challenge=(r.opt("challenge", ChallengeSummary.from_dict) if "challenge" in d else None),
         )
         r.done()
         return out

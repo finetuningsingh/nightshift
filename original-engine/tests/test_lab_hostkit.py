@@ -748,6 +748,29 @@ class AxolotlHelper(OriginFixtures):
         self.assertEqual(env["PATH"], venv_bin + os.pathsep + "/opt/lab/bin:/usr/bin", "torchrun is found in the venv too")
         self.assertEqual((env["CUDA_VISIBLE_DEVICES"], env["WANDB_MODE"]), ("0", "disabled"))
 
+    def test_the_dose_is_computed_from_the_exact_rows_and_recorded_not_refused(self):
+        spec = importlib.util.spec_from_file_location("axolotl_train", LIB / "axolotl_train.py")
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        by_epochs = mod.dose({"micro_batch_size": 1, "gradient_accumulation_steps": 4, "num_epochs": 2}, 321)
+        self.assertEqual((by_epochs["steps_per_epoch"], by_epochs["steps"], by_epochs["examples_seen"], by_epochs["epochs"]), (81, 162, 648, 2.0))
+        self.assertEqual(by_epochs["checks"], [])
+        by_steps = mod.dose({"micro_batch_size": 1, "gradient_accumulation_steps": 4, "num_epochs": 2, "max_steps": 300}, 320)
+        self.assertEqual((by_steps["steps"], by_steps["examples_seen"]), (300, 1200))
+        self.assertAlmostEqual(by_steps["epochs"], 1200 / 320)
+        self.assertIn("max_steps=300 overrides num_epochs=2", by_steps["checks"])
+        short = mod.dose({"gradient_accumulation_steps": 4, "max_steps": 10}, 320)
+        self.assertTrue(any(c.startswith("less than one epoch: 40 examples seen of 320 rows") for c in short["checks"]))
+        self.assertIn("no training rows", mod.dose({"num_epochs": 1}, 0)["checks"])
+        data = self.tmp / "rows.jsonl"
+        data.write_text('{"messages": []}\n\n{"messages": []}\n')
+        self.assertEqual(mod.count_rows(str(data)), 2)
+        out = self.tmp / "dose-out"
+        mod.record_dose(str(out), by_steps)
+        mod.record_dose(str(out), by_epochs)  # one line per training call (rounds)
+        lines = [json.loads(l) for l in (out / "dose.jsonl").read_text().splitlines()]
+        self.assertEqual([l["steps"] for l in lines], [300, 162])
+
     @unittest.skipUnless(importlib.util.find_spec("yaml"), "PyYAML not installed (the Axolotl environment has it)")
     def test_overlay_forces_the_harness_settings(self):
         spec = importlib.util.spec_from_file_location("axolotl_train", LIB / "axolotl_train.py")

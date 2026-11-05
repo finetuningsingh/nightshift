@@ -129,6 +129,7 @@ class CliWorld(LabWorld):
     lab_cap: Any = None
     rentals: Any = None
     close: Optional[Callable[[], None]] = None
+    challenger: Any = None  # outer_challenge.Challenger, or None (no challenge)
 
 
 class LazyScorer:
@@ -832,6 +833,7 @@ def cmd_outer(env: _Env, a: argparse.Namespace) -> None:
         clock=world.clock, lab_cap=env.lab_cap(), hosts=(cfg.control_host, cfg.researcher_host), proposal_usd_cap=a.wonder_usd,
         trial_llm_usd_cap=a.trial_llm_usd, scoring_usd_per_trial=a.scoring_usd_per_trial, shape=cfg.shape, base=cfg.base,
         after_decision=lambda d: env.anchor(f"decision:{d.candidate_id}:{d.stage.value}", publish=True),
+        challenger=getattr(world, "challenger", None),
     )
     decisions = controller.run(a.rounds)
     env.emit({"decisions": [{"candidate": d.candidate_id, "stage": d.stage.value, "outcome": d.outcome.value, "round": d.round_index} for d in decisions]})
@@ -1683,6 +1685,22 @@ class _LazyProposalSource:
             self._ledger.close()
 
 
+def researcher_model(environ: Optional[Mapping[str, str]] = None) -> str:
+    """The Muse Code researcher model: ``LAB_RESEARCHER_MODEL`` (e.g. ``muse-wonder-full-1.0``), else the runtime default
+    (``muse-spark-1.3``, unchanged for existing lab roots). The runtime validates it and checks what Muse reports serving."""
+    from nightshift.lab.runtime_coral_cli import DEFAULT_MODEL
+
+    env = os.environ if environ is None else environ
+    return env.get("LAB_RESEARCHER_MODEL") or DEFAULT_MODEL
+
+
+def outer_challenge_enabled(environ: Optional[Mapping[str, str]] = None) -> bool:
+    """The outer challenge runs with the Muse Code proposer (``LAB_PROPOSER=muse_cli``) unless ``LAB_OUTER_CHALLENGE=off``. The API
+    proposer path is unchanged."""
+    env = os.environ if environ is None else environ
+    return env.get("LAB_PROPOSER", "api") == "muse_cli" and env.get("LAB_OUTER_CHALLENGE", "on") != "off"
+
+
 def build_world(layout: LabLayout, config: LabConfig, *, ledger: Any = None) -> CliWorld:
     """Build the real objects from ``lab.json``. Constructors only: nothing here touches the network, a GPU or a third-party checkout
     (verifiers, the Meta client and the scorer are built on first use)."""
@@ -1762,7 +1780,7 @@ def build_world(layout: LabLayout, config: LabConfig, *, ledger: Any = None) -> 
         runtime = CoralMuseRuntime(
             layout, f"{config.researcher_user}@{config.researcher_host}", coral_home, config.pins, ports, clock=clock,
             muse_home=os.environ.get("LAB_MUSE_HOME", "/home/ankit/work/glimmer-lab/muse-home"),
-            model=os.environ.get("LAB_RESEARCHER_MODEL", "muse-spark-1.3"),
+            model=researcher_model(),
             remote_trials_root=os.environ.get("LAB_TRIALS_ROOT", "/srv/lab/trials"),
         )
     else:
@@ -1775,6 +1793,12 @@ def build_world(layout: LabLayout, config: LabConfig, *, ledger: Any = None) -> 
         proposal.close = lambda: None  # type: ignore[attr-defined]
     else:
         proposal = _LazyProposalSource(layout, config, clock)
+    challenger = None
+    if outer_challenge_enabled():  # the bounded challenge: rendered-config checker, one Wonder critic call, at most one revision
+        from nightshift.lab.outer_challenge import CRITIC_MODEL, Challenger
+        from nightshift.lab.proposer_muse_cli import MuseCliProposer
+
+        challenger = Challenger(MuseCliProposer(model=CRITIC_MODEL, effort=os.environ.get("LAB_PROPOSER_EFFORT", "high"), precheck_allowance=True))
 
     scanner_box: dict = {}
 
@@ -1795,7 +1819,7 @@ def build_world(layout: LabLayout, config: LabConfig, *, ledger: Any = None) -> 
         layout=layout, config=config, clock=clock, ledger=ledger, state_reader=reader, new_trial_ledger=new_trial_ledger,
         meter_factory=meter_factory, scorer=scorer, generator_factory=generator_factory, trainer=trainer, model_server=model_server,
         runtime=runtime, packs=packs, decision_rule=stats, trial_executor=runner, proposal_source=proposal, lab_cap=lab_cap, rentals=rentals,
-        close=proposal.close,
+        close=proposal.close, challenger=challenger,
     )
 
 

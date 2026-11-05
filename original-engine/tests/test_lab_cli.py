@@ -1060,6 +1060,14 @@ class SidakAndHelpers(unittest.TestCase):
         self.assertAlmostEqual(1 - (1 - a) ** 2, 0.05, places=12)
         self.assertLess(cli.sidak_alpha(0.05, 4), cli.sidak_alpha(0.05, 2))
 
+    def test_researcher_model_is_selected_by_the_environment_and_keeps_its_default(self):
+        self.assertEqual(cli.researcher_model({}), "muse-spark-1.3")  # old roots: unchanged
+        self.assertEqual(cli.researcher_model({"LAB_RESEARCHER_MODEL": ""}), "muse-spark-1.3")
+        self.assertEqual(cli.researcher_model({"LAB_RESEARCHER_MODEL": "muse-wonder-full-1.0"}), "muse-wonder-full-1.0")
+        self.assertEqual(cli.outer_challenge_enabled({"LAB_PROPOSER": "muse_cli"}), True)
+        self.assertEqual(cli.outer_challenge_enabled({"LAB_PROPOSER": "muse_cli", "LAB_OUTER_CHALLENGE": "off"}), False)
+        self.assertEqual(cli.outer_challenge_enabled({}), False)  # the API proposer path is unchanged
+
 
 if __name__ == "__main__":
     unittest.main()

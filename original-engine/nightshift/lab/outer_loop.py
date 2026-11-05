@@ -17,11 +17,15 @@ Facts the design leaves open, decided here:
   closed with ``cli abort-trial`` first; the controller refuses to start while one exists.
 * The ledger is the authority: the accepting decision is appended BEFORE ``PackStore.accept`` moves ``main``; the next round reads the
   incumbent from the ledger, and ``accept`` is idempotent, so a crash between the two is repaired by calling ``accept`` again.
+* With a ``challenger`` (``outer_challenge.Challenger``), every proposal that applies is challenged before lint and commit: the rendered-
+  config checker, one critic call, at most one revision. A candidate whose new hard findings remain is recorded as refused (no pack commit,
+  the findings as lint messages, INVALID) and spends no GPU; the record carries a ``ChallengeSummary`` and ``challenge.json``.
 * ``stop_after_rejections`` counts consecutive ROUNDS (decisions share a ``round_index``) in which no candidate was accepted.
 """
 
 from __future__ import annotations
 
+import json
 import tempfile
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -33,6 +37,7 @@ from nightshift.lab.contracts import (
     BudgetExhausted,
     BudgetSpec,
     CandidateRecord,
+    ChallengeSummary,
     Clock,
     ContractError,
     Decision,
@@ -87,6 +92,7 @@ from nightshift.lab.outer_context import (
     forbidden_values,
     summarize_trace,
 )
+from nightshift.lab.outer_challenge import ChallengeOutcome, Challenger
 from nightshift.lab.packs import DEFAULT_EDITABLE_PATHS, default_lint_ranges
 from nightshift.lab.proposer import ProposerUnavailable
 
@@ -136,6 +142,7 @@ class OuterController:
         base: Optional[BaseModelRef] = None,
         lint_ranges: Optional[Mapping[str, Any]] = None,
         after_decision: Optional[Callable[[Decision], None]] = None,
+        challenger: Optional[Challenger] = None,
     ):
         self.layout, self.ledger, self.reader, self.packs = layout, ledger, state_reader, packs
         self.proposer, self.executor, self.rules = proposer, executor, decisions
@@ -149,6 +156,7 @@ class OuterController:
         self._shape, self._base = shape, base
         self._contract = contract_text(lint_ranges if lint_ranges is not None else default_lint_ranges())
         self._after_decision = after_decision
+        self.challenger = challenger
         self._issued_seeds: dict[tuple, int] = {}
         self._confirm_inc_ids: list[str] = []
 
@@ -372,7 +380,13 @@ class OuterController:
                 batch.append(self._record_unparseable(cid, ctx, prompt_text, exc, incumbent_pack, incumbent_label))
                 continue
             self._add_spent(result.usd)
-            batch.append(self._record_candidate(cid, ctx, prompt_text, result, incumbent_pack, incumbent_label))
+            challenge = None
+            if self.challenger is not None:  # before lint and commit; bounded: one critic call, at most one revision
+                challenge = self.challenger.run(ctx=ctx, result=result, parent_files=facts.pack_files, gpu_minutes=budget.gpu_minutes,
+                                                proposer=self.proposer, forbidden=forbidden)
+                if challenge is not None:
+                    self._add_spent(challenge.extra_usd)
+            batch.append(self._record_candidate(cid, ctx, prompt_text, result, incumbent_pack, incumbent_label, challenge))
         return batch
 
     def _add_spent(self, usd: float) -> None:
@@ -393,37 +407,58 @@ class OuterController:
             raise OuterRefused(f"candidate directory {d.name} already exists without a ledger record; move it aside and retry") from None
         return d
 
-    def _record_candidate(self, cid, ctx, prompt_text, result, incumbent_pack, incumbent_label) -> _Cand:
+    def _record_candidate(self, cid, ctx, prompt_text, result, incumbent_pack, incumbent_label, challenge: Optional[ChallengeOutcome] = None) -> _Cand:
+        first = result
+        if challenge is not None:
+            result = challenge.result  # the revised proposal when a revision applied, else the first one
         proposal = result.proposal
         self._candidate_dir(cid)
         prompt_ref = self._write_text(self.layout.candidate_prompt_path(cid), prompt_text)
-        response_ref = self._write_text(self.layout.candidate_response_path(cid), result.raw_response)
+        response_ref = self._write_text(self.layout.candidate_response_path(cid), first.raw_response)
         write_record(self.layout.candidate_proposal_path(cid), proposal)
         proposal_ref = self.layout.file_ref(self.layout.candidate_proposal_path(cid))
+        summary = self._record_challenge(cid, challenge) if challenge is not None else None
         pack: Optional[PackRef] = None
         diff_ref = None
         lint_passed, messages = False, ()
-        try:
-            pack, diff = self.packs.apply(proposal, incumbent_pack, cid)
-            diff_ref = self._write_text(self.layout.candidate_diff_path(cid), diff)
-            lint = self.packs.lint(pack)
-            lint_passed, messages = lint.passed, tuple(lint.messages)
-            write_record(self.layout.candidate_lint_path(cid), {"passed": lint.passed, "messages": list(lint.messages), "changed_paths": list(lint.changed_paths)})
-        except ProposalInvalid as exc:
-            messages = (str(exc)[:500],)
-            pack, diff_ref = None, None
+        if challenge is not None and challenge.refused:
+            # refused before any commit: the in-memory diff is the record, the findings are the reason
+            diff_ref = self._write_text(self.layout.candidate_diff_path(cid), challenge.diff)
+            messages = tuple(f"refused by the rendered-config check: {f.code} ({f.path}): {f.message}"[:500] for f in challenge.blocking)
+        else:
+            try:
+                pack, diff = self.packs.apply(proposal, incumbent_pack, cid)
+                diff_ref = self._write_text(self.layout.candidate_diff_path(cid), diff)
+                lint = self.packs.lint(pack)
+                lint_passed, messages = lint.passed, tuple(lint.messages)
+                write_record(self.layout.candidate_lint_path(cid), {"passed": lint.passed, "messages": list(lint.messages), "changed_paths": list(lint.changed_paths)})
+            except ProposalInvalid as exc:
+                messages = (str(exc)[:500],)
+                pack, diff_ref = None, None
+        revised = challenge is not None and challenge.revised
+        served = first.served_model if not revised or result.served_model == first.served_model else f"{first.served_model},{result.served_model}"
         rec = CandidateRecord(
             candidate_id=cid, version_label=cid, parent=incumbent_pack, parent_version=incumbent_label,
             pack=pack, proposal=proposal_ref, diff=diff_ref, prompt=prompt_ref, response=response_ref,
             lever=proposal.lever, hypothesis=proposal.hypothesis, reason=_reason(proposal),
             lint_passed=lint_passed, lint_messages=messages,
-            proposer_model=result.model, proposer_served_model=result.served_model, fallback_used=result.fallback_used,
-            propose_usd=result.usd, created_utc=utc_iso(self.clock()),
+            proposer_model=first.model, proposer_served_model=served[:200],
+            fallback_used=first.fallback_used or (revised and result.fallback_used),
+            propose_usd=first.usd + (challenge.extra_usd if challenge is not None else 0.0), created_utc=utc_iso(self.clock()),
+            challenge=summary,
         )
         self.ledger.append(LabKind.CANDIDATE_PROPOSED, ACTOR, rec)
         if lint_passed:
             self.ledger.append(LabKind.PACK_COMMITTED, ACTOR, PackCommitted(cid, pack, incumbent_pack, cid))
         return _Cand(cid, rec, pack, lint_passed)
+
+    def _record_challenge(self, cid: str, ch: ChallengeOutcome) -> ChallengeSummary:
+        """Write the challenge artefacts and ``challenge.json`` (with the hash of every artefact) into the candidate directory."""
+        d = self.layout.candidate_dir(cid)
+        files = {name: self._write_text(d / name, text).to_dict() for name, text in sorted(ch.artefacts.items())}
+        report = {**ch.report, "files": files}
+        ref = self._write_text(d / "challenge.json", json.dumps(report, indent=1, sort_keys=True) + "\n")
+        return ChallengeSummary(ref, tuple(f.code for f in ch.blocking), ch.critic_model, ch.critic_served_model, ch.critic_sha256, ch.revised, ch.refused)
 
     def _record_unparseable(self, cid, ctx, prompt_text, exc, incumbent_pack, incumbent_label) -> _Cand:
         """A reply that is no Proposal: INVALID, no GPU spent. A placeholder proposal.json keeps the file contract (see handoff)."""

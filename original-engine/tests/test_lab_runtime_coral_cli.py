@@ -182,6 +182,9 @@ class PureTests(unittest.TestCase):
         self.assertEqual(d["run.stop.max_real_attempts"], "3")
         for key in ("workspace.results_dir", "workspace.repo_path", "workspace.run_dir"):
             self.assertTrue(d[key].startswith("/srv/lab/trials/t-0001/"), key)
+        w = dict(x.split("=", 1) for x in cli.coral_cli_overrides("/srv/lab/trials/t-0001", model="muse-wonder-full-1.0"))
+        self.assertEqual(w["agents.model"], "muse-wonder-full-1.0")
+        self.assertEqual(cli.DEFAULT_MODEL, "muse-spark-1.3")  # old roots keep their default
         plain = dict(x.split("=", 1) for x in cli.coral_cli_overrides("/r"))
         self.assertNotIn("run.stop.max_real_attempts", plain)
         self.assertNotIn("agents.runtime_options.reasoning_effort", plain)
@@ -298,6 +301,27 @@ class MuseUsageTests(unittest.TestCase):
         pub2 = self.logs({"a1.0.log": [model_ev("muse-spark-1.3"), {"type": "coral"}]})  # a model but no usage
         self.assertIsNone(cli.muse_usage_from_logs(pub2))
         self.assertEqual(cli.configured_models_from_logs(pub2), ["muse-spark-1.3"])
+
+    def test_served_and_configured_models_are_compared_with_the_requested_one(self):
+        m = lambda model: {"model": model, "input_tokens": 1, "cached_tokens": 0, "output_tokens": 1, "reasoning_tokens": 0, "calls": 1}
+        wonder = "muse-wonder-full-1.0"
+        u = cli.muse_usage_from_logs(self.logs({"a1.0.log": [model_ev(wonder), usage_ev("r", [m(wonder)])]}))
+        self.assertEqual(cli.served_models(u), [wonder])
+        self.assertEqual(cli.usage_environment(u, u["configured_models"])["researcher_model_served"], wonder)
+        self.assertEqual(cli.model_verdict(wonder, cli.served_models(u), u["configured_models"]), (f"ok: Muse reported only {wonder}", []))
+        # a silent fallback: requested Wonder, served Spark (in one run of one agent is enough)
+        u2 = cli.muse_usage_from_logs(self.logs({"a1.0.log": [model_ev(wonder), usage_ev("r", [m(wonder)])], "a2.0.log": [usage_ev("r2", [m("muse-spark-1.3")])]}))
+        verdict, others = cli.model_verdict(wonder, cli.served_models(u2), u2["configured_models"])
+        self.assertEqual(others, ["muse-spark-1.3"])
+        self.assertTrue(verdict.startswith("MISMATCH: requested muse-wonder-full-1.0"))
+        # a configured id that differs counts too, even when no usage was reported
+        self.assertEqual(cli.model_verdict(wonder, [], ["muse-spark-1.3"])[1], ["muse-spark-1.3"])
+        # nothing reported is unverified, never "ok"
+        self.assertEqual(cli.model_verdict(wonder, [], []), ("unverified: Muse reported no model", []))
+        self.assertEqual(cli.usage_environment(None)["researcher_model_served"], "not reported")
+        # a usage entry without a model name is not an id
+        u3 = cli.muse_usage_from_logs(self.logs({"a1.0.log": [usage_ev("r", [{"input_tokens": 3}])]}))
+        self.assertEqual(cli.served_models(u3), [])
 
     def test_symlinked_logs_are_ignored(self):
         pub = self.logs({"a1.0.log": [usage_ev("r", [{"model": "m", "input_tokens": 3}])]})
@@ -524,6 +548,12 @@ class MuseRuntimeModuleTests(unittest.TestCase):
         self.assertEqual(Path(Path(str(self.out) + ".cwd").read_text().strip()).resolve(), self.wt)
         self.assertEqual(h.log_path.name, "agent-1.0.log")
         self.assertEqual(h.session_id, sid)
+
+    def test_the_requested_model_reaches_muse_exec(self):
+        self.start(model="muse-wonder-full-1.0")
+        a = self.argv()
+        self.assertEqual(a.count("--model"), 1)
+        self.assertEqual(a[a.index("--model") + 1], "muse-wonder-full-1.0")
 
     def test_options(self):
         self.start(runtime_options={"reasoning_effort": "medium", "web_tools": True}, max_turns=40)
@@ -814,6 +844,42 @@ class FinishAndHarvestTests(CliCase):
         self.assertEqual(res.environment["researcher_model_configured"], "muse-spark-1.3")
         self.assertEqual(res.environment["researcher_allowance_used_percent"], "window=2 weekly=1")
         self.assertEqual(res.environment["researcher_tokens"], "unmetered, wall-limited")  # still not a meter
+
+    def _wonder_trial(self, logs):
+        """A trial that requested muse-wonder-full-1.0; ``logs`` maps a log name to the models its events report."""
+        self.runtime = self.make_runtime(model="muse-wonder-full-1.0")
+        self.set_behavior(mode="finish", log_names=sorted(logs))
+        ctx, h = self.start()
+        self.wait_exit(h)
+        self.assertEqual(dict(a.split("=", 1) for a in self.start_json(ctx)["argv"][3:])["agents.model"], "muse-wonder-full-1.0")
+        pub = self.root_of(ctx) / "run" / ".coral" / "public" / "logs"
+        for n, (configured, served) in logs.items():
+            (pub / n).write_text(json.dumps(model_ev(configured)) + "\n" + json.dumps(usage_ev(f"r-{n}", [{"model": served, "input_tokens": 3, "output_tokens": 1, "calls": 1}])) + "\n")
+        return ctx, h
+
+    def test_the_requested_configured_and_served_wonder_model_are_recorded(self):
+        w = "muse-wonder-full-1.0"
+        ctx, h = self._wonder_trial({"a1.0.log": (w, w), "a2.0.log": (w, w)})
+        env = h.collect().environment
+        self.assertEqual((env["model"], env["researcher_model_requested"], env["researcher_model_configured"], env["researcher_model_served"]), (w, w, w, w))
+        self.assertEqual(env["researcher_model_check"], f"ok: Muse reported only {w}")
+
+    def test_a_silent_fallback_to_another_model_fails_the_trial_loudly(self):
+        w = "muse-wonder-full-1.0"
+        ctx, h = self._wonder_trial({"a1.0.log": (w, w), "a2.0.log": (w, "muse-spark-1.3")})
+        with self.assertRaises(cli.ResearcherModelMismatch) as cm:
+            h.collect()
+        self.assertIsInstance(cm.exception, RuntimeFailure)  # the trial runner records a failed trial
+        self.assertIn("requested muse-wonder-full-1.0", str(cm.exception))
+        self.assertIn("muse-spark-1.3", str(cm.exception))
+        with self.assertRaises(cli.ResearcherModelMismatch):  # asking again gives the same verdict, never a result
+            h.collect()
+        self.assertTrue((self.layout.trial_trace_dir("t-0001") / "public" / "logs").exists(), "the evidence is harvested")
+
+    def test_a_configured_model_other_than_the_requested_one_fails_the_trial(self):
+        ctx, h = self._wonder_trial({"a1.0.log": ("muse-spark-1.3", "muse-wonder-full-1.0")})
+        with self.assertRaises(cli.ResearcherModelMismatch):
+            h.collect()
 
     def test_a_refreshed_login_is_reported(self):
         ctx, h = self.start()

@@ -367,6 +367,43 @@ class PromptTests(Base):
         self.assertScratchEmpty()
 
 
+class CriticTests(Base):
+    """``critique``: the outer challenge's one critic call goes through the same restricted ``muse exec`` as a proposal."""
+
+    def test_one_fresh_restricted_call_with_the_wonder_model_and_the_given_prompt_only(self):
+        text = json.dumps({"verdict": "accept", "challenges": [], "summary": "ok"})
+        self.scenario([{"stdout_lines": ok_stream(text)}])
+        reply = self.proposer(base_env={**PLANTED, "PATH": os.environ.get("PATH", "/usr/bin:/bin"), "HOME": "/home/x", "LANG": "C"}).critique("CRITIC PROMPT $(id) `x`")
+        (c,) = self.calls()  # one call, no retry
+        argv = c["argv"]
+        self.assertEqual(argv[argv.index("--model") + 1], "muse-wonder-full-1.0")
+        self.assertIn(" ".join(RESTRICTIVE_FLAGS), " ".join(argv))
+        self.assertNotIn("--yolo", argv)
+        self.assertEqual(c["prompt"], "CRITIC PROMPT $(id) `x`")  # a file, never an argv or shell word
+        self.assertNotIn("CRITIC PROMPT", " ".join(argv))
+        # the python fake adds these itself: macOS __CF_USER_TEXT_ENCODING, and LC_CTYPE from PEP 538 locale coercion under LANG=C
+        names = {n for n in c["env_names"] if n not in ("__CF_USER_TEXT_ENCODING", "LC_CTYPE")}
+        self.assertTrue(names <= set(ENV_ALLOWLIST), names)
+        for v in PLANTED.values():
+            self.assertNotIn(v, json.dumps(c["env"]))
+        self.assertEqual(c["ws_at_start"], [])
+        self.assertEqual((reply.text, reply.model, reply.served_model, reply.fallback_used), (text, "muse-wonder-full-1.0", "muse-wonder-full-1.0", False))
+        self.assertScratchEmpty()
+
+    def test_a_served_model_other_than_wonder_is_reported_as_a_fallback(self):
+        self.scenario([{"stdout_lines": ok_stream("{}", model="muse-spark-1.3")}])
+        reply = self.proposer().critique("p")
+        self.assertEqual((reply.served_model, reply.fallback_used), ("muse-spark-1.3", True))
+
+    def test_failures_raise_like_a_proposal(self):
+        self.scenario([{"exit": 1, "stdout_lines": failed_stream("internal error")}])
+        with self.assertRaises(ProposerUnavailable):
+            self.proposer().critique("p")
+        self.scenario([{"exit": 1, "stdout_lines": failed_stream("request rejected", weekly=100)}])
+        with self.assertRaises(BudgetExhausted):
+            self.proposer().critique("p")
+
+
 class CleanupTests(Base):
     def test_workspace_and_prompt_removed_after_success_failure_and_unparseable(self):
         for step in ({"stdout_lines": ok_stream(json.dumps(good_reply()))}, {"exit": 3}, {"stdout_lines": ok_stream("nope")}):

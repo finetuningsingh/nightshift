@@ -24,6 +24,10 @@ extractor, submissions read from the attempt commits, stop/collect/close semanti
   stops the team from ``poll()`` and, independently of the coordinator, from ``timeout`` around ``coral start``. Token counts Muse itself
   printed (``run.usage`` events in ``logs/<agent>.<n>.log``) are recorded only when present (``muse_usage_from_logs``), with the models its
   ``run.model.configured`` events reported.
+* **The researcher model is verified, not assumed.** ``model`` (``LAB_RESEARCHER_MODEL`` in the CLI; default ``muse-spark-1.3``, e.g.
+  ``muse-wonder-full-1.0``) goes to ``agents.model`` and from there to ``muse exec --model``. ``collect()`` records the requested, configured
+  (``run.model.configured``) and served (``run.usage`` ``models[].model``) ids, and fails the trial with ``ResearcherModelMismatch`` when Muse
+  reports any other model (a silent fallback). No reported model at all is recorded as ``unverified``, not as a pass.
 
 CORAL settings verified in the pinned source (commit 0123dfb9, ``~/work/glimmer-coral-src/src`` on ax42):
 
@@ -192,9 +196,32 @@ def configured_models_from_logs(public_dir: Path) -> list[str]:
     return sorted(found)
 
 
+class ResearcherModelMismatch(RuntimeFailure):
+    """Muse reported running a researcher model other than the requested one (a silent fallback). The trial fails: work done by another
+    model must not count as the requested model's."""
+
+
+def served_models(usage: Optional[Mapping[str, Any]]) -> list[str]:
+    """Model ids Muse named in ``run.usage`` events (``models[].model``); entries without a name are not an id."""
+    return sorted(m for m in usage["models"] if m != "unknown") if usage else []
+
+
+def model_verdict(requested: str, served: Sequence[str], configured: Sequence[str]) -> tuple[str, list[str]]:
+    """``(verdict, other ids)``: ``ok`` when every reported id is ``requested``; ``MISMATCH`` when any other id was reported (configured or
+    served); ``unverified`` when Muse reported none."""
+    others = sorted({m for m in (*served, *configured) if m != requested})
+    if others:
+        return f"MISMATCH: requested {requested}, Muse reported {','.join(others)}", others
+    if not served and not configured:
+        return "unverified: Muse reported no model", []
+    return f"ok: Muse reported only {requested}", []
+
+
 def usage_environment(usage: Optional[Mapping[str, Any]], configured: Sequence[str] = ()) -> dict[str, str]:
     """The environment-record entries: always the honest label, the numbers only when Muse reported them."""
-    env = {"researcher_tokens": UNMETERED, "researcher_model_configured": ",".join(configured) if configured else "not reported"}
+    served = served_models(usage)
+    env = {"researcher_tokens": UNMETERED, "researcher_model_configured": ",".join(configured) if configured else "not reported",
+           "researcher_model_served": ",".join(served) if served else "not reported"}
     if usage is None:
         env["researcher_usage_reported"] = "none: no Muse log carried a run.usage event"
     else:
@@ -624,6 +651,7 @@ class CoralMuseHandle(CoralHandle):
         self._wall = int(wall_seconds)
         self._auth_source = auth_source
         self._model = model
+        self._model_error: Optional[str] = None
         self._started = float(self._clock())
 
     @property
@@ -661,6 +689,8 @@ class CoralMuseHandle(CoralHandle):
 
     def collect(self) -> RuntimeResult:
         with self._lock:
+            if self._model_error is not None:  # the harvest happened (the base handle cached its result); the verdict stands
+                raise ResearcherModelMismatch(self._model_error)
             if self._collected is not None:
                 return self._collected
         if self.poll() is None:
@@ -670,9 +700,18 @@ class CoralMuseHandle(CoralHandle):
         result = super().collect()
         public = self._layout.trial_trace_dir(self.trial_id) / "public"
         usage = muse_usage_from_logs(public)
-        env = {**result.environment, **usage_environment(usage, usage["configured_models"] if usage else configured_models_from_logs(public))}
+        configured = usage["configured_models"] if usage else configured_models_from_logs(public)
+        env = {**result.environment, **usage_environment(usage, configured)}
         env["researcher_model_requested"] = self._model
+        verdict, others = model_verdict(self._model, served_models(usage), configured)
+        env["researcher_model_check"] = verdict
         result = dataclasses.replace(result, environment={k: _clip(str(v)) for k, v in env.items()})
+        if others:
+            msg = _clip(f"researcher model mismatch: requested {self._model}, Muse reported {', '.join(others)} "
+                        f"(configured: {env['researcher_model_configured']}; served: {env['researcher_model_served']}); the trial fails")
+            with self._lock:
+                self._model_error = msg
+            raise ResearcherModelMismatch(msg)
         with self._lock:
             self._collected = result
         return result

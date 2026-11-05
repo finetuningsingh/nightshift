@@ -5,7 +5,8 @@
 The researcher's config is the base; the harness overrides what makes a trial comparable and safe: ``base_model`` is the local pinned
 checkpoint (``GLIMMER_BASE``), the single dataset entry points at ``--data``, ``output_dir`` is ``$GLIMMER_OUT/adapter``, W&B is off,
 validation is off. If the config sets no ``eot_tokens`` the harness sets ``["<|eot|>", "<|eom|>"]`` (the 0.19.0 example omits them, so the turn
-terminator would not be trained). UNVERIFIED on a GPU: that Axolotl 0.19.0 accepts the text-only path (see glimmer-qlora-text.yaml).
+terminator would not be trained). Before training, the effective dose on the exact rows of ``--data`` (steps, examples seen, epochs;
+``max_steps`` > 0 overrides ``num_epochs``) is printed and appended to ``$GLIMMER_OUT/dose.jsonl``; it is recorded, never a refusal. UNVERIFIED on a GPU: that Axolotl 0.19.0 accepts the text-only path (see glimmer-qlora-text.yaml).
 """
 import argparse
 import os
@@ -36,6 +37,50 @@ def overlay(cfg, data, base, out_dir, cache_dir):
     return cfg
 
 
+def _int(v):
+    return v if isinstance(v, int) and not isinstance(v, bool) else None
+
+
+def dose(cfg, rows):
+    """The effective training dose of the harness config ``cfg`` on exactly ``rows`` accepted training rows (sample packing off, as the
+    harness configs use): optimizer steps, examples seen and epochs. In Axolotl 0.19.0 a positive ``max_steps`` takes precedence over
+    ``num_epochs``. ``checks`` are recorded facts, never a refusal."""
+    micro, accum = _int(cfg.get("micro_batch_size", 1)) or 1, _int(cfg.get("gradient_accumulation_steps", 1)) or 1
+    batch = micro * accum
+    epochs_cfg = cfg.get("num_epochs", 1)
+    max_steps = _int(cfg.get("max_steps"))
+    per_epoch = -(-rows // batch) if rows > 0 else 0
+    checks = []
+    if max_steps is not None and max_steps > 0:
+        steps = max_steps
+        epochs = (steps * batch / rows) if rows else None
+        checks.append(f"max_steps={max_steps} overrides num_epochs={epochs_cfg}")
+        if rows and steps * batch < rows:
+            checks.append(f"less than one epoch: {steps * batch} examples seen of {rows} rows")
+    else:
+        steps = int(-(-per_epoch * float(epochs_cfg) // 1)) if isinstance(epochs_cfg, (int, float)) and not isinstance(epochs_cfg, bool) else None
+        epochs = float(epochs_cfg) if steps is not None else None
+    if rows == 0:
+        checks.append("no training rows")
+    return {"rows": rows, "micro_batch_size": micro, "gradient_accumulation_steps": accum, "batch": batch, "num_epochs": epochs_cfg,
+            "max_steps": max_steps, "steps_per_epoch": per_epoch, "steps": steps, "examples_seen": None if steps is None else steps * batch,
+            "epochs": epochs, "checks": checks}
+
+
+def count_rows(path):
+    with open(path, "rb") as fh:
+        return sum(1 for line in fh if line.strip())
+
+
+def record_dose(out_dir, record):
+    """Append the dose of this call to ``$GLIMMER_OUT/dose.jsonl`` (one line per training call; the helper may be called once per round)."""
+    import json
+
+    os.makedirs(out_dir, exist_ok=True)
+    with open(os.path.join(out_dir, "dose.jsonl"), "a", encoding="utf-8") as fh:
+        fh.write(json.dumps(record, sort_keys=True) + "\n")
+
+
 def train_command(config_path, python, environ):
     """The ``axolotl train`` argv and environment. ``python`` is the Axolotl virtual environment's interpreter: running a file with it does not
     put the environment's ``bin`` on PATH, so ``axolotl`` is addressed by its path there and the directory is added to PATH (torchrun)."""
@@ -62,6 +107,10 @@ def main(argv=None):
     os.makedirs(out, exist_ok=True)
     with open(path, "w") as fh:
         yaml.safe_dump(final, fh, sort_keys=True)
+    d = dose(final, count_rows(a.data))  # from the exact rows about to be trained on, before the optimizer starts (recorded, not a refusal)
+    record_dose(out, d)
+    print(f"[glimmer-axolotl-train] dose: {d['rows']} rows, {d['steps']} steps x batch {d['batch']} = {d['examples_seen']} examples, "
+          f"epochs {d['epochs'] if d['epochs'] is None else round(d['epochs'], 3)}" + (f"; {'; '.join(d['checks'])}" if d["checks"] else ""), flush=True)
     if a.dry_run:
         print(path)
         return 0

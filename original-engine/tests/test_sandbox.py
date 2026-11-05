@@ -1348,16 +1348,20 @@ class TrustedStatTests(SandboxCase):
     def test_added_removed_replaced_renamed_and_chmodded_entries_are_all_named(self):
         t = self.task.trusted_dir
         before = self.snap()
+        time.sleep(0.02)                      # a later kernel timestamp tick than the snapshot: same-tick changes keep mtime/ctime
         (t / "new.csv").write_text("n")
         self.assertEqual(sandbox.trusted_stat_diff(before, self.snap()), ["trusted", "trusted/new.csv"])
         before = self.snap()
+        time.sleep(0.02)                      # a later kernel timestamp tick than the snapshot: same-tick changes keep mtime/ctime
         os.unlink(t / "new.csv")
         self.assertEqual(sandbox.trusted_stat_diff(before, self.snap()), ["trusted", "trusted/new.csv"])
         before = self.snap()
+        time.sleep(0.02)                      # a later kernel timestamp tick than the snapshot: same-tick changes keep mtime/ctime
         os.replace(t / "secret.txt", t / "moved.txt")
         os.replace(t / "moved.txt", t / "secret.txt")                 # same name and bytes again, new ctime
         self.assertIn("trusted/secret.txt", sandbox.trusted_stat_diff(before, self.snap()))
         before = self.snap()
+        time.sleep(0.02)                      # a later kernel timestamp tick than the snapshot: same-tick changes keep mtime/ctime
         os.chmod(t / "grade.py", 0o600)
         self.assertEqual(sandbox.trusted_stat_diff(before, self.snap()), ["trusted/grade.py"])
 
@@ -1440,6 +1444,7 @@ class TrustedStatAdversarialTests(SandboxCase):
     def test_a_file_that_comes_and_goes_is_still_seen_after_the_grader_when_no_bytecode_is_involved(self):
         t = self.task.trusted_dir
         before = self.snap()
+        time.sleep(0.02)                      # a later kernel timestamp tick than the snapshot: same-tick changes keep mtime/ctime
         (t / "random.py").write_text("import os\n")              # planted for the grader's import, removed afterwards
         os.unlink(t / "random.py")
         self.assertEqual(sandbox.trusted_stat_diff(before, self.snap(), ignore_bytecode=True), ["trusted"])
@@ -1447,14 +1452,17 @@ class TrustedStatAdversarialTests(SandboxCase):
     def test_bytecode_next_to_a_transient_file_is_excused_only_for_the_bytecode(self):
         t = self.task.trusted_dir
         before = self.snap()
+        time.sleep(0.02)                      # a later kernel timestamp tick than the snapshot: same-tick changes keep mtime/ctime
         (t / "__pycache__").mkdir()
         (t / "__pycache__" / "grade.cpython-313.pyc").write_bytes(b"x")
         self.assertEqual(sandbox.trusted_stat_diff(before, self.snap(), ignore_bytecode=True), [])
         before = self.snap()                                      # __pycache__ exists now; rewriting inside it is excused
+        time.sleep(0.02)
         (t / "__pycache__" / "grade.cpython-313.pyc").write_bytes(b"yy")
         (t / "__pycache__" / "other.cpython-313.pyc").write_bytes(b"z")
         self.assertEqual(sandbox.trusted_stat_diff(before, self.snap(), ignore_bytecode=True), [])
         before = self.snap()
+        time.sleep(0.02)                      # a later kernel timestamp tick than the snapshot: same-tick changes keep mtime/ctime
         (t / "x.py").write_text("1")
         os.unlink(t / "x.py")
         self.assertEqual(sandbox.trusted_stat_diff(before, self.snap(), ignore_bytecode=True), ["trusted"])
